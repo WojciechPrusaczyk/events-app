@@ -4,7 +4,7 @@
 
 # Roadmap
 
-1. [ ] Nazwa, logo, uzgodnienie części technologicznej
+1. [x] Nazwa, logo, uzgodnienie części technologicznej
 2. [ ] Strona główna w podstawowej wersji (bez okolicznych wydarzeń).
 3. [ ] Rejestracja
 4. [ ] Logowanie
