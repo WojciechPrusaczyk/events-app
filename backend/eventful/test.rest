@@ -1,0 +1,25 @@
+POST http://localhost:8000/api/login/
+Content-Type: application/json
+
+{"username" : "rel", "password" : "123"}
+
+###
+
+POST http://localhost:8000/api/register/
+Content-Type: application/json
+
+{"name" : "rel", "password" : "123", "email" : "Woj@gmail.com"}
+
+###
+
+GET http://localhost:8000/api/user/
+Content-Type: application/json
+Authorization: Token c19d57452306af9e95d47f357f1155fb7097bce3
+
+###
+
+POST http://localhost:8000/api/logout/
+Content-Type: application/json
+Authorization: Token c19d57452306af9e95d47f357f1155fb7097bce3
+
+###
