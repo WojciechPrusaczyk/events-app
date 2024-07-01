@@ -1,0 +1,33 @@
+@import "../colors";
+@import "../mixins";
+
+.header {
+  display: flex;
+  flex-direction: row;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 20px;
+  @include double-gradient(90deg, $main, $main-dark);
+
+  &-logo{
+    background: $main-white;
+    padding: 15px;
+    border-radius: 20px;
+    > img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  &-name {
+    width: 70%;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    color: $main-white;
+    > h1 {
+      margin: 0;
+    }
+  }
+}

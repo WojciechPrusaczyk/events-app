@@ -49,7 +49,6 @@ Zalecam jednak wykonanie tych działań z pomocą wbudowanego w IDE narzędzia d
 git add .
 git commit -m "Komentarz odnośnie wykonanych prac"
 git push
-"
 ```
 
 

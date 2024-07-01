@@ -1,0 +1,62 @@
+@import url("../components/header.scss");
+@import "../colors";
+@import "../mixins";
+
+main {
+  .login-form {
+    box-shadow: 0 4px 7px rgba(0,0,0,.12);
+    width: 30%;
+    margin: 100px auto;
+    padding: 0 40px;
+    @include double-gradient(0deg, $main-white, $main-light);
+
+    &-title {
+      padding: 40px;
+      text-align: center;
+      color: $black;
+    }
+    &-company {
+      background-color: $white;
+      display: flex;
+      flex-direction: row;
+      padding: 12px;
+      border-radius: 20px;
+      text-decoration: none;
+      > span {
+        padding: 8px 35px;
+        color: $black;
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+    }
+    &-breakpoint {
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+      color: $black;
+    }
+    &-email {
+      @include input-text( $black-light );
+    }
+    &-password {
+      @include input-password( $black-light );
+    }
+    &-submit {
+      @include button( $success-light, $black-light );
+    }
+    &-forgotPasswd {
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      text-decoration: underline;
+      color: $black;
+      > a {
+        &:visited, &:active {
+          color: $black;
+        }
+      }
+    }
+  }
+}
