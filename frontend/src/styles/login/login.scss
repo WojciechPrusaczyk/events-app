@@ -6,7 +6,8 @@ main {
   .login-form {
     box-shadow: 0 4px 7px rgba(0,0,0,.12);
     width: 30%;
-    margin: 100px auto;
+    margin: auto;
+    margin-top: 100px;
     padding: 0 40px;
     @include double-gradient(0deg, $main-white, $main-light);
 
@@ -41,6 +42,22 @@ main {
     &-password {
       @include input-password( $black-light );
     }
+    &-remember {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 35px 0;
+      span {
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: bold;
+        padding-left: 20px;
+        color: $black;
+      }
+    }
+    &-remember-wrapper {
+      @include input-checkbox( $black, $white, $main-dark);
+    }
     &-submit {
       @include button( $success-light, $black-light );
     }
@@ -52,6 +69,22 @@ main {
       padding: 20px;
       text-decoration: underline;
       color: $black;
+      > a {
+        &:visited, &:active {
+          color: $black;
+        }
+      }
+    }
+    &-signUp {
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+      color: $black;
+      width: 30%;
+      margin: auto;
+      span{
+        margin-right: 10px;
+      }
       > a {
         &:visited, &:active {
           color: $black;
