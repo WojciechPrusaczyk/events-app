@@ -2,6 +2,57 @@
 
 # Instalacja
 
+Wymagane oprogramowanie:
+- [GIT](https://git-scm.com/downloads)
+- [PostreSQL](https://www.postgresql.org/download/)
+- [Postman](https://www.postman.com/downloads/), lub wtyczka Visual Studio do tworzenia zapytań API
+- [NodeJS v18.20.3](https://nodejs.org/en/download/prebuilt-installer)
+- IDE: [PyCharm](https://www.jetbrains.com/pycharm/download/?section=windows), ewentualnie [Visual Studio Code](https://code.visualstudio.com/)
+- [Python v3.11.0](https://www.python.org/downloads/)
+
+1. Zainstaluj całe potrzebne oprogramwoanie.
+2. Pobierz za pomocą IDE najświeższe repozytorium z githuba.
+3. Utwórz w PostgreSQL (za pomocą PgAdmin) pustą bazę danych o nazwie "events-app".
+4. Upewnij się, że masz odpowiedni connection string w backend/backend/settings.py (zmienna "DATABASES")
+5. Wymigruj całą bazę danych do PostgreSQL.
+6. Zainstaluj potrzebne biblioteki JS
+```commandline
+cd .\frontend\
+npm install
+```
+7. Skompiluj pliki JS i CSS.
+8. Jeśli gdzieś wystąpią błędy, to możliwe że nie posiadasz zainstalowanych bibliotek. Sprawdź komunikat o błędzie i zainstaluj wymagane biblioteki.
+
+### Migracja bazy danych
+Należy ją wykonać przy każdej zmianie w strukturze bazy danych.
+```commandline
+cd .\backend\
+python manage.py makemigrations
+python manage.py migrate
+```
+### Kompilacja plików JS i CSS
+Należy wykonać przy każdej zmianie w plikach JS, czy CSS.
+```commandline
+cd .\frontend\
+npm run build
+```
+
+### Uruchomienie lokalknego serwera deweloperskeigo
+```commandline
+cd .\backend\
+python manage.py runserver
+```
+
+### Wypychanie lokalnych zmian na GitHuba
+Zalecam jednak wykonanie tych działań z pomocą wbudowanego w IDE narzędzia do zarządzania projektem w GIT.
+```commandline
+git add .
+git commit -m "Komentarz odnośnie wykonanych prac"
+git push
+"
+```
+
+
 # Roadmap
 
 1. [x] Nazwa, logo, uzgodnienie części technologicznej
