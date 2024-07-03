@@ -33,9 +33,9 @@ const Header = (props) => {
 
     return (
         <header className="header">
-            <div className="header-logo">
+            <a className="header-logo" href={`${window.location.protocol}//${window.location.host}`}>
                 <img src={company_logo} alt="company logo"/>
-            </div>
+            </a>
             <div className="header-name">
                 <h1>{company_name}</h1>
             </div>
