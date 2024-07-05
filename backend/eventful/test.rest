@@ -1,25 +1,29 @@
 POST http://localhost:8000/api/login/
 Content-Type: application/json
 
-{"username" : "rel", "password" : "123"}
+{"username" : "remo", "password" : "123"}
 
 ###
 
 POST http://localhost:8000/api/register/
 Content-Type: application/json
 
-{"name" : "rel", "password" : "123", "email" : "Woj@gmail.com"}
+{"username" : "remo",  "password" : "123", "name" : "Remigiusz", "surname" : "Grzemo",
+"email" : "Woj@gmail.com","registrationdate" : "2001-11-11",
+ "birthdate" : "2001-03-11", "language" : "pl"}
 
 ###
 
 GET http://localhost:8000/api/user/
 Content-Type: application/json
-Authorization: Token c19d57452306af9e95d47f357f1155fb7097bce3
+
+{"username" : "remo"}
 
 ###
 
 POST http://localhost:8000/api/logout/
 Content-Type: application/json
-Authorization: Token c19d57452306af9e95d47f357f1155fb7097bce3
+
+{"token" : "XsCznrvDu6ynmDvjbh1n"}
 
 ###

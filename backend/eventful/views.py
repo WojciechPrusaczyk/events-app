@@ -1,7 +1,7 @@
 from .serializers import UserSerializer
 from django.shortcuts import render
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from django.contrib.auth import logout as django_logout
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
@@ -14,6 +14,8 @@ from rest_framework.decorators import (
     permission_classes,
     authentication_classes,
 )
+from .models import Users
+from .utils import *
 
 
 # Create your views here.
@@ -24,19 +26,39 @@ def index(request):
 @csrf_exempt
 @api_view(["POST"])
 def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        user = get_object_or_404(User, username=request.data["username"])
-    except User.DoesNotExist:
-        return Response(
-            {"detail": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED
-        )
-    if not user.check_password(request.data["password"]):
-        return Response(
-            {"detail": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED
-        )
-    token, created = Token.objects.get_or_create(user=user)
-    serializer = UserSerializer(instance=user)
-    return Response({"token": token.key, "user": serializer.data})
+        user = Users.objects.get(username=username)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid username."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not check_password(password, user.password):
+        return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if user is already logged in
+    existing_token = user.token
+    if existing_token:
+        return Response({"detail": "User is already logged in."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        pass  # Proceed with login
+
+    # Generate token for the session
+    user.token = generate_token()
+    user.save()
+
+    serializer = UserSerializer(user)
+
+    return Response(
+        {
+            "user": serializer.data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @csrf_exempt
@@ -44,12 +66,18 @@ def login(request):
 def register(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
+        if Users.objects.filter(username=serializer.validated_data["username"]).exists():
+            return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
         user = serializer.save()
-        user.set_password(request.data["password"])
+        user.password = set_password(request.data["password"])  # Hash the password
+        user.token = generate_token()
         user.save()
-        token = Token.objects.create(user=user)
+
         return Response(
-            {"token": token.key, "user": serializer.data},
+            {
+                "user": serializer.data
+            },
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -57,27 +85,44 @@ def register(request):
 
 @csrf_exempt
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def user(request):
-    user = request.user
-    data = {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-    }
-    return Response(data)
+
+    username = request.data.get("username")
+    if not username:
+        return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        serializer = UserSerializer(Users.objects.get(username=username))
+        return Response(
+            {
+                "user": serializer.data
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def logout(request):
-    user = request.user
-    token = Token.objects.get(user=user)  # Retrieve the token from the request
-    if token:
-        token.delete()
-        django_logout(request)
-        return Response({"detail": "Logout succesfully"}, status=status.HTTP_200_OK)
-    else:
-        return Response({"detail": "Can't logout"}, status=status.HTTP_404_NOT_FOUND)
+    token = request.data.get("token")
+    if not token:
+        return Response({"detail": "token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    if user.token == "":
+        return Response(
+            {
+                "detail": "User not logged in."
+            },
+            status=status.HTTP_200_OK,
+        )
+    user.token = ""
+    user.save()
+    return Response(
+        {
+            "detail": "User logged out."
+        },
+        status=status.HTTP_200_OK,
+    )

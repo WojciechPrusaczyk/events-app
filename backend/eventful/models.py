@@ -78,12 +78,12 @@ class Segmentsparticipants(models.Model):
         db_table = "segmentsParticipants"
 
 class Users(models.Model):
-    uid = models.IntegerField(primary_key=True)
+    uid = models.AutoField(primary_key=True)
     username = models.CharField(max_length=64)
     name = models.CharField(max_length=64)
     surname = models.CharField(max_length=64)
     email = models.CharField(max_length=320)
-    password = models.CharField(max_length=32)
+    password = models.CharField(max_length=64)
     registrationdate = models.DateTimeField(db_column="registrationDate")
     lastlogin = models.DateTimeField(db_column="lastLogin", blank=True, null=True)
     birthdate = models.DateField(db_column="birthDate", blank=True, null=True)
@@ -93,6 +93,7 @@ class Users(models.Model):
     isactive = models.BooleanField(db_column="isActive", blank=True, null=True)
     hasseentutorial = models.BooleanField(db_column="hasSeenTutorial", blank=True, null=True)
     sex = models.CharField(max_length=16, blank=True, null=True)
+    token = models.CharField(max_length=64, blank=True, null=True)
 
     class Meta:
         db_table = "users"
