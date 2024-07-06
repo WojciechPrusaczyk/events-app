@@ -1,19 +1,9 @@
 from .serializers import UserSerializer
 from django.shortcuts import render
-from django.core.cache import cache
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import logout as django_logout
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-    authentication_classes,
-)
+from rest_framework.decorators import api_view
 from .models import Users
 from .utils import *
 
@@ -68,18 +58,20 @@ def register(request):
     if serializer.is_valid():
         if Users.objects.filter(username=serializer.validated_data["username"]).exists():
             return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
         user = serializer.save()
-        user.password = set_password(request.data["password"])  # Hash the password
-        user.token = generate_token()
-        user.save()
+        if not is_valid_password(user.password):
+            return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user.password = set_password(request.data["password"])  # Hash the password
+            user.token = generate_token()
+            user.save()
 
-        return Response(
-            {
-                "user": serializer.data
-            },
-            status=status.HTTP_201_CREATED,
-        )
+            return Response(
+                {
+                    "user": serializer.data
+                },
+                status=status.HTTP_201_CREATED,
+            )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -1,14 +1,14 @@
 POST http://localhost:8000/api/login/
 Content-Type: application/json
 
-{"username" : "remo", "password" : "123"}
+{"username" : "remo12", "password" : "Remo123@"}
 
 ###
 
 POST http://localhost:8000/api/register/
 Content-Type: application/json
 
-{"username" : "remo",  "password" : "123", "name" : "Remigiusz", "surname" : "Grzemo",
+{"username" : "remo12",  "password" : "Remo123@", "name" : "Remigiusz", "surname" : "Grzemo",
 "email" : "Woj@gmail.com","registrationdate" : "2001-11-11",
  "birthdate" : "2001-03-11", "language" : "pl"}
 
@@ -17,13 +17,13 @@ Content-Type: application/json
 GET http://localhost:8000/api/user/
 Content-Type: application/json
 
-{"username" : "remo"}
+{"username" : "remo12"}
 
 ###
 
 POST http://localhost:8000/api/logout/
 Content-Type: application/json
 
-{"token" : "XsCznrvDu6ynmDvjbh1n"}
+{"token" : "VJIDXESI4RUD1Y4ObeSb"}
 
 ###
