@@ -1,0 +1,8 @@
+@import "../colors";
+@import "../mixins";
+
+.footer{
+    &-company{
+        background-color: $main-lighter;
+    }
+}
