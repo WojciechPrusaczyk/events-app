@@ -1,0 +1,116 @@
+@import url("../components/header.scss");
+@import "../colors";
+@import "../mixins";
+
+.page-info {
+  width: 100%;
+  &-dots {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+    &-dot {
+      width: 25px;
+      height: 25px;
+      background-color: $main-light;
+      display: block;
+      border-radius: 50px;
+      &.active {
+      background-color: $main-dark;
+      }
+    }
+  }
+  &-back {
+    &-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      font-size: 1.2rem;
+      transform: translateX(-50px);
+      padding: 0;
+      > img {
+        margin-right: 15px;
+        width: 35px;
+        height: 35px;
+      }
+    }
+    :hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.btn-next {
+  @include button( $success-light, $black-light );
+  margin-top: 40px;
+}
+
+@mixin title-style() {
+  &-title, &-breakpoint {
+    text-align: center;
+    color: $black-light;
+    margin: 50px 0 12px;
+    &h2 {
+      font-weight: bold;
+    }
+  }
+}
+
+.form-container{
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+  &-email {
+    width: 30%;
+    @include title-style();
+    &-address {
+      @include input-text($black, $main-white, $main-lighter);
+      margin-top: 40px;
+    }
+    &-company {
+      background-color: $white;
+      display: flex;
+      flex-direction: row;
+      padding: 12px;
+      border-radius: 20px;
+      text-decoration: none;
+      margin: 20px 0;
+      box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+      > span {
+        padding: 8px 35px;
+        color: $black;
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+      > img {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    &-signIn {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: $black;
+      text-align: center;
+      margin: 50px;
+      span {
+        margin-right: 15px;
+      }
+      > a {
+        &:visited, &:active {
+          color: $black;
+        }
+      }
+    }
+  }
+  &-password {
+    width: 30%;
+    @include title-style();
+    .password-wrapper {
+      @include input-password-wrapper($black, $main-white, $main-lighter);
+    }
+  }
+}
+

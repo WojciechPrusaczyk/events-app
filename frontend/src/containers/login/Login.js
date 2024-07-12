@@ -5,7 +5,7 @@ import Footer from "../../components/structure/footer";
 import GoogleIcon from "../../images/icons/google_color.png"
 import FacebookIcon from "../../images/icons/facebook_color.png"
 import AppleIcon from "../../images/icons/apple_color.png"
-import "../../styles/login/login.scss"
+import "../../styles/containers/login.scss"
 
 class Login extends Component {
   render() {

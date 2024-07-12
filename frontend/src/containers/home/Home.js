@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
-import "../../styles/home/home.scss"
+import "../../styles/containers/home.scss"
 
 const Home = () => {
     return (

@@ -38,7 +38,6 @@ const Footer = (props) => {
         children: [
             { name: "Help", href: `${window.location.protocol}//${window.location.host}/help` },
             { name: "Free mobile app", href: `${window.location.protocol}//${window.location.host}/app` },
-            { name: "chuj", href: `${window.location.protocol}//${window.location.host}/app` },
         ],
         },{
         name: "App plans",

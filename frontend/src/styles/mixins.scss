@@ -28,14 +28,18 @@
   }
 }
 
-@mixin input-text($font-color){
+@mixin input-text($font-color, $background-color, $focus-background-color){
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
   border: none;
   border-radius: 5px;
-  width: calc( 100% - 30px );
+  width: calc( 100% - 40px );
   font-size: 1.3rem;
   padding: 25px 20px;
   color: $font-color;
+  background-color: $background-color;
+  &:focus {
+    background-color: $focus-background-color;
+  }
 }
 
 @mixin input-password($font-color){
@@ -46,6 +50,44 @@
   font-size: 1.3rem;
   padding: 25px 20px;
   color: $font-color;
+}
+@mixin input-password-wrapper($font-color, $background-color, $focus-background-color) {
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+  background-color: $background-color;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+
+  &:focus-within {
+    background-color: $focus-background-color;
+    outline: 3px solid $font-color;
+  }
+
+  input {
+    border: none;
+    background-color: $background-color;
+    width: 100%;
+    padding: 25px 20px;
+    color: $font-color;
+    font-size: 1.3rem;
+    &:focus {
+      outline: none;
+      background-color: $focus-background-color;
+    }
+  }
+
+  .password-icon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+
+    img {
+      width: 50px;
+      height: 50px;
+    }
+  }
 }
 
 @mixin input-checkbox( $dot-color, $default-color, $checked-color ) {

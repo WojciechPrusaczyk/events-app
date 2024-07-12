@@ -37,7 +37,7 @@ main {
       color: $black;
     }
     &-email {
-      @include input-text( $black-light );
+      @include input-text( $black-light, $main-white, $main-lighter );
     }
     &-password {
       @include input-password( $black-light );

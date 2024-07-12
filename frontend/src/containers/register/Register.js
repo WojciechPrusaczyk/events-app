@@ -5,6 +5,7 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import StepEmail from "./stepEmail";
 import StepPassword from "./stepPassword";
+import "../../styles/containers/register.scss"
 
 const minStep = 0;
 const maxStep = 4;
@@ -14,10 +15,14 @@ class Register extends Component {
     this.state = {
       step: 0,
       formData: {
-        // przykładowe dane formularza
-        name: '',
         email: '',
-        password: ''
+        password: '',
+        username: '',
+        dateOfBirth: '',
+        gender: '',
+        acceptedNews: false,
+        acceptedSharingDetails: false,
+        acceptedTos: false,
       }
     };
   }
@@ -52,9 +57,9 @@ class Register extends Component {
             timeout={300}
             classNames="form"
           >
-            <main className="form-container">
+            <main className="form-container" onClick={ () => { console.log(this.state) }}>
               {step === 0 && <StepEmail nextStep={this.nextStep} handleChange={this.handleChange} formData={formData} />}
-              {step === 1 && <StepPassword nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
+              {step === 1 && <StepPassword nextStep={this.nextStep} prevStep={this.prevStep} handleChange={ this.handleChange } formData={formData} />}
             </main>
           </CSSTransition>
         </TransitionGroup>
