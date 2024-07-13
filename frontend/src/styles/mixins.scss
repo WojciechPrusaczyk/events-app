@@ -57,6 +57,7 @@
   display: flex;
   align-items: center;
   padding: 0 10px;
+  border-radius: 5px;
 
   &:focus-within {
     background-color: $focus-background-color;
@@ -95,7 +96,7 @@
     display: none;
   }
   .tgl-btn{
-    filter: drop-shadow(0 0 3px #00000052) drop-shadow(0 0 16px #fff);
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)) drop-shadow(0 0 16px #fff);
   }
   .tgl,
   .tgl:after,
@@ -165,5 +166,103 @@
   }
   .tgl-light:checked + .tgl-btn {
     background: $checked-color;
+  }
+}
+
+
+@mixin input-checkbox-small($background-color, $checkmark-color, $focus-color) {
+  display: block;
+  position: relative;
+  padding-left: 45px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    &:focus + .checkmark {
+      outline: 3px solid $focus-color;
+    }
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: $checkmark-color;
+    border-radius: 50px;
+    border: 2px solid $background-color;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  input:checked + .checkmark {
+    background-color: $background-color;
+    border: 2px solid $background-color;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  input:checked + .checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid $checkmark-color;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+}
+
+
+
+@mixin input-date($font-color, $background-color)
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  input,select {
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+    border: none;
+    border-radius: 5px;
+    width: calc( 100% - 30px );
+    font-size: 1.3rem;
+    padding: 25px 20px;
+    color: $font-color;
+    background-color: $background-color;
+  }
+  input{
+    width: 20%;
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  select {
+    width: 40%;
+    cursor: pointer;
   }
 }

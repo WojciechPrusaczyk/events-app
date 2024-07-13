@@ -29,11 +29,16 @@
       background: transparent;
       font-size: 1.2rem;
       transform: translateX(-50px);
+      transition: transform .1s ease-in;
       padding: 0;
       > img {
         margin-right: 15px;
         width: 35px;
         height: 35px;
+      }
+      &:hover {
+        transform: translateX(-45px);
+        transition: transform .1s ease-out;
       }
     }
     :hover {
@@ -47,15 +52,17 @@
   margin-top: 40px;
 }
 
-@mixin title-style() {
-  &-title, &-breakpoint {
-    text-align: center;
-    color: $black-light;
-    margin: 50px 0 12px;
-    &h2 {
-      font-weight: bold;
-    }
-  }
+h2.form-page-title {
+  text-align: center;
+  margin: 25px 0 15px;
+  font-weight: bold;
+  color: $black;
+}
+h3.form-page-title {
+  text-align: center;
+  color: $black-light;
+  margin: 25px 0 15px;
+  font-weight: 600;
 }
 
 .form-container{
@@ -64,7 +71,6 @@
   padding-top: 30px;
   &-email {
     width: 30%;
-    @include title-style();
     &-address {
       @include input-text($black, $main-white, $main-lighter);
       margin-top: 40px;
@@ -104,13 +110,111 @@
         }
       }
     }
+    &-breakpoint {
+      text-align: center;
+      color: $black-light;
+      margin: 25px 0 15px;
+      font-weight: 600;
+    }
   }
   &-password {
     width: 30%;
-    @include title-style();
     .password-wrapper {
       @include input-password-wrapper($black, $main-white, $main-lighter);
     }
+    &-validation {
+    }
+  }
+  &-info {
+    width: 30%;
+    &-username {
+      @include input-text($black, $main-white, $main-lighter);
+    }
+    .date-wrapper {
+      @include input-date($black-light, $main-white);
+    }
+    &-h3 {
+      text-align: start;
+      color: $black-light;
+      margin: 25px 0 15px;
+      font-weight: 600;
+    }
+    &-h2 {
+      text-align: start;
+      margin: 40px 0 15px;
+      font-weight: bold;
+      color: $black;
+    }
+  }
+  &-tos {
+    width: 30%;
+    a {
+        color: $black;
+      :active {
+        color: $black;
+      }
+    }
+    &-agreement {
+      padding: 20px;
+      border-radius: 5px;
+      background-color: $main-light;
+      color: $black;
+      .agreement {
+        margin-bottom: 0!important;
+        color: $black-light!important;
+      }
+    }
+    &-closure {
+      font-size: 1.2rem;
+      font-weight: 400;
+      a {
+        margin-left: 10px;
+      }
+    }
+
   }
 }
 
+
+.checkbox-container, .radio-container, .agreement{
+  @include input-checkbox-small($main-dark, $main-white, $black);
+}
+
+.form {
+  &-enter {
+    opacity: 0;
+    transform: translateX(100%);
+    &-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 300ms ease-out, transform 300ms ease-out;
+    }
+  }
+  &-exit {
+    opacity: 1;
+    transform: translateX(-100%);
+    &-active {
+      opacity: 0;
+      transform: translateX(-100%);
+      transition: opacity 300ms ease-out, transform 300ms ease-out;
+    }
+  }
+  &-reverse-enter {
+    opacity: 0;
+    transform: translateX(-100%);
+    &-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 300ms ease-out, transform 300ms ease-out;
+    }
+  }
+  &-reverse-exit {
+    opacity: 1;
+    transform: translateX(0);
+    &-active {
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 300ms ease-out, transform 300ms ease-out;
+    }
+  }
+}

@@ -25,26 +25,35 @@ const StepPassword = ({ nextStep, handleChange, formData, prevStep }) => {
   return (
     <div className="form-container-password">
       <PageCounter page={1} prevStep={prevStep} />
-      <h2 className="form-container-password-title">Create password</h2>
-      <h3 className="form-container-password-title">1 out of 3 steps</h3>
+      <h2 className="form-page-title">Create password</h2>
+      <h3 className="form-page-title">1 out of 3 steps</h3>
       <PasswordInput handleChange={handleChange('password')} value={formData.password} />
       <h2>Password must contain at least:</h2>
-      <p className="form-container-password-validation">
-        <input type="checkbox" disabled checked={isLengthValid} aria-label="between 8 and 32 characters" />
-        <label aria-hidden="true">between 8 and 32 characters</label>
+        <p className="form-container-password-validation">
+            <label className="checkbox-container">
+                between 8 and 32 characters
+                <input className="checkbox" type="checkbox" disabled checked={isLengthValid}/>
+                <span className="checkmark"></span>
+            </label>
+        </p>
+        <p className="form-container-password-validation">
+            <label className="checkbox-container">
+                at least 1 special character ($, @, #, &, !, %, ?)
+                <input className="checkbox" type="checkbox" disabled checked={hasSpecialChar}/>
+                <span className="checkmark"></span>
+            </label>
+        </p>
+        <p className="form-container-password-validation">
+            <label className="checkbox-container">
+                at least 3 numbers
+                <input className="checkbox" type="checkbox" disabled checked={hasThreeNumbers} />
+                <span className="checkmark"></span>
+          </label>
       </p>
-      <p className="form-container-password-validation">
-        <input type="checkbox" disabled checked={hasSpecialChar} aria-label="at least 1 special character ($, @, #, &, !, %, ?)" />
-        <label aria-hidden="true">at least 1 special character ($, @, #, &, !, %, ?)</label>
-      </p>
-      <p className="form-container-password-validation">
-        <input type="checkbox" disabled checked={hasThreeNumbers} aria-label="at least 3 numbers" />
-        <label aria-hidden="true">at least 3 numbers</label>
-      </p>
-      <input
-        onClick={ () => {
-            if (isPasswordValid) nextStep();
-        }}
+        <input
+            onClick={() => {
+                if (isPasswordValid) nextStep();
+            }}
         type="button"
         aria-label="Next"
         title="Next"

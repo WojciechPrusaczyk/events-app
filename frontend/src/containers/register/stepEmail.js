@@ -15,7 +15,7 @@ const StepEmail = ({ nextStep, handleChange, formData }) => {
   return (
     <div className="form-container-email">
       <PageCounter page={0} />
-      <h2 className="form-container-email-title">Sign in to participate in events</h2>
+      <h2 className="form-page-title">Sign in to participate in events</h2>
       <input
         type="email"
         title="Email address"
