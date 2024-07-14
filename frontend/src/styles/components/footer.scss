@@ -2,7 +2,74 @@
 @import "../mixins";
 
 .footer{
-    &-company{
-        background-color: $main-lighter;
+    .btn-footer{
+        display: flex;
+        border: none;
+        background-color: $main-dark;
+        padding: 8px;
+        border-radius: 20px;
+        align-items: center;
+
+        
+            span{
+                color: $black;
+                font-size: 1.3rem;
+                font-weight: 700;
+            }
+            img{
+                height: 50px;
+                width: 50px;
+            }
     }
+    
+    &-company{
+        background-color: red;
+    }
+    &-links{
+        display: flex;
+        width: calc(100% - 40px);
+        padding: 20px;
+
+            &-app{
+                display: flex;
+
+                &-list{
+                    ul{
+                        list-style: none;
+                    }
+
+                    &-item{
+                        a{
+                            text-decoration: none;
+                            color: $black;
+                        }
+
+                    }
+
+                }
+            }
+
+            &-socialMedia{
+                display: flex;
+                flex-direction: column;
+            }
+            &-socialMedia-link{
+                &:first-child{
+                    //background-color: yellow;
+                }
+                &-icon{
+                    width: 100px;
+                    height: 100px;
+
+                }
+            }
+
+
+    }
+
 }
+
+/*.Facebook{
+    background-color: red;
+}
+*/

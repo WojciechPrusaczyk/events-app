@@ -50,9 +50,21 @@ const Footer = (props) => {
     ] ;
 
     let socialMediaComponent = socialMedia.map( (item, index) => {
+        {/*
+        if(item.name == 'Facebook'){
+            return (
+                <a key={index} className="footer-links-socialMedia-link Facebook" href={item.href} aria-label={item.name}>
+                    <img className='footer-links-socialMedia-link-icon' src={item.icon} alt={item.name} aria-hidden="true"/>
+                </a>
+            );
+        }
+
+        let nazwa = `footer-links-socialMedia-link${(item.name == 'Facebook')?' Facebook':" tutaj jak nie spelnia sie warunek"}`
+                    */}
         return (
-            <a key={index} className="footer-links-socialMedia-link" href={item.href} aria-label={item.name}>
-                <img src={item.icon} alt={item.name} aria-hidden="true"/>
+            <a key={index} className="footer-links-socialMedia-link btn-footer" href={item.href} aria-label={item.name}>
+                <img className='footer-links-socialMedia-link-icon' src={item.icon} alt={item.name} aria-hidden="true"/>
+                    {/*   (item.name == 'Facebook')?'Facebook':*/}
             </a>
         );
     } );
@@ -82,7 +94,7 @@ const Footer = (props) => {
     return (
         <footer className="footer">
             <div className="footer-lang">
-                <button className="footer-lang-btn">
+                <button className="footer-lang-btn btn-footer">
                     <img src={langLogo} alt="language logo" aria-hidden={true} />
                     <span>{currentLanguage}</span>
                 </button>
