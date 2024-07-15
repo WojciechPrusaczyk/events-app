@@ -117,6 +117,30 @@ def user(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
+@csrf_exempt
+@api_view(["GET"])
+def checkUsername(request):
+    username = request.data.get("username")
+    if not username:
+        return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if not Users.objects.filter(username=username).exists():
+            return Response(
+                {
+                    "detail": False,
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "detail": True,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 def logout(request):

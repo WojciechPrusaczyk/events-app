@@ -21,6 +21,13 @@ Content-Type: application/json
 
 ###
 
+GET http://localhost:8000/api/checkUsername/
+Content-Type: application/json
+
+{"username" : "asdf"}
+
+###
+
 POST http://localhost:8000/api/logout/
 Content-Type: application/json
 
