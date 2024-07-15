@@ -31,4 +31,5 @@ urlpatterns = [
     path("api/login/", views.login, name="api_login"),
     path("api/user/", views.user, name="api_user"),
     path("api/logout/", views.logout, name="api_logout"),
+    path("api/create_event/", views.create_event, name="api_create_event"),
 ]

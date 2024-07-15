@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Users
-
+from .models import Users, Events, UserSettings
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -12,7 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
             "surname",
             "password",
             "email",
-            "registrationdate",
             "birthdate",
             "language",
             "isactive",
@@ -22,4 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
 
         read_only_fields = ["uid"]
 
+class UserSettingsSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = UserSettings
+        fields = '__all__'
 
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Events
+        fields = '__all__'

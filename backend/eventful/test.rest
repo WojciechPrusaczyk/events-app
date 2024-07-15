@@ -17,7 +17,7 @@ Content-Type: application/json
 GET http://localhost:8000/api/user/
 Content-Type: application/json
 
-{"username" : "remo12"}
+{"username" : "s"}
 
 ###
 
@@ -25,5 +25,12 @@ POST http://localhost:8000/api/logout/
 Content-Type: application/json
 
 {"token" : "VJIDXESI4RUD1Y4ObeSb"}
+
+###
+
+POST http://localhost:8000/api/create_event/
+Content-Type: application/json
+
+{"name" : "Template Event", "description" : "Description"}
 
 ###

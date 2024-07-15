@@ -77,6 +77,18 @@ class Segmentsparticipants(models.Model):
     class Meta:
         db_table = "segmentsParticipants"
 
+
+class UserSettings(models.Model):
+    id = models.AutoField(primary_key=True)
+    hasseentutorial = models.BooleanField(db_column="hasSeenTutorial", blank=True, null=True, default=False)
+    acceptedSharingDetails = models.BooleanField(db_column="acceptedSharingDetails", blank=True, null=True, default=False)
+    acceptedTOS = models.BooleanField(db_column="acceptedTOS", blank=True, null=True, default=False)
+    acceptedNews = models.BooleanField(db_column="acceptedNews", blank=True, null=True, default=False)
+
+    class Meta:
+        db_table = "userSettings"
+
+
 class Users(models.Model):
     uid = models.AutoField(primary_key=True)
     username = models.CharField(max_length=64)
@@ -84,16 +96,16 @@ class Users(models.Model):
     surname = models.CharField(max_length=64)
     email = models.CharField(max_length=320)
     password = models.CharField(max_length=64)
-    registrationdate = models.DateTimeField(db_column="registrationDate")
-    lastlogin = models.DateTimeField(db_column="lastLogin", blank=True, null=True)
+    isactive = models.BooleanField(db_column="isActive", blank=True, null=True, default=False)
+    registrationdate = models.CharField(db_column="registrationDate", max_length=64)
+    lastlogin = models.CharField(db_column="lastLogin", blank=True, null=True, max_length=64)
     birthdate = models.DateField(db_column="birthDate", blank=True, null=True)
     language = models.CharField(max_length=3, blank=True, null=True)
     lastlocation = models.ForeignKey(Locations, models.DO_NOTHING, db_column="lastLocation", blank=True, null=True)
     recentip = models.CharField(db_column="recentIp", max_length=16, blank=True, null=True)
-    isactive = models.BooleanField(db_column="isActive", blank=True, null=True)
-    hasseentutorial = models.BooleanField(db_column="hasSeenTutorial", blank=True, null=True)
     sex = models.CharField(max_length=16, blank=True, null=True)
     token = models.CharField(max_length=64, blank=True, null=True)
+    userSetting = models.ForeignKey(UserSettings, models.DO_NOTHING, db_column="userSetting", blank=True, null=True)
 
     class Meta:
         db_table = "users"

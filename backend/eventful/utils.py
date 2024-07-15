@@ -3,7 +3,7 @@ import string
 import bcrypt
 import re
 
-def generate_token(length=20):
+def generate_token(length=64):
     characters = string.ascii_letters + string.digits
     token = ''.join(random.choice(characters) for _ in range(length))
     return token
@@ -21,23 +21,15 @@ def check_password(password, hashed):
 
 def is_valid_password(password):
     # Check the length
-    if len(password) < 8:
+    if len(password) < 8 or len(password) > 32:
         return False
 
-    # Check for at least one lowercase letter
-    if not re.search(r'[a-z]', password):
-        return False
-
-    # Check for at least one uppercase letter
-    if not re.search(r'[A-Z]', password):
-        return False
-
-    # Check for at least one number
-    if not re.search(r'\d', password):
-        return False
-
-    # Check for at least one symbol (non-alphanumeric character)
+    # Check for at least one special character ($,@,#,!,%,&,?)
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+
+    # Check for at least three numbers
+    if len(re.findall(r'\d', password)) < 3:
         return False
 
     return True
