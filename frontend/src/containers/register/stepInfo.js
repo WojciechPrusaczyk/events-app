@@ -2,20 +2,39 @@ import React, { useState, useEffect } from 'react';
 import PageCounter from "./pageCounter";
 import DatePicker from "../../components/datePicker";
 
-const StepInfo = ({ nextStep, handleChange, formData, prevStep }) => {
+const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername }) => {
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isUsernameFree, setIsUsernameFree] = useState(true);
+    const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+
+    const checkUsername = async (username) => {
+        setIsCheckingUsername(true);
+        const usernameFree = await validateUsername(username);
+        setIsUsernameFree(usernameFree);
+        setIsCheckingUsername(false);
+    };
+
+    const handleUsernameChange = (e) => {
+        const username = e.target.value;
+        handleChange('username')(e);
+        checkUsername(username);
+    };
+
+    const validateForm = (data) => {
+        const isUsernameValid = data.username && data.username.length > 3 && data.username.length < 64;
+        const isDateOfBirthValid = data.dateOfBirth && new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear() >= 13;
+        const isGenderValid = data.gender;
+
+        setIsFormValid(isUsernameValid && isDateOfBirthValid && isGenderValid && isUsernameFree);
+    };
 
     useEffect(() => {
-        const isUsernameValid = formData.username && formData.username.length > 2;
-        const isDateOfBirthValid = formData.dateOfBirth && new Date().getFullYear() - new Date(formData.dateOfBirth).getFullYear() >= 13;
-        const isGenderValid = formData.gender;
-
-        setIsFormValid(isUsernameValid && isDateOfBirthValid && isGenderValid);
-    }, [formData]);
+        validateForm(formData);
+    }, [formData, isUsernameFree]);
 
     return (
         <div className="form-container-info">
-            <PageCounter page={2} prevStep={prevStep} />
+            <PageCounter page={2} prevStep={prevStep}/>
             <h2 className="form-page-title">Tell about yourself</h2>
             <h3 className="form-page-title">2 out of 3 steps</h3>
             <div>
@@ -27,8 +46,20 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep }) => {
                     type="text"
                     aria-label="username"
                     value={formData.username || ""}
-                    onChange={(e) => handleChange('username')(e)}
+                    onChange={handleUsernameChange}
                 />
+                {!isUsernameFree &&
+                <p id="errors" className="form-container-info-errors">
+                    Username already exists
+                </p>}
+                {!(formData.username.length > 3) &&
+                <p id="errors" className="form-container-info-errors">
+                    Username too short
+                </p>}
+                {!(formData.username.length < 64) &&
+                <p id="errors" className="form-container-info-errors">
+                    Username too long
+                </p>}
             </div>
             <div>
                 <h2 className="form-container-info-h2"><label htmlFor="dateOfBirth">Date of birth</label></h2>
@@ -37,6 +68,29 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep }) => {
                     id="dateOfBirth"
                     handleChange={(e) => handleChange('dateOfBirth')(e)}
                     dateValue={formData.dateOfBirth}
+                />
+            </div>
+            <div>
+                <h2 className="form-container-info-h2"><label htmlFor="name">Name</label></h2>
+                <h3 className="form-container-info-h3">Helps to identify you among participants</h3>
+                <input
+                    className="form-container-info-name"
+                    id="name"
+                    type="text"
+                    aria-label="name"
+                    value={formData.name || ""}
+                    onChange={(e) => handleChange('name')(e)}
+                />
+            </div>
+            <div>
+                <h2 className="form-container-info-h2"><label htmlFor="surname">Surname</label></h2>
+                <input
+                    className="form-container-info-surname"
+                    id="surname"
+                    type="text"
+                    aria-label="surname"
+                    value={formData.surname || ""}
+                    onChange={(e) => handleChange('surname')(e)}
                 />
             </div>
             <div>
@@ -100,7 +154,7 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep }) => {
                 title="Next"
                 value="Next"
                 className="form-container-info-next btn-next"
-                disabled={!isFormValid}
+                disabled={!isFormValid || isCheckingUsername}
             />
         </div>
     );

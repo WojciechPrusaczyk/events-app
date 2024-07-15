@@ -127,7 +127,7 @@ h3.form-page-title {
   }
   &-info {
     width: 30%;
-    &-username {
+    &-username, &-name, &-surname {
       @include input-text($black, $main-white, $main-lighter);
     }
     .date-wrapper {
@@ -144,6 +144,11 @@ h3.form-page-title {
       margin: 40px 0 15px;
       font-weight: bold;
       color: $black;
+    }
+    &-errors {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: $danger;
     }
   }
   &-tos {
@@ -171,7 +176,21 @@ h3.form-page-title {
         margin-left: 10px;
       }
     }
-
+  }
+  &-confirmation {
+    width: 30%;
+    .page-info {
+      margin-bottom: 75px;
+    }
+    &-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 100px;
+        height: 100px;
+      }
+    }
   }
 }
 

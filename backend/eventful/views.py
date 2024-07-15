@@ -118,7 +118,7 @@ def user(request):
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["POST"])
 def checkUsername(request):
     username = request.data.get("username")
     if not username:

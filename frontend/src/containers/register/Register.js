@@ -52,9 +52,12 @@ class Register extends Component {
     this.state = {
       step: 0,
       direction: "forward",
+      usernameErrors: '',
       formData: {
         email: '',
         password: '',
+        name: '',
+        surname: '',
         username: '',
         dateOfBirth: '',
         gender: '',
@@ -112,25 +115,40 @@ class Register extends Component {
       isEntireFormValid = false;
       console.log("Invalid form: Invalid username");
     }
-    let currentDate = new Date();
-    let dateString = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}T00:00`;
-    console.log(dateString);
+
     axios
       .post(`${window.location.protocol}//${window.location.host}/api/register/`, {
         username: formData.username,
         password: formData.password,
-        name: formData.username,
-        surname: formData.username,
+        name: formData.name,
+        surname: formData.surname,
         email: formData.email,
         birthdate: formData.dateOfBirth,
-        registrationdate: dateString,
+        acceptedNews: formData.acceptedNews,
+        acceptedSharingDetails: formData.acceptedSharingDetails,
+        acceptedTos: formData.acceptedTos,
+        sex: formData.gender,
         languge: "en",
       })
       .then( result => {
-          console.log(result.data)
+          if (result.status === 201) {
+              this.nextStep();
+          }
       })
       .catch(err => console.log(err));
   };
+
+  validateUsername = async (username) => {
+      try {
+          const result = await axios.post(`${window.location.protocol}//${window.location.host}/api/checkUsername/`, {
+              username: username
+          });
+          return !result.data.detail;
+      } catch (err) {
+          return false;
+      }
+  }
+
 
 
   render() {
@@ -148,7 +166,7 @@ class Register extends Component {
             <main className="form-container">
               {step === 0 && <StepEmail nextStep={this.nextStep} handleChange={this.handleChange} formData={formData} />}
               {step === 1 && <StepPassword nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
-              {step === 2 && <StepInfo nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
+              {step === 2 && <StepInfo nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} validateUsername={this.validateUsername} />}
               {step === 3 && <StepTos register={this.register} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
               {step === 4 && <StepConfirmation />}
             </main>
