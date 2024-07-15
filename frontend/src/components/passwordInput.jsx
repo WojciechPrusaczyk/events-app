@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import eyeIconShow from '../images/icons/eye_icon.svg';
 import eyeIconHide from '../images/icons/eye_icon_2.svg';
 
-const PasswordInput = ({ handleChange }) => {
+const PasswordInput = ({ handleChange, value }) => {
   const [passwordShown, setPasswordShown] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -17,6 +17,7 @@ const PasswordInput = ({ handleChange }) => {
         aria-label="Password"
         className="password-wrapper-password"
         placeholder="Password"
+        value={value}
         onChange={ (elem) => handleChange(elem) }
       />
       <div className="password-icon" onClick={togglePasswordVisibility}>

@@ -9,9 +9,43 @@ import "../../styles/containers/register.scss"
 import StepInfo from "./stepInfo";
 import StepTos from "./stepTos";
 import StepConfirmation from "./stepConfirmation";
+import axios from "axios";
 
 const minStep = 0;
 const maxStep = 4;
+const validateEmail = (email) => {
+  return email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+};
+const validatePassword = (password) => {
+
+
+  let isLengthValid = password.length >= 8 && password.length <= 32;
+
+
+  let hasSpecialChar = false;
+  const specialCharRegex = /[$@#&!%?]/;
+  const unwantedSpecialCharRegex = /[\^*()\-+={}[\]:;"'<>,.\/|\\]/;
+  if (unwantedSpecialCharRegex.test(password))
+  {
+      hasSpecialChar = false;
+  }
+  else if (specialCharRegex.test(password))
+  {
+      hasSpecialChar = true;
+  }
+  else {
+      hasSpecialChar = false;
+  }
+
+  const digitRegex = /\d/g;
+  const digits = password.match(digitRegex);
+  const hasThreeNumbers = digits && digits.length >= 3;
+
+  return isLengthValid && hasSpecialChar && hasThreeNumbers;
+};
+
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +67,7 @@ class Register extends Component {
 
   nextStep = () => {
     this.setState((prevState) => ({
-      step: (prevState.step < maxStep)?(prevState.step + 1):prevState.step,
+      step: (prevState.step <= maxStep)?(prevState.step + 1):prevState.step,
       direction: 'forward'
     }));
   };
@@ -45,17 +79,57 @@ class Register extends Component {
     }));
   };
 
-  handleChange = (input) => (e) => {
-    const { formData } = this.state;
-    formData[input] = e.target.value;
-    this.setState({ formData });
-  };
+  handleChange = (field) => (event) => {
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [field]: (event.target.type !== "checkbox") ? event.target.value : event.target.checked
+      }
+    });
+  }
 
-  register = (input) => (e) => {
-    const { formData } = this.state;
-    formData[input] = e.target.value;
-    this.setState({ formData });
-    this.nextStep();
+  register =  () => {
+    const formData = this.state.formData;
+    let isEntireFormValid = true;
+
+    if (!formData.acceptedTos) {
+      isEntireFormValid = false;
+      console.log("Invalid form: TOS not accepted");
+    }
+    if (!formData.dateOfBirth || new Date(formData.dateOfBirth) < new Date() ) {
+      isEntireFormValid = false;
+      console.log("Invalid form: Incorrect date");
+    }
+    if (!validateEmail(formData.email)) {
+      isEntireFormValid = false;
+      console.log("Invalid form: Incorrect email");
+    }
+    if (!validatePassword(formData.password)) {
+      isEntireFormValid = false;
+      console.log("Invalid form: Invalid password");
+    }
+    if (!(formData.username.length > 6)) {
+      isEntireFormValid = false;
+      console.log("Invalid form: Invalid username");
+    }
+    let currentDate = new Date();
+    let dateString = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}T00:00`;
+    console.log(dateString);
+    axios
+      .post(`${window.location.protocol}//${window.location.host}/api/register/`, {
+        username: formData.username,
+        password: formData.password,
+        name: formData.username,
+        surname: formData.username,
+        email: formData.email,
+        birthdate: formData.dateOfBirth,
+        registrationdate: dateString,
+        languge: "en",
+      })
+      .then( result => {
+          console.log(result.data)
+      })
+      .catch(err => console.log(err));
   };
 
 
@@ -75,7 +149,7 @@ class Register extends Component {
               {step === 0 && <StepEmail nextStep={this.nextStep} handleChange={this.handleChange} formData={formData} />}
               {step === 1 && <StepPassword nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
               {step === 2 && <StepInfo nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
-              {step === 3 && <StepTos nextStep={this.register} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
+              {step === 3 && <StepTos register={this.register} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
               {step === 4 && <StepConfirmation />}
             </main>
           </CSSTransition>

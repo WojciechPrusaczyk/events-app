@@ -13,7 +13,18 @@ const StepPassword = ({ nextStep, handleChange, formData, prevStep }) => {
     setIsLengthValid(password.length >= 8 && password.length <= 32);
 
     const specialCharRegex = /[$@#&!%?]/;
-    setHasSpecialChar(specialCharRegex.test(password));
+    const unwantedSpecialCharRegex = /[\^*()\-+={}[\]:;"'<>,.\/|\\]/;
+    if (unwantedSpecialCharRegex.test(password))
+    {
+        setHasSpecialChar(false);
+    }
+    else if (specialCharRegex.test(password))
+    {
+        setHasSpecialChar(true);
+    }
+    else {
+        setHasSpecialChar(false);
+    }
 
     const digitRegex = /\d/g;
     const digits = password.match(digitRegex);

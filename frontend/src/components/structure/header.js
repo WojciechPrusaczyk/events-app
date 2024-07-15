@@ -9,7 +9,7 @@ const GetUser = (token) => {
     {
 
         axios
-            .get(`${window.location.protocol}//${window.location.host}/api/user?`, {
+            .get(`${window.location.protocol}//${window.location.host}/api/register`, {
 
             })
             .then( result => {
