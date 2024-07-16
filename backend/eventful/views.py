@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Users, Events
-from .serializers import UserSerializer, EventSerializer, UserSettingsSerializer
+from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
 
 # Create your views here.
@@ -44,7 +44,7 @@ def login(request):
     user.token = generate_token()
     user.save()
 
-    serializer = UserSerializer(user, )
+    serializer = LoginUserSerializer(user, )
 
     return Response(
         {
@@ -57,7 +57,7 @@ def login(request):
 @csrf_exempt
 @api_view(["POST"])
 def register(request):
-    serializerUser = UserSerializer(data=request.data)
+    serializerUser = RegisterUserSerializer(data=request.data)
     if serializerUser.is_valid():
         if Users.objects.filter(username=serializerUser.validated_data["username"]).exists():
             return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
@@ -108,7 +108,7 @@ def user(request):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = UserSerializer(Users.objects.get(username=username))
+        serializer = LoginUserSerializer(Users.objects.get(username=username))
         return Response(
             {
                 "user": serializer.data
