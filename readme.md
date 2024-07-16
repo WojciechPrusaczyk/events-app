@@ -1,14 +1,35 @@
-# Aplikacja do eventów
+[![Python](https://img.shields.io/badge/python%20%5E3.11.0-yellow?style=for-the-badge&logo=python)](https://www.python.org/downloads/)
+[![NodeJS](https://img.shields.io/badge/nodejs%20%5E18.20.3-gray?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/en/download/prebuilt-installer)
+[![Git](https://img.shields.io/badge/git-lightgray?style=for-the-badge&logo=git)](https://git-scm.com/downloads)
+[![Git](https://img.shields.io/badge/PostgreSQL%20%5E16.3-white?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/download/)
+[![ReactJS](https://img.shields.io/badge/React.js-gray?style=for-the-badge&logo=react)](https://react.dev/)
+[![Django](https://img.shields.io/badge/Django-darkgreen?style=for-the-badge&logo=django)](https://docs.djangoproject.com/en/5.0/)
 
-# Instalacja
+# Eventful :fire:
+Service for creating and managing events.
+### Key features:
+- Event schedule :calendar:
+- Reminders :calling:
+- Event map :pushpin:
+- Useful informations about event :page_with_curl:
+- Surrounding events browser :mag:
+  
+### Roadmap
 
-Wymagane oprogramowanie:
-- [GIT](https://git-scm.com/downloads)
-- [PostreSQL](https://www.postgresql.org/download/)
-- [Postman](https://www.postman.com/downloads/), lub wtyczka Visual Studio do tworzenia zapytań API
-- [NodeJS v18.20.3](https://nodejs.org/en/download/prebuilt-installer)
-- IDE: [PyCharm](https://www.jetbrains.com/pycharm/download/?section=windows), ewentualnie [Visual Studio Code](https://code.visualstudio.com/)
-- [Python v3.11.0](https://www.python.org/downloads/)
+1. [x] Name, logo, deciding about tech stack
+2. [x] Registration
+3. [x] Signing in
+4. [ ] Creating event (mostly basic info)
+5. [ ] Event edition
+6. [ ] Creating segments
+7. [ ] Segment edition
+8. [ ] Joining and sharing events
+9. [ ] Event page (schedule, important infos)
+10. [ ] Galleries (for events and segments)
+11. [ ] Event map
+12. [ ] Mobile app
+
+# Installation
 
 1. Zainstaluj całe potrzebne oprogramwoanie.
 2. Pobierz za pomocą IDE najświeższe repozytorium z githuba.
@@ -66,21 +87,7 @@ BEGIN
     END LOOP;
 END $$;
 ```
-
-# Roadmap
-
-1. [x] Nazwa, logo, uzgodnienie części technologicznej
-2. [ ] Strona główna w podstawowej wersji (bez okolicznych wydarzeń).
-3. [ ] Rejestracja
-4. [ ] Logowanie
-5. [ ] Tworzenie wydarzenia(Segmenty, Ramy czasowe, Harmonogram, Opis)
-6. [ ] Edycja wydarzenia
-7. [ ] Udostępnianie wydarzenia
-8. [ ] Galerie wydarzeń i segmentów
-9. [ ] Mapa wydarzenia
-10. [ ] Zadania organizatorów
-11. [ ] Zasoby
-
+<!--
 # Mapa aplikacji
 - Strona główna (/):  
 Publiczne wydarzenia z twojej okolicy, z możliwością dołączenia.
@@ -126,3 +133,4 @@ Zawiera:
     - Opis
     - Mapa wydarzenia
     - Uczestnicy
+-->
