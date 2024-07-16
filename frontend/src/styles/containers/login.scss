@@ -11,6 +11,11 @@ main {
     padding: 0 40px;
     @include double-gradient(0deg, $main-white, $main-light);
 
+
+    .password-wrapper {
+      @include input-password-wrapper($black, $main-white, $main-lighter);
+    }
+
     &-title {
       padding: 40px;
       text-align: center;

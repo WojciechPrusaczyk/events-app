@@ -47,6 +47,7 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername
                     aria-label="username"
                     value={formData.username || ""}
                     onChange={handleUsernameChange}
+                    autoComplete="username"
                 />
                 {!isUsernameFree &&
                 <p id="errors" className="form-container-info-errors">

@@ -95,9 +95,13 @@
   .tgl {
     display: none;
   }
-  .tgl-btn{
+  .tgl-btn {
     filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)) drop-shadow(0 0 16px #fff);
+    &:focus {
+      outline: 2px solid #000; /* lub inny kolor obramowania */
+    }
   }
+
   .tgl,
   .tgl:after,
   .tgl:before,
@@ -168,6 +172,7 @@
     background: $checked-color;
   }
 }
+
 
 
 @mixin input-checkbox-small($background-color, $checkmark-color, $focus-color) {

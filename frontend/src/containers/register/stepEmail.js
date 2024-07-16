@@ -12,6 +12,13 @@ const StepEmail = ({ nextStep, handleChange, formData }) => {
     setIsEmailValid(emailRegex.test(formData.email));
   }, [formData.email]);
 
+  const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && isEmailValid) {
+            e.preventDefault();
+            nextStep();
+        }
+    };
+
   return (
     <div className="form-container-email">
       <PageCounter page={0} />
@@ -25,6 +32,8 @@ const StepEmail = ({ nextStep, handleChange, formData }) => {
         value={formData.email}
         defaultValue="mail@mail.com"
         onChange={handleChange('email')}
+        autoComplete="email"
+        onKeyDown={handleKeyDown}
       />
       <button
         onClick={ () => {

@@ -33,12 +33,19 @@ const StepPassword = ({ nextStep, handleChange, formData, prevStep }) => {
 
   let isPasswordValid = isLengthValid && hasSpecialChar && hasThreeNumbers;
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && isPasswordValid) {
+            e.preventDefault();
+            nextStep();
+        }
+    };
+
   return (
     <div className="form-container-password">
       <PageCounter page={1} prevStep={prevStep} />
       <h2 className="form-page-title">Create password</h2>
       <h3 className="form-page-title">1 out of 3 steps</h3>
-      <PasswordInput handleChange={handleChange('password')} value={formData.password} />
+      <PasswordInput handleChange={handleChange('password')} value={formData.password} onEnterDown={handleKeyDown} />
       <h2>Password must contain at least:</h2>
         <p className="form-container-password-validation">
             <label className="checkbox-container">
