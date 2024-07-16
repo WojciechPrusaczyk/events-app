@@ -35,6 +35,12 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:8000/api/logoutUsername/
+Content-Type: application/json
+
+{"username" : "adrok"}
+
+###
 POST http://localhost:8000/api/create_event/
 Content-Type: application/json
 

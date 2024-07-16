@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'clearcache',
     "eventful.apps.EventfulConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -72,6 +73,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = "backend.wsgi.application"
 

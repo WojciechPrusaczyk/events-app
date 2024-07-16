@@ -16,12 +16,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from eventful import views
 from rest_framework import routers
 
 
 urlpatterns = [
+    path('admin/clearcache/', include('clearcache.urls')),
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),
@@ -32,6 +33,7 @@ urlpatterns = [
     path("api/user/", views.user, name="api_user"),
     path("api/checkUsername/", views.checkUsername, name="api_check_user"),
     path("api/logout/", views.logout, name="api_logout"),
+    path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
     path("api/create_event/", views.create_event, name="api_create_event"),
 ]
 

@@ -7,7 +7,6 @@ from .models import Users, Events
 from .serializers import UserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
 
-
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -16,16 +15,20 @@ def index(request):
 @csrf_exempt
 @api_view(["POST"])
 def login(request):
-    username = request.data.get("username")
+    usernameEmail = request.data.get("username")
     password = request.data.get("password")
 
-    if not username or not password:
+    if not usernameEmail or not password:
         return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        user = Users.objects.get(username=username)
+        user = Users.objects.get(email=usernameEmail)
     except Users.DoesNotExist:
-        return Response({"detail": "Invalid username."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = Users.objects.get(username=usernameEmail)
+        except Users.DoesNotExist:
+            return Response({"detail": "Invalid username or email1."}, status=status.HTTP_400_BAD_REQUEST)
+
 
     if not check_password(password, user.password):
         return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
@@ -41,7 +44,7 @@ def login(request):
     user.token = generate_token()
     user.save()
 
-    serializer = UserSerializer(user)
+    serializer = UserSerializer(user, )
 
     return Response(
         {
@@ -73,8 +76,7 @@ def register(request):
         if not is_valid_password(user.password):
             return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            user.password = set_password(request.data["password"])  # Hash the password
-            user.token = generate_token()
+            user.password = set_password(request.data["password"])
             user.userSettings = userSettingsSerializer.data["id"]
             user.save()
             userSettings.hasseentutorial = request.data.get("hasseentutorial")
@@ -84,8 +86,7 @@ def register(request):
 
             return Response(
                 {
-                    "user": serializerUser.data,
-                    "settings": userSettingsSerializer.data
+                    "detail" : "succesfully registered."
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -167,6 +168,31 @@ def logout(request):
         status=status.HTTP_200_OK,
     )
 
+
+@api_view(["POST"])
+def logoutUsername(request):
+    username = request.data.get("username")
+    if not username:
+        return Response({"detail": "token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(username=username)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    if user.token == "":
+        return Response(
+            {
+                "detail": "User not logged in."
+            },
+            status=status.HTTP_200_OK,
+        )
+    user.token = ""
+    user.save()
+    return Response(
+        {
+            "detail": "User logged out."
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @csrf_exempt
