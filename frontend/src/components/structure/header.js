@@ -1,35 +1,76 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import logo from "../../images/logo.png"
+import logo from "../../images/logo.png";
+import userIcon from "../../images/icons/userIcon.svg";
+import addIcon from "../../images/icons/addIcon.svg";
+import Cookies from 'js-cookie';
 
-const GetUser = (token) => {
-
-    let user = null;
-    if (null != token)
-    {
-
-        axios
-            .get(`${window.location.protocol}//${window.location.host}/api/register`, {
-
+const Logout = () => {
+    axios
+        .post(`${window.location.protocol}//${window.location.host}/api/logoutUsername/`, {
+                username: Cookies.get('username')
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('token')}`
+                }
             })
-            .then( result => {
-                user = result.data;
-                console.log(result.data)
-            })
-            .catch(err => console.log(err));
+        .then(response => {
+            console.log('User logged out:', response.data);
+            Cookies.remove('username');
+            window.location.href = '/';
 
-    }
-    return user;
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }
 
 const Header = (props) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [user, setUser] = useState(null); // Dodajemy stan użytkownika
 
-    let user = GetUser(props.token);
+    useEffect(() => {
+        const checkAuth = async () => {
+            axios
+                .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
+                    username: Cookies.get('username')
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${Cookies.get('token')}`
+                    }
+                })
+                .then(result => {
+                    if (result.status === 201) {
+                        setIsAuthenticated(true);
+                        Cookies.set('username', result.data.user.username)
+                    }
+                })
+                .catch(err => {
+                    setIsAuthenticated(false);
+                    console.log(err);
+                });
+        };
+        checkAuth();
+    }, []);
+
     const company_name = "Eventful";
-    const company_logo = logo
+    const company_logo = logo;
     const userNavigation = <div className="header-user">
-
+        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
+        <button aria-label="add bew event" className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/register`}>
+            <img src={addIcon} alt="add new event" aria-hidden={true} />
+        </button>
+        <button aria-label="user settings" className="header-user-button" onClick={ (e) => {
+            Logout();
+        }}>
+            <img src={userIcon} alt="user settings" aria-hidden={true} />
+        </button>
     </div>;
+    const navigation = <div className="header-user">
+        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
+        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/register`}> Sign up</button>
+        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/login`}>Log in</button>
+    </div>
 
     return (
         <header className="header">
@@ -39,7 +80,8 @@ const Header = (props) => {
             <div className="header-name">
                 <h1>{company_name}</h1>
             </div>
-            { null != user && userNavigation }
+            {isAuthenticated && userNavigation}
+            {!isAuthenticated && navigation}
         </header>
     );
 };

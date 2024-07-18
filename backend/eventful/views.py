@@ -7,6 +7,7 @@ from .models import Users, Events
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
 
+
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -17,6 +18,7 @@ def index(request):
 def login(request):
     usernameEmail = request.data.get("username")
     password = request.data.get("password")
+    rememberMe = request.data.get("rememberMe")
 
     if not usernameEmail or not password:
         return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -29,16 +31,15 @@ def login(request):
         except Users.DoesNotExist:
             return Response({"detail": "Invalid username or email1."}, status=status.HTTP_400_BAD_REQUEST)
 
-
     if not check_password(password, user.password):
         return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Check if user is already logged in
-    existing_token = user.token
-    if existing_token:
-        return Response({"detail": "User is already logged in."}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        pass  # Proceed with login
+    # existing_token = user.token
+    # if existing_token:
+    #     return Response({"detail": "User is already logged in."}, status=status.HTTP_400_BAD_REQUEST)
+    # else:
+    #     pass  # Proceed with login
 
     # Generate token for the session
     user.token = generate_token()
@@ -46,12 +47,16 @@ def login(request):
 
     serializer = LoginUserSerializer(user, )
 
-    return Response(
-        {
-            "user": serializer.data,
-        },
-        status=status.HTTP_200_OK,
-    )
+    response = Response({"user": serializer.data}, status=status.HTTP_200_OK)
+
+    if rememberMe and rememberMe == True:
+        response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
+                            expires=1209600)
+    else:
+        response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
+                            expires=0)
+
+    return response
 
 
 @csrf_exempt
@@ -86,7 +91,7 @@ def register(request):
 
             return Response(
                 {
-                    "detail" : "succesfully registered."
+                    "detail": "succesfully registered."
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -95,7 +100,7 @@ def register(request):
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["POST"])
 def user(request):
     username = request.data.get("username")
     if not username:
@@ -117,6 +122,7 @@ def user(request):
         )
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -143,6 +149,7 @@ def checkUsername(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(["POST"])
 def logout(request):
     token = request.data.get("token")
@@ -161,12 +168,16 @@ def logout(request):
         )
     user.token = ""
     user.save()
-    return Response(
+
+    response = Response(
         {
             "detail": "User logged out."
         },
         status=status.HTTP_200_OK,
     )
+    response.delete_cookie('token')
+
+    return response
 
 
 @api_view(["POST"])

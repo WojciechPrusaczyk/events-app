@@ -8,14 +8,15 @@ import AppleIcon from "../../images/icons/apple_color.png"
 import "../../styles/containers/login.scss"
 import axios from "axios";
 import PasswordInput from "../../components/passwordInput";
+import Cookies from 'js-cookie';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       rememberUser: false,
-        username: "",
-        password: ""
+      username: "",
+      password: ""
     };
     this.rememberUser = this.rememberUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -42,8 +43,14 @@ class Login extends Component {
           .post(`${window.location.protocol}//${window.location.host}/api/login/`, {
               username: this.state.username,
               password: this.state.password,
-          }).then(r => {
-              console.log(r);
+              rememberMe: this.state.rememberUser,
+          }).then(response => {
+              if (response.status === 200 )
+              {
+                  Cookies.set("username", response.data.user.username)
+                  console.log(response.data.user.username);
+                  window.location.href = '/';
+              }
           })
    }
 
