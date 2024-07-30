@@ -1,75 +1,108 @@
 @import "../colors";
 @import "../mixins";
 
-.footer{
-    .btn-footer{
+.footer {
+    .btn-footer {
         display: flex;
         border: none;
         background-color: $main-dark;
         padding: 8px;
         border-radius: 20px;
         align-items: center;
+        margin-bottom: 10px;
 
-        
-            span{
-                color: $black;
-                font-size: 1.3rem;
+        span {
+            color: $black;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        img {
+            height: 40px;
+            width: 40px;
+        }
+    }
+    &-lang{
+        display: flex;
+        justify-content: end;
+        margin-right: 20px;
+    }
+
+    &-company {
+        background-color: $main-lighter;
+        height: 17vh;
+
+        &-signature{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80%;
+
+            &-name{
+                font-size: 1.4rem;
                 font-weight: 700;
+                margin-top: 15px;
             }
-            img{
-                height: 50px;
-                width: 50px;
+            &-logo{
+                height: 30px;
+                width: 30px;
+                margin-left: 6px;
+                margin-top: 15px;
+
             }
+        }
+        &-rights{
+            display: flex;
+            justify-content: end;
+            margin-right: 25px;
+        }
     }
-    
-    &-company{
-        background-color: red;
-    }
-    &-links{
+
+    &-links {
         display: flex;
         width: calc(100% - 40px);
         padding: 20px;
+        justify-content: space-between;
 
-            &-app{
-                display: flex;
+        &-app {
+            display: flex;
+            width: 85%; // Adjusted width to leave space for social media links
+            justify-content: space-between;
 
-                &-list{
-                    ul{
-                        list-style: none;
-                    }
+            &-list {
+                ul {
+                    list-style: none;
+                    padding: 0; // Reset padding
+                }
 
-                    &-item{
-                        a{
-                            text-decoration: none;
-                            color: $black;
+                &-item {
+                    margin-bottom: 10px;
+
+                    a {
+                        text-decoration: none;
+                        color: $black;
+
+                        &:hover {
+                            text-decoration: underline;
                         }
-
                     }
-
                 }
             }
+        }
 
-            &-socialMedia{
-                display: flex;
-                flex-direction: column;
-            }
-            &-socialMedia-link{
-                &:first-child{
-                    //background-color: yellow;
+        &-socialMedia {
+            width: 20%; // Adjusted width for social media section
+            display: flex;
+            flex-direction: column;
+            align-items: end; // Align items to the start
+
+            &-link {
+                margin-bottom: 10px;
+
+                &-icon {
+                    width: 40px;
+                    height: 40px;
                 }
-                &-icon{
-                    width: 100px;
-                    height: 100px;
-
-                }
             }
-
-
+        }
     }
-
 }
-
-/*.Facebook{
-    background-color: red;
-}
-*/
