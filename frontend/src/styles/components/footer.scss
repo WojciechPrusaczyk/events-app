@@ -6,7 +6,7 @@
         display: flex;
         border: none;
         background-color: $main-dark;
-        padding: 8px;
+        padding: 10px;
         border-radius: 20px;
         align-items: center;
         margin-bottom: 10px;
@@ -25,17 +25,22 @@
         display: flex;
         justify-content: end;
         margin-right: 20px;
+        &-btn{
+            cursor: pointer;
+            img {
+                margin-right: 10px;
+            }
+        }
     }
 
     &-company {
         background-color: $main-lighter;
-        height: 17vh;
-
+        padding: 5px;
         &-signature{
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 80%;
+            margin: 20px;
 
             &-name{
                 font-size: 1.4rem;
@@ -54,6 +59,10 @@
             display: flex;
             justify-content: end;
             margin-right: 25px;
+            span{
+                font-weight: 500;
+                color: $black-light;
+            }
         }
     }
 
@@ -73,14 +82,18 @@
                     list-style: none;
                     padding: 0; // Reset padding
                 }
-
+                h2 {
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    margin-bottom: 25px;
+                }
                 &-item {
                     margin-bottom: 10px;
 
                     a {
                         text-decoration: none;
                         color: $black;
-
+                        font-weight: 500;
                         &:hover {
                             text-decoration: underline;
                         }
@@ -96,11 +109,11 @@
             align-items: end; // Align items to the start
 
             &-link {
-                margin-bottom: 10px;
+                margin-bottom: 9px;
 
                 &-icon {
-                    width: 40px;
-                    height: 40px;
+                    width: 36px;
+                    height: 36px;
                 }
             }
         }

@@ -172,7 +172,7 @@ class Register extends Component {
             </main>
           </CSSTransition>
         </TransitionGroup>
-        {/*<Footer/>*/}
+        <Footer/>
       </div>
     );
   }
