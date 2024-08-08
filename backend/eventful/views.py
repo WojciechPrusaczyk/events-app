@@ -258,5 +258,7 @@ def reset_password(request):
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-    user.password = new_password
-    return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
+    if is_valid_password(new_password):
+        user.password = set_password(new_password)
+        return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
+    return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
