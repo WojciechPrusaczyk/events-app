@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Users, Events
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
+from email.mime.text import MIMEText
+
 
 
 # Create your views here.
@@ -221,3 +224,39 @@ def create_event(request):
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def reset_password_email(request):
+    email = request.data.get("email")
+    if not email:
+        return Response({"detail": "email required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(email=email)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid email."}, status=status.HTTP_400_BAD_REQUEST)
+    if not user.token == "":
+        return Response({"detail": "Already logged in"}, status=status.HTTP_400_BAD_REQUEST)
+    user.token = generate_token()
+    #hashed_token = hash(user.token)
+    link = f"eventfull.com/{user.token}"
+    msg = MIMEText(f'<p>Hello click </p><a href={link}>Reset Password</a><p> to continue</p>','html')
+
+    send_mail(
+        "Reset Password",
+        msg,
+        "eventfull@example.com",
+        [email],
+        fail_silently=False,
+    )
+
+
+@api_view(["POST"])
+def reset_password(request):
+    token = request.data.get("token")
+    new_password = request.data.get("new_password")
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    user.password = new_password
+    return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)

@@ -47,3 +47,10 @@ Content-Type: application/json
 {"name" : "Template Event", "description" : "Description"}
 
 ###
+
+POST http://localhost:8000/api/verification_email/
+Content-Type: application/json
+
+{"email" : "eventfull2024@gmail.com"}
+
+##
