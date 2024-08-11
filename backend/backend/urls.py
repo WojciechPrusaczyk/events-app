@@ -27,6 +27,8 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),
     path("login/", views.index, name="login"),
+    path("forgot_password/", views.index, name="forgot_password"),
+    path("reset_password/", views.index, name="reset_password"),
     #
     path("api/register/", views.register, name="api_register"),
     path("api/login/", views.login, name="api_login"),
@@ -35,6 +37,7 @@ urlpatterns = [
     path("api/logout/", views.logout, name="api_logout"),
     path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
     path("api/create_event/", views.create_event, name="api_create_event"),
-    path("api/reset_password_email/", views.reset_password_email, name="api_reset_password_email"),
+    path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
+    path("api/reset_password/", views.reset_password, name="api_reset_password"),
 ]
 

@@ -226,7 +226,7 @@ def create_event(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
-def reset_password_email(request):
+def forgot_password(request):
     email = request.data.get("email")
     if not email:
         return Response({"detail": "email required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -238,7 +238,7 @@ def reset_password_email(request):
         return Response({"detail": "Already logged in"}, status=status.HTTP_400_BAD_REQUEST)
     user.token = generate_token()
     #hashed_token = hash(user.token)
-    link = f"eventfull.com/{user.token}"
+    link = f"{request.gethost}/reset_password/{user.token}"
     msg = MIMEText(f'<p>Hello click </p><a href={link}>Reset Password</a><p> to continue</p>','html')
 
     send_mail(
