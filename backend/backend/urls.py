@@ -8,8 +8,8 @@ Function views
     1. Add an import:  from my_app import views
     2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+    1. Add an import:  from other_app.views import ForgotPassword
+    2. Add a URL to urlpatterns:  path('', ForgotPassword.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
@@ -28,8 +28,8 @@ urlpatterns = [
     path("register/", views.index, name="register"),
     path("login/", views.index, name="login"),
     path("forgot_password/", views.index, name="forgot_password"),
-    path("reset_password/", views.index, name="reset_password"),
-    #
+    path("reset_password/<str:token>", views.view_reset_password, name="reset_password"),
+
     path("api/register/", views.register, name="api_register"),
     path("api/login/", views.login, name="api_login"),
     path("api/user/", views.user, name="api_user"),

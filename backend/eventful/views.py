@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from rest_framework import status
@@ -262,3 +262,20 @@ def reset_password(request):
         user.password = set_password(new_password)
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
     return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def forgot_password(request):
+    # TODO: wygenerować tutaj token, i wysłać go mailem i zwrócić potwierdzenie
+    # email wygląda taK:
+    # Cześć zmieniłeś hasło wejdź w tego linka: https://eventfull.pl/reset_password/<str:token>
+
+    return None
+
+def view_reset_password(token=""):
+    # TODO: odebrać token, sprawdzić z bazą danych i wyświetlić fomularz do zmiany hasła
+    if token:
+        # Generowanie losowego tokenu
+        token = str(random.randint(100000, 999999))
+        # Przekierowanie do URL z tokenem
+        return redirect(f'/reset_password/{token}')
+    return None

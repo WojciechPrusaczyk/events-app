@@ -4,12 +4,13 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 
-const Home = () => {
+const ResetPassword = () => {
+
     return (
         <div>
             <Header />
             <main>
-                <h2>Home</h2>
+                <h2>reset password</h2>
                 <ul>
                     <li><a href={`${window.location.protocol}//${window.location.host}/register`}>Register</a></li>
                     <li><a href={`${window.location.protocol}//${window.location.host}/login`}>Login</a></li>
@@ -20,4 +21,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default ResetPassword;

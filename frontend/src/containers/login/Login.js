@@ -108,7 +108,7 @@ class Login extends Component {
                       </p>
                       <p>
                           <h3 className="login-form-forgotPasswd">
-                              <a href="">Forgot password?</a>
+                              <a href={`${window.location.protocol}//${window.location.host}/forgot_password`}>Forgot password?</a>
                           </h3>
                       </p>
                   </form>
