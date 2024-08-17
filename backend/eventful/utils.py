@@ -3,15 +3,18 @@ import string
 import bcrypt
 import re
 
+
 def generate_token(length=64):
     characters = string.ascii_letters + string.digits
     token = ''.join(random.choice(characters) for _ in range(length))
     return token
 
+
 def hash(string):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(string.encode('utf-8'), salt)
     return hashed.decode('utf-8')
+
 
 def set_password(password):
     salt = bcrypt.gensalt()

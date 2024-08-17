@@ -29,6 +29,7 @@ urlpatterns = [
     path("login/", views.index, name="login"),
     path("forgot_password/", views.index, name="forgot_password"),
     path("reset_password/<str:token>", views.view_reset_password, name="reset_password"),
+    path("ViewAPI/", views.index, name="ViewAPI"),
 
     path("api/register/", views.register, name="api_register"),
     path("api/login/", views.login, name="api_login"),
@@ -37,7 +38,7 @@ urlpatterns = [
     path("api/logout/", views.logout, name="api_logout"),
     path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
     path("api/create_event/", views.create_event, name="api_create_event"),
-    path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
+    path("api/forgot_password/", views.index, name="api_forgot_password"),
     path("api/reset_password/", views.reset_password, name="api_reset_password"),
 ]
 

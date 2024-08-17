@@ -53,4 +53,10 @@ Content-Type: application/json
 
 {"email" : "eventfull2024@gmail.com"}
 
-##
+###
+
+
+POST http://localhost:8000/api/forgot_password/
+Content-Type: application/json
+
+{"email" : "eventfull2024@gmail.com"}

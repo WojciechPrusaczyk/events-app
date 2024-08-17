@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .models import Users, Events
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
@@ -225,30 +226,39 @@ def create_event(request):
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([])
 @api_view(["POST"])
 def forgot_password(request):
     email = request.data.get("email")
     if not email:
-        return Response({"detail": "email required."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Email required."}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         user = Users.objects.get(email=email)
     except Users.DoesNotExist:
         return Response({"detail": "Invalid email."}, status=status.HTTP_400_BAD_REQUEST)
-    if not user.token == "":
-        return Response({"detail": "Already logged in"}, status=status.HTTP_400_BAD_REQUEST)
+
     user.token = generate_token()
-    #hashed_token = hash(user.token)
-    link = f"{request.gethost}/reset_password/{user.token}"
-    msg = MIMEText(f'<p>Hello click </p><a href={link}>Reset Password</a><p> to continue</p>','html')
+    link = f"https://eventfull.pl/reset_password/reset_password/{user.token}"
 
-    send_mail(
-        "Reset Password",
-        msg,
-        "eventfull@example.com",
-        [email],
-        fail_silently=False,
-    )
+    subject = "Reset Hasła"
+    message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
+    html_message = f'<p>Cześć, zmieniłeś hasło. Wejdź w tego linka:</p> <a href="{link}">{link}</a>'
 
+    try:
+        send_mail(
+            subject,
+            message,
+            'no-reply@eventfull.pl',
+            [email],
+            fail_silently=False,
+            html_message=html_message,
+        )
+    except Exception as e:
+        return Response({"detail": "Error sending email.", "error": str(e)},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def reset_password(request):
@@ -263,11 +273,6 @@ def reset_password(request):
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
     return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["POST"])
-def forgot_password(request):
-    # TODO: wygenerować tutaj token, i wysłać go mailem i zwrócić potwierdzenie
-    # email wygląda taK:
-    # Cześć zmieniłeś hasło wejdź w tego linka: https://eventfull.pl/reset_password/<str:token>
 
     return None
 
@@ -278,4 +283,10 @@ def view_reset_password(token=""):
         token = str(random.randint(100000, 999999))
         # Przekierowanie do URL z tokenem
         return redirect(f'/reset_password/{token}')
+    return None
+
+
+@api_view(["POST"])
+def viewAPI(request):
+
     return None
