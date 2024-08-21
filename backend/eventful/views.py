@@ -304,5 +304,5 @@ def viewAPI(request):
         "api_create_event": "https://eventfull.pl/create_event{wszystko eventu}",
         "api_forgot_password": "https://eventfull.pl/forgot_password{email}",
         "api_reset_password": "https://eventfull.pl/reset_password{new_password}"
-
+    }
     return Response(api, status=status.HTTP_400_BAD_REQUEST)
