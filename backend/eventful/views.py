@@ -226,10 +226,12 @@ def create_event(request):
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@permission_classes([])
+
+@csrf_exempt
 @api_view(["POST"])
 def forgot_password(request):
     email = request.data.get("email")
+    print(request.data.get("token"))
     if not email:
         return Response({"detail": "Email required."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -245,18 +247,17 @@ def forgot_password(request):
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     html_message = f'<p>Cześć, zmieniłeś hasło. Wejdź w tego linka:</p> <a href="{link}">{link}</a>'
 
-    try:
-        send_mail(
-            subject,
-            message,
-            'no-reply@eventfull.pl',
-            [email],
-            fail_silently=False,
-            html_message=html_message,
-        )
-    except Exception as e:
-        return Response({"detail": "Error sending email.", "error": str(e)},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #try:
+    send_mail(
+        subject,
+        message,
+        'no-reply@eventfull.pl',
+        [email],
+        html_message=html_message,
+    )
+    #except Exception as e:
+        #return Response({"detail": "Error sending email.", "error": str(e)},
+                        #status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
