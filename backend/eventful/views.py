@@ -241,11 +241,17 @@ def forgot_password(request):
         return Response({"detail": "Invalid email."}, status=status.HTTP_400_BAD_REQUEST)
 
     user.token = generate_token()
-    link = f"https://eventfull.pl/reset_password/reset_password/{user.token}"
+    protocol = request.scheme
+    full_host = request.get_host()
+    full_url = f"{protocol}://{full_host}"
+    print(full_url)
+    link = f"{full_url}/reset_password/{user.token}"
+    print(link)
 
     subject = "Reset Hasła"
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
-    html_message = f'<p>Cześć, zmieniłeś hasło. Wejdź w tego linka:</p> <a href="{link}">{link}</a>'
+    username = user.username
+    html_message = f'<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reset hasła</title></head><body style="font-family: "Poppins", Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px;"><table width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc; background-color: #ffffff;"><tr><td align="center" style="background-color: #8576ff; padding: 40px; color: white; font-size: 24px;"><div style="display: flex; align-items: center; justify-content: center;"><img src="https://i.imgur.com/QL725dO.png" alt="Ikona Resetu" style="width: 50px; height: 50px; margin-right: 10px;"><span style="font-size: 24px; font-weight: bold;">Reset hasła</span></div></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Cześć {username}, <br><br>Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta. Jeśli to Ty wysłałeś/aś tę prośbę, kliknij poniższy przycisk, aby ustawić nowe hasło.</td></tr><tr><td align="center" style="padding: 20px;"><table cellspacing="0" cellpadding="0"><tr><td align="center" style="background-color: #8576ff; padding: 15px 30px; border-radius: 5px;"><a href="{link}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold;">Zresetuj hasło</a></td></tr></table></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Jeśli nie złożyłeś/aś tej prośby, po prostu zignoruj ten e-mail. Twoje hasło pozostanie bez zmian.</td></tr><tr><td align="center" style="background-color: #e6ebff; padding: 20px; color: black; font-size: 14px;">Jeśli masz jakiekolwiek pytania, skontaktuj się z naszym zespołem wsparcia.<br><br>Copyright &copy; 2024 | Eventful</td></tr></table></td></tr></table></body></html>'
 
     try:
         send_mail(
@@ -286,7 +292,17 @@ def view_reset_password(token=""):
     return None
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 def viewAPI(request):
+    api = {
+        "api_register": "https://eventfull.pl/register{wszystko usera}",
+        "api_login": "https://eventfull.pl/login{email/login, password}",
+        "api_user": "https://eventfull.pl/user{username}",
+        "api_check_user": "https://eventfull.pl/checkUsername{username}",
+        "api_logout": "https://eventfull.pl/logout{token}",
+        "api_logout_username": "https://eventfull.pl/logoutUsername{username}",
+        "api_create_event": "https://eventfull.pl/create_event{wszystko eventu}",
+        "api_forgot_password": "https://eventfull.pl/forgot_password{email}",
+        "api_reset_password": "https://eventfull.pl/reset_password{new_password}"
 
-    return None
+    return Response(api, status=status.HTTP_400_BAD_REQUEST)

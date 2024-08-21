@@ -29,7 +29,7 @@ urlpatterns = [
     path("login/", views.index, name="login"),
     path("forgot_password/", views.index, name="forgot_password"),
     path("reset_password/<str:token>", views.view_reset_password, name="reset_password"),
-    path("ViewAPI/", views.index, name="ViewAPI"),
+    path("api/", views.viewAPI, name="view_api"),
 
     path("api/register/", views.register, name="api_register"),
     path("api/login/", views.login, name="api_login"),
