@@ -38,7 +38,7 @@ urlpatterns = [
     path("api/logout/", views.logout, name="api_logout"),
     path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
     path("api/create_event/", views.create_event, name="api_create_event"),
-    path("api/forgot_password/", views.index, name="api_forgot_password"),
+    path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
     path("api/reset_password/", views.reset_password, name="api_reset_password"),
 ]
 

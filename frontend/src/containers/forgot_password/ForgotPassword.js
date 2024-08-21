@@ -15,8 +15,12 @@ const ForgotPassword = () => {
           .post(`${window.location.protocol}//${window.location.host}/api/forgot_password/`, {
               email: email,
           }).then(response => {
-              console.log(response);
+          console.log(response)
           })
+          .catch(error => {
+          console.log(error);
+          })
+
    }
 
     return (
