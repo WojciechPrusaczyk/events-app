@@ -251,11 +251,8 @@ def forgot_password(request):
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
         link = f"{protocol}://{full_host}/reset_password/{user.userSetting.passwordResetToken}"
-        print(link)  # Print link for debugging (remove in production)
-
     except Exception as e:
-        print(str(e))  # Log the exact error (for debugging)
-        return Response({"detail": "Error creating link."},
+        return Response({"detail": "Error sending email.", "error": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     subject = "Reset Hasła"
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
@@ -263,8 +260,6 @@ def forgot_password(request):
     rawHTML = open_email_template()
     html_message = rawHTML.replace("[Imię]", username)
     html_message = html_message.replace("[Link do resetu hasła]", link)
-
-    #html_message = f'<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reset hasła</title></head><body style="font-family: "Poppins", Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px;"><table width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc; background-color: #ffffff;"><tr><td align="center" style="background-color: #8576ff; padding: 40px; color: white; font-size: 24px;"><div style="display: flex; align-items: center; justify-content: center;"><img src="https://i.imgur.com/QL725dO.png" alt="Ikona Resetu" style="width: 50px; height: 50px; margin-right: 10px;"><span style="font-size: 24px; font-weight: bold;">Reset hasła</span></div></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Cześć {username}, <br><br>Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta. Jeśli to Ty wysłałeś/aś tę prośbę, kliknij poniższy przycisk, aby ustawić nowe hasło.</td></tr><tr><td align="center" style="padding: 20px;"><table cellspacing="0" cellpadding="0"><tr><td align="center" style="background-color: #8576ff; padding: 15px 30px; border-radius: 5px;"><a href="{link}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold;">Zresetuj hasło</a></td></tr></table></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Jeśli nie złożyłeś/aś tej prośby, po prostu zignoruj ten e-mail. Twoje hasło pozostanie bez zmian.</td></tr><tr><td align="center" style="background-color: #e6ebff; padding: 20px; color: black; font-size: 14px;">Jeśli masz jakiekolwiek pytania, skontaktuj się z naszym zespołem wsparcia.<br><br>Copyright &copy; 2024 | Eventful</td></tr></table></td></tr></table></body></html>'
 
     try:
         send_mail(
@@ -294,7 +289,7 @@ def reset_password(request):
 
     if is_valid_password(new_password):
         user.password = set_password(new_password)
-        userSettings.passwordResetToken = None  # Clear the token after successful reset
+        userSettings.passwordResetToken = None
         user.save()
         userSettings.save()
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
