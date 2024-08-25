@@ -12,6 +12,7 @@ from email.mime.text import MIMEText
 
 
 
+
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -251,7 +252,11 @@ def forgot_password(request):
     subject = "Reset Hasła"
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     username = user.username
-    html_message = f'<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reset hasła</title></head><body style="font-family: "Poppins", Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px;"><table width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc; background-color: #ffffff;"><tr><td align="center" style="background-color: #8576ff; padding: 40px; color: white; font-size: 24px;"><div style="display: flex; align-items: center; justify-content: center;"><img src="https://i.imgur.com/QL725dO.png" alt="Ikona Resetu" style="width: 50px; height: 50px; margin-right: 10px;"><span style="font-size: 24px; font-weight: bold;">Reset hasła</span></div></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Cześć {username}, <br><br>Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta. Jeśli to Ty wysłałeś/aś tę prośbę, kliknij poniższy przycisk, aby ustawić nowe hasło.</td></tr><tr><td align="center" style="padding: 20px;"><table cellspacing="0" cellpadding="0"><tr><td align="center" style="background-color: #8576ff; padding: 15px 30px; border-radius: 5px;"><a href="{link}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold;">Zresetuj hasło</a></td></tr></table></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Jeśli nie złożyłeś/aś tej prośby, po prostu zignoruj ten e-mail. Twoje hasło pozostanie bez zmian.</td></tr><tr><td align="center" style="background-color: #e6ebff; padding: 20px; color: black; font-size: 14px;">Jeśli masz jakiekolwiek pytania, skontaktuj się z naszym zespołem wsparcia.<br><br>Copyright &copy; 2024 | Eventful</td></tr></table></td></tr></table></body></html>'
+    rawHTML = open_email_template()
+    html_message = rawHTML.replace("[Imię]", username)
+    html_message = html_message.replace("[Link do resetu hasła]", link)
+
+    #html_message = f'<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reset hasła</title></head><body style="font-family: "Poppins", Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px;"><table width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc; background-color: #ffffff;"><tr><td align="center" style="background-color: #8576ff; padding: 40px; color: white; font-size: 24px;"><div style="display: flex; align-items: center; justify-content: center;"><img src="https://i.imgur.com/QL725dO.png" alt="Ikona Resetu" style="width: 50px; height: 50px; margin-right: 10px;"><span style="font-size: 24px; font-weight: bold;">Reset hasła</span></div></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Cześć {username}, <br><br>Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta. Jeśli to Ty wysłałeś/aś tę prośbę, kliknij poniższy przycisk, aby ustawić nowe hasło.</td></tr><tr><td align="center" style="padding: 20px;"><table cellspacing="0" cellpadding="0"><tr><td align="center" style="background-color: #8576ff; padding: 15px 30px; border-radius: 5px;"><a href="{link}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold;">Zresetuj hasło</a></td></tr></table></td></tr><tr><td style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">Jeśli nie złożyłeś/aś tej prośby, po prostu zignoruj ten e-mail. Twoje hasło pozostanie bez zmian.</td></tr><tr><td align="center" style="background-color: #e6ebff; padding: 20px; color: black; font-size: 14px;">Jeśli masz jakiekolwiek pytania, skontaktuj się z naszym zespołem wsparcia.<br><br>Copyright &copy; 2024 | Eventful</td></tr></table></td></tr></table></body></html>'
 
     try:
         send_mail(
@@ -266,30 +271,37 @@ def forgot_password(request):
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
+
 @api_view(["POST"])
 def reset_password(request):
     token = request.data.get("token")
     new_password = request.data.get("new_password")
+
     try:
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
     if is_valid_password(new_password):
         user.password = set_password(new_password)
+        user.token = None  # Clear the token after successful reset
+        user.save()
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
+
     return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    return None
-
-def view_reset_password(token=""):
-    # TODO: odebrać token, sprawdzić z bazą danych i wyświetlić fomularz do zmiany hasła
+def view_reset_password(request, token=""):
+    # Check if the token is valid by querying the database
     if token:
-        # Generowanie losowego tokenu
-        token = str(random.randint(100000, 999999))
-        # Przekierowanie do URL z tokenem
-        return redirect(f'/reset_password/{token}')
-    return None
+        try:
+            user = Users.objects.get(token=token)
+            reset_password(request)
+            # If token is valid, render the form to reset the password
+            return Response("OK?.", status=status.HTTP_200_OK)
+        except Users.DoesNotExist:
+            # Token is invalid or expired
+            return Response("Invalid or expired token.", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
