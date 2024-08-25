@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
@@ -5,7 +6,7 @@ from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .models import Users, Events
+from .models import Users, Events, UserSettings
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
 from email.mime.text import MIMEText
@@ -68,40 +69,36 @@ def login(request):
 @api_view(["POST"])
 def register(request):
     serializerUser = RegisterUserSerializer(data=request.data)
-    if serializerUser.is_valid():
-        if Users.objects.filter(username=serializerUser.validated_data["username"]).exists():
-            return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
-        settingsData = {
-            "acceptedSharingDetails": request.data["acceptedSharingDetails"],
-            "acceptedTOS": request.data["acceptedTos"],
-            "acceptedNews": request.data["acceptedNews"]
-        }
-        userSettingsSerializer = UserSettingsSerializer(data=settingsData)
-        if not userSettingsSerializer.is_valid():
-            return Response(userSettingsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        userSettings = userSettingsSerializer.save()
+    if not serializerUser.is_valid():
+        return Response(serializerUser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if Users.objects.filter(username=serializerUser.validated_data["username"]).exists():
+        return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+    settings_data = {
+        "acceptedSharingDetails": request.data.get("acceptedSharingDetails", False),
+        "acceptedTOS": request.data.get("acceptedTOS", False),
+        "acceptedNews": request.data.get("acceptedNews", False)
+    }
+
+    userSettingsSerializer = UserSettingsSerializer(data=settings_data)
+
+    if not userSettingsSerializer.is_valid():
+        return Response(userSettingsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        user_setting = userSettingsSerializer.save()
         user = serializerUser.save()
 
         if not is_valid_password(user.password):
             return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            user.password = set_password(request.data["password"])
-            user.userSettings = userSettingsSerializer.data["id"]
-            user.save()
-            userSettings.hasseentutorial = request.data.get("hasseentutorial")
-            userSettings.acceptedTOS = request.data.get("acceptedTOS")
-            userSettings.acceptedNews = request.data.get("acceptedNews")
-            userSettings.save()
 
-            return Response(
-                {
-                    "detail": "succesfully registered."
-                },
-                status=status.HTTP_201_CREATED,
-            )
-    else:
-        return Response(serializerUser.errors, status=status.HTTP_400_BAD_REQUEST)
+        user.password = set_password(request.data["password"])
+        user.userSetting = user_setting  # Associate the user with the UserSettings instance
+        user.save()
+
+        return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt
@@ -232,23 +229,34 @@ def create_event(request):
 @api_view(["POST"])
 def forgot_password(request):
     email = request.data.get("email")
-    print(request.data.get("token"))
     if not email:
         return Response({"detail": "Email required."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+        # Attempt to find the user by email
         user = Users.objects.get(email=email)
     except Users.DoesNotExist:
         return Response({"detail": "Invalid email."}, status=status.HTTP_400_BAD_REQUEST)
 
-    user.token = generate_token()
-    protocol = request.scheme
-    full_host = request.get_host()
-    full_url = f"{protocol}://{full_host}"
-    print(full_url)
-    link = f"{full_url}/reset_password/{user.token}"
-    print(link)
+    try:
+        # Ensure that the user has a related UserSettings object
+        if not user.userSetting:
+            return Response({"detail": "User settings not found."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Generate a password reset token
+        user.userSetting.passwordResetToken = generate_token()
+        user.userSetting.save()  # Save the token to the database
+
+        # Construct the reset link
+        protocol = request.scheme  # http or https
+        full_host = request.get_host()  # domain and port
+        link = f"{protocol}://{full_host}/reset_password/{user.userSetting.passwordResetToken}"
+        print(link)  # Print link for debugging (remove in production)
+
+    except Exception as e:
+        print(str(e))  # Log the exact error (for debugging)
+        return Response({"detail": "Error creating link."},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     subject = "Reset Hasła"
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     username = user.username
@@ -275,33 +283,30 @@ def forgot_password(request):
 @api_view(["POST"])
 def reset_password(request):
     token = request.data.get("token")
-    new_password = request.data.get("new_password")
+    new_password = request.data.get("password")
 
     try:
-        user = Users.objects.get(token=token)
+        userSettings = UserSettings.objects.get(passwordResetToken=token)
+        user = Users.objects.get(userSetting=userSettings)
+
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
     if is_valid_password(new_password):
         user.password = set_password(new_password)
-        user.token = None  # Clear the token after successful reset
+        userSettings.passwordResetToken = None  # Clear the token after successful reset
         user.save()
+        userSettings.save()
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
 
     return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def view_reset_password(request, token=""):
-    # Check if the token is valid by querying the database
     if token:
-        try:
-            user = Users.objects.get(token=token)
-            reset_password(request)
-            # If token is valid, render the form to reset the password
-            return Response("OK?.", status=status.HTTP_200_OK)
-        except Users.DoesNotExist:
-            # Token is invalid or expired
-            return Response("Invalid or expired token.", status=status.HTTP_400_BAD_REQUEST)
+        return render(request, "index.html", {"token": token})
+    else:
+        return Response("Token not provided.", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])

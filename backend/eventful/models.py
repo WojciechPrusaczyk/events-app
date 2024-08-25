@@ -84,6 +84,7 @@ class UserSettings(models.Model):
     acceptedSharingDetails = models.BooleanField(db_column="acceptedSharingDetails", blank=True, null=True, default=False)
     acceptedTOS = models.BooleanField(db_column="acceptedTOS", blank=True, null=True, default=False)
     acceptedNews = models.BooleanField(db_column="acceptedNews", blank=True, null=True, default=False)
+    passwordResetToken = models.CharField(db_column="passwordResetToken", blank=True, null=True, default="", max_length=64)
 
     class Meta:
         db_table = "userSettings"
@@ -105,7 +106,7 @@ class Users(models.Model):
     recentip = models.CharField(db_column="recentIp", max_length=16, blank=True, null=True)
     sex = models.CharField(max_length=16, blank=True, null=True)
     token = models.CharField(max_length=64, blank=True, null=True)
-    userSetting = models.ForeignKey(UserSettings, models.DO_NOTHING, db_column="userSetting", blank=True, null=True)
+    userSetting = models.ForeignKey(UserSettings, models.DO_NOTHING, db_column="userSetting", blank=True, null=True, default=UserSettings)
 
     class Meta:
         db_table = "users"
