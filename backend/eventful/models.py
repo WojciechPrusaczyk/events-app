@@ -80,11 +80,11 @@ class Segmentsparticipants(models.Model):
 
 class UserSettings(models.Model):
     id = models.AutoField(primary_key=True)
-    hasseentutorial = models.BooleanField(db_column="hasSeenTutorial", blank=True, null=True, default=False)
+    hasSeenTutorial = models.BooleanField(db_column="hasSeenTutorial", blank=True, null=True, default=False)
     acceptedSharingDetails = models.BooleanField(db_column="acceptedSharingDetails", blank=True, null=True, default=False)
     acceptedTOS = models.BooleanField(db_column="acceptedTOS", blank=True, null=True, default=False)
     acceptedNews = models.BooleanField(db_column="acceptedNews", blank=True, null=True, default=False)
-    passwordResetToken = models.CharField(db_column="passwordResetToken", blank=True, null=True, default="", max_length=64)
+    utilityToken = models.CharField(db_column="utilityToken", blank=True, null=True, default="", max_length=64)
 
     class Meta:
         db_table = "userSettings"

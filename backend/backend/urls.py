@@ -30,6 +30,7 @@ urlpatterns = [
     path("forgot_password/", views.index, name="forgot_password"),
     path("reset_password/<str:token>", views.view_reset_password, name="reset_password"),
     path("api/", views.viewAPI, name="view_api"),
+    path("account_verification/<str:token>", views.view_account_verification, name="account_verification"),
 
     path("api/register/", views.register, name="api_register"),
     path("api/login/", views.login, name="api_login"),
@@ -40,5 +41,6 @@ urlpatterns = [
     path("api/create_event/", views.create_event, name="api_create_event"),
     path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
     path("api/reset_password/", views.reset_password, name="api_reset_password"),
+    path("api/account_verification/", views.account_verification, name="api_account_verification"),
 ]
 

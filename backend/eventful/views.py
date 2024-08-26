@@ -98,6 +98,36 @@ def register(request):
         user.userSetting = user_setting  # Associate the user with the UserSettings instance
         user.save()
 
+        user.userSetting.utilityToken = generate_token()
+        user.userSetting.save()
+
+        protocol = request.scheme  # http or https
+        full_host = request.get_host()  # domain and port
+        link = f"{protocol}://{full_host}/account_verification/{user.userSetting.utilityToken}"
+
+        try:
+            subject = "Weryfikacja"
+            message = f"Cześć. Wejdź w tego linka: {link}"
+            username = user.username
+            rawHTML = open_verification_template()
+            html_message = rawHTML.replace("[Imię]", username)
+            html_message = html_message.replace("[Link do weryfikacji]", link)
+        except Exception as e:
+            return Response({"detail": "Error creating link."},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        try:
+            send_mail(
+                subject,
+                message,
+                'no-reply@eventfull.pl',
+                [user.email],
+                html_message=html_message,
+            )
+        except Exception as e:
+            return Response({"detail": "Error sending email.", "error": str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
 
@@ -244,13 +274,13 @@ def forgot_password(request):
             return Response({"detail": "User settings not found."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Generate a password reset token
-        user.userSetting.passwordResetToken = generate_token()
+        user.userSetting.utilityToken = generate_token()
         user.userSetting.save()  # Save the token to the database
 
         # Construct the reset link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
-        link = f"{protocol}://{full_host}/reset_password/{user.userSetting.passwordResetToken}"
+        link = f"{protocol}://{full_host}/reset_password/{user.userSetting.utilityToken}"
     except Exception as e:
         return Response({"detail": "Error sending email.", "error": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -281,7 +311,7 @@ def reset_password(request):
     new_password = request.data.get("password")
 
     try:
-        userSettings = UserSettings.objects.get(passwordResetToken=token)
+        userSettings = UserSettings.objects.get(utilityToken=token)
         user = Users.objects.get(userSetting=userSettings)
 
     except Users.DoesNotExist:
@@ -289,7 +319,7 @@ def reset_password(request):
 
     if is_valid_password(new_password):
         user.password = set_password(new_password)
-        userSettings.passwordResetToken = None
+        userSettings.utilityToken = None
         user.save()
         userSettings.save()
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
@@ -318,3 +348,23 @@ def viewAPI(request):
         "api_reset_password": "https://eventfull.pl/reset_password{new_password}"
     }
     return Response(api, status=status.HTTP_400_BAD_REQUEST)
+@api_view(["POST"])
+def account_verification(request):
+    token = request.data.get("token")
+
+    try:
+        userSettings = UserSettings.objects.get(utilityToken=token)
+        user = Users.objects.get(userSetting=userSettings)
+
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({"detail": "account verified"}, status=status.HTTP_200_OK)
+
+    #return redirect("https://eventfull.pl/index", status=status.HTTP_200_OK)
+
+def view_account_verification(request, token=""):
+    if token:
+        return render(request, "index.html", {"token": token})
+    else:
+        return Response("Token not provided.", status=status.HTTP_400_BAD_REQUEST)

@@ -61,3 +61,23 @@ def open_email_template():
             return content
     except FileNotFoundError:
         return None
+
+def open_verification_template():
+    # Get the directory of the current file (views.py)
+    current_dir = os.path.dirname(__file__)
+
+    # Construct the relative path to EmailTemplate.html
+    template_path = os.path.join(current_dir, '..', '..', 'frontend', 'src', 'containers', 'register',
+                                 'VerificationTemplate.html')
+
+    # Normalize the path (optional)
+    template_path = os.path.normpath(template_path)
+
+    try:
+        # Open the file
+        with open(template_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+            # You can now use 'content' or return it
+            return content
+    except FileNotFoundError:
+        return None
