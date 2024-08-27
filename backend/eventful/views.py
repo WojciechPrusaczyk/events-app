@@ -104,6 +104,9 @@ def register(request):
             message = f"Cześć. Wejdź w tego linka: {link}"
             username = user.username
             rawHTML = open_verification_template()  # Ensure this loads properly
+            if rawHTML is "File doesn't exist.":
+                return Response({"detail": "File doesn't exist."},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             html_message = rawHTML.replace("[Imię]", username)
             html_message = html_message.replace("[Link do weryfikacji]", link)
         except Exception as e:
@@ -283,6 +286,9 @@ def forgot_password(request):
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     username = user.username
     rawHTML = open_email_template()
+    if rawHTML is "File doesn't exist.":
+        return Response({"detail": "File doesn't exist."},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     html_message = rawHTML.replace("[Imię]", username)
     html_message = html_message.replace("[Link do resetu hasła]", link)
 
