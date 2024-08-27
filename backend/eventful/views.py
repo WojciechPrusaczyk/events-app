@@ -355,7 +355,6 @@ def view_account_verification(request, token=""):
             return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.isactive = True
-        user.username = "Test"
         userSettings.utilityToken = None
         userSettings.save()
         user.save()
