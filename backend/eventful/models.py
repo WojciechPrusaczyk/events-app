@@ -84,7 +84,7 @@ class UserSettings(models.Model):
     acceptedSharingDetails = models.BooleanField(db_column="acceptedSharingDetails", blank=True, null=True, default=False)
     acceptedTOS = models.BooleanField(db_column="acceptedTOS", blank=True, null=True, default=False)
     acceptedNews = models.BooleanField(db_column="acceptedNews", blank=True, null=True, default=False)
-    utilityToken = models.CharField(db_column="utilityToken", blank=True, null=True, default="", max_length=64)
+    utilityToken = models.CharField(db_column="utilityToken", blank=True, null=True, default="", max_length=64, db_default="")
 
     class Meta:
         db_table = "userSettings"
@@ -97,7 +97,7 @@ class Users(models.Model):
     surname = models.CharField(max_length=64)
     email = models.CharField(max_length=320)
     password = models.CharField(max_length=64)
-    isactive = models.BooleanField(db_column="isActive", blank=True, null=True, default=False)
+    isactive = models.CharField(db_column="isActive", blank=True, null=True, default="False")
     registrationdate = models.CharField(db_column="registrationDate", max_length=64)
     lastlogin = models.CharField(db_column="lastLogin", blank=True, null=True, max_length=64)
     birthdate = models.DateField(db_column="birthDate", blank=True, null=True)

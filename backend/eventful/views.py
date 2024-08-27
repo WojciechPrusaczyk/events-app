@@ -9,7 +9,6 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Users, Events, UserSettings
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
-from email.mime.text import MIMEText
 
 
 
@@ -40,14 +39,6 @@ def login(request):
     if not check_password(password, user.password):
         return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Check if user is already logged in
-    # existing_token = user.token
-    # if existing_token:
-    #     return Response({"detail": "User is already logged in."}, status=status.HTTP_400_BAD_REQUEST)
-    # else:
-    #     pass  # Proceed with login
-
-    # Generate token for the session
     user.token = generate_token()
     user.save()
 
@@ -65,7 +56,6 @@ def login(request):
     return response
 
 
-@csrf_exempt
 @api_view(["POST"])
 def register(request):
     serializerUser = RegisterUserSerializer(data=request.data)
@@ -76,10 +66,16 @@ def register(request):
     if Users.objects.filter(username=serializerUser.validated_data["username"]).exists():
         return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
+    if Users.objects.filter(email=serializerUser.validated_data["email"]).exists():
+        return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+    # Check password validity before saving the user
+    if not is_valid_password(request.data["password"]):
+        return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
+
     settings_data = {
-        "acceptedSharingDetails": request.data.get("acceptedSharingDetails", False),
-        "acceptedTOS": request.data.get("acceptedTOS", False),
-        "acceptedNews": request.data.get("acceptedNews", False)
+        "acceptedSharingDetails": request.data.get("acceptedSharingDetails"),
+        "acceptedTOS": request.data.get("acceptedTos"),
+        "acceptedNews": request.data.get("acceptedNews")
     }
 
     userSettingsSerializer = UserSettingsSerializer(data=settings_data)
@@ -90,17 +86,15 @@ def register(request):
     with transaction.atomic():
         user_setting = userSettingsSerializer.save()
         user = serializerUser.save()
-
-        if not is_valid_password(user.password):
-            return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
-
-        user.password = set_password(request.data["password"])
+        user.password = set_password(request.data["password"])  # Proper password hashing
         user.userSetting = user_setting  # Associate the user with the UserSettings instance
         user.save()
 
+        # Generate and save utility token
         user.userSetting.utilityToken = generate_token()
         user.userSetting.save()
 
+        # Create verification link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
         link = f"{protocol}://{full_host}/account_verification/{user.userSetting.utilityToken}"
@@ -109,11 +103,11 @@ def register(request):
             subject = "Weryfikacja"
             message = f"Cześć. Wejdź w tego linka: {link}"
             username = user.username
-            rawHTML = open_verification_template()
+            rawHTML = open_verification_template()  # Ensure this loads properly
             html_message = rawHTML.replace("[Imię]", username)
             html_message = html_message.replace("[Link do weryfikacji]", link)
         except Exception as e:
-            return Response({"detail": "Error creating link."},
+            return Response({"detail": "Error creating link.", "error": str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         try:
@@ -274,8 +268,9 @@ def forgot_password(request):
             return Response({"detail": "User settings not found."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Generate a password reset token
-        user.userSetting.utilityToken = generate_token()
-        user.userSetting.save()  # Save the token to the database
+        userSetting = UserSettings.objects.get(id=user.userSetting.id)
+        userSetting.utilityToken = generate_token()
+        user.save()  # Save the token to the database
 
         # Construct the reset link
         protocol = request.scheme  # http or https
@@ -348,23 +343,24 @@ def viewAPI(request):
         "api_reset_password": "https://eventfull.pl/reset_password{new_password}"
     }
     return Response(api, status=status.HTTP_400_BAD_REQUEST)
-@api_view(["POST"])
-def account_verification(request):
-    token = request.data.get("token")
 
-    try:
-        userSettings = UserSettings.objects.get(utilityToken=token)
-        user = Users.objects.get(userSetting=userSettings)
-
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
-    return Response({"detail": "account verified"}, status=status.HTTP_200_OK)
-
-    #return redirect("https://eventfull.pl/index", status=status.HTTP_200_OK)
 
 def view_account_verification(request, token=""):
     if token:
+        try:
+            userSettings = UserSettings.objects.get(utilityToken=token)
+            user = Users.objects.get(userSetting=userSettings)
+
+        except Users.DoesNotExist:
+            return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.isactive = True
+        user.username = "Test"
+        userSettings.utilityToken = None
+        userSettings.save()
+        user.save()
+
+
         return render(request, "index.html", {"token": token})
     else:
         return Response("Token not provided.", status=status.HTTP_400_BAD_REQUEST)
