@@ -1,4 +1,7 @@
+from datetime import datetime, timedelta
+
 from django.db import transaction
+from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
@@ -46,12 +49,15 @@ def login(request):
 
     response = Response({"user": serializer.data}, status=status.HTTP_200_OK)
 
-    if rememberMe and rememberMe == True:
-        response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
-                            expires=1209600)
-    else:
-        response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
-                            expires=0)
+    # if rememberMe and rememberMe == True:
+    #     response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
+    #                         expires=1209600)
+    # else:
+    #     response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
+    #                         expires=0)
+
+    response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
+                        expires=1209600)
 
     return response
 
@@ -235,21 +241,21 @@ def logoutUsername(request):
     )
 
 
-@csrf_exempt
-@api_view(["POST"])
-def create_event(request):
-    serializer = EventSerializer(data=request.data)
-    if serializer.is_valid():
-        if Events.objects.filter(name=serializer.validated_data["name"]).exists():
-            return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
-        event = serializer.save()
-        return Response(
-            {
-                "event": serializer.data
-            },
-            status=status.HTTP_201_CREATED,
-        )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @csrf_exempt
+# @api_view(["POST"])
+# def create_event(request):
+#     serializer = EventSerializer(data=request.data)
+#     if serializer.is_valid():
+#         if Events.objects.filter(name=serializer.validated_data["name"]).exists():
+#             return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+#         event = serializer.save()
+#         return Response(
+#             {
+#                 "event": serializer.data
+#             },
+#             status=status.HTTP_201_CREATED,
+#         )
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
@@ -301,8 +307,7 @@ def forgot_password(request):
             html_message=html_message,
         )
     except Exception as e:
-        return Response({"detail": "Error sending email.", "error": str(e)},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"detail": "Error sending email."})
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
 
@@ -369,3 +374,52 @@ def view_account_verification(request, token=""):
         return render(request, "index.html", {"token": token})
     else:
         return Response("Token not provided.", status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def create_event(request):
+    token = request.COOKIES.get('token')
+
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Sprawdzanie, czy istnieje już wydarzenie
+    if Events.objects.filter(name="New Event", supervisor=user).exists():
+        existingEvent = Events.objects.get(name="New Event", supervisor=user)
+        return Response({"event_id": existingEvent.id, "detail": "Event already exists."}, status=status.HTTP_200_OK)
+
+    # Tworzenie nowego wydarzenia
+    currentTime = datetime.now()  # aktualna data
+
+    # Tworzenie unikalnego tokenu
+    letters = string.ascii_lowercase
+    length = 12
+    event_token = ''.join(random.choice(letters) for i in range(length))  # Zmieniono nazwę tokena na event_token
+
+    # Tworzenie obiektu wydarzenia
+    newEvent = Events(
+        name="New Event",
+        description="",
+        rules="",
+        starttime=currentTime,
+        endtime=currentTime + timedelta(days=10),  # Poprawiono generowanie endtime
+        supervisor=user,
+        isactive=False,
+        ispublic=False,
+        joinapproval=True,
+        token=event_token
+    )
+    newEvent.save()
+
+    return Response({"event_id": newEvent.id, "detail": "Event created successfully."}, status=status.HTTP_201_CREATED)
+
+
+def editEvent(request, id=None):
+    if id:
+        return render(request, "index.html", {"token": id})
+    else:
+        return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)

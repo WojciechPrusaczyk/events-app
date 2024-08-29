@@ -1,7 +1,6 @@
 from django.db import models
 
 class Events(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     rules = models.TextField(blank=True, null=True)
@@ -11,7 +10,7 @@ class Events(models.Model):
     isactive = models.BooleanField(db_column="isActive", blank=True, null=True)
     ispublic = models.BooleanField(db_column="isPublic", blank=True, null=True)
     joinapproval = models.BooleanField(db_column="joinApproval", blank=True, null=True)
-    token = models.CharField(max_length=8, blank=True, null=True)
+    token = models.CharField(max_length=16, blank=True, null=True)
     location = models.ForeignKey("Locations", models.DO_NOTHING, db_column="location", blank=True, null=True)
 
     class Meta:

@@ -25,6 +25,23 @@ const Logout = () => {
         });
 }
 
+const CreateEvent = () => {
+    axios
+        .post(`${window.location.protocol}//${window.location.host}/api/create-event/`, {}, {
+            withCredentials: true,
+        })
+        .then(response => {
+            if (response.status === 201 || response.status === 200) {  // Sprawdzanie, czy event został stworzony
+                const eventId = response.data.event_id;
+                // Przekierowanie do strony edycji wydarzenia
+                window.location.href = `${window.location.protocol}//${window.location.host}/edit-event/${eventId}`;
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
 const Header = (props) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [user, setUser] = useState(null); // Dodajemy stan użytkownika
@@ -57,7 +74,7 @@ const Header = (props) => {
     const company_logo = logo;
     const userNavigation = <div className="header-user">
         <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
-        <button aria-label="add bew event" className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/register`}>
+        <button aria-label="add bew event" className="header-user-button" onClick={CreateEvent}>
             <img src={addIcon} alt="add new event" aria-hidden={true} />
         </button>
         <button aria-label="user settings" className="header-user-button" onClick={ (e) => {

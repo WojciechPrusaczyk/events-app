@@ -16,9 +16,7 @@ const ForgotPassword = () => {
     const forgotPassword = (event, email) => {
         event.preventDefault();
         axios
-            .post(`${window.location.protocol}//${window.location.host}/api/forgot_password/`, {
-                email: email,
-            })
+            .get(`${window.location.protocol}//${window.location.host}/api/forgot_password/`)
             .then(response => {
 
                 if (response.status == 200) {
