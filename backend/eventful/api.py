@@ -134,8 +134,6 @@ def register(request):
 
         return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
-
-
 @csrf_exempt
 @api_view(["POST"])
 def user(request):
@@ -378,7 +376,7 @@ def getEvent(request):
     eventSerializer = EventSerializer(event)
 
     try:
-        return Response({"detail": eventSerializer.data}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
