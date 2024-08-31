@@ -1,6 +1,7 @@
 from django.db import models
 
 class Events(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     rules = models.TextField(blank=True, null=True)
@@ -25,7 +26,7 @@ class Eventsparticipants(models.Model):
         db_table = "eventsParticipants"
 
 class Locations(models.Model):
-    placeId = models.CharField(primary_key=True)
+    placeId = models.CharField(primary_key=True, null=True)
     formattedAddress = models.CharField(max_length=256, blank=True, null=True)
     latitude = models.CharField(max_length=64)
     longitude = models.CharField(max_length=64)

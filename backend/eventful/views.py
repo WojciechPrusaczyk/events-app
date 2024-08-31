@@ -453,12 +453,14 @@ def getEvent(request):
 @csrf_exempt
 @api_view(["POST"])
 def editEventApi(request):
-
     # Checking token and user
-    token = request.COOKIES.get('token')
+    token = request.data.get('token')
     if not token:
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
-    user = Users.objects.get(token=token)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding event
     eventId = request.data.get("id")
@@ -466,9 +468,84 @@ def editEventApi(request):
         return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
     event = Events.objects.get(id=eventId, supervisor=user)
 
-    # TODO: Obsługa edycji wydarzenia
+    try:
+        locationData = UserSettingsSerializer(data=request.data.get("location"))
+    except:
+        return Response({"detail": "Cant assign location"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not user:
-        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    # Retrieve fields from the request and update the event
+    name = request.data.get('name')
+    description = request.data.get('description')
+    rules = request.data.get('rules')
+    starttime = request.data.get('starttime')
+    endtime = request.data.get('endtime')
+    isactive = request.data.get('isactive')
+    ispublic = request.data.get('ispublic')
+    joinapproval = request.data.get('joinapproval')
+    location = locationData
 
-    return Response({"detail": "Invalid token."}, status=status.HTTP_501_NOT_IMPLEMENTED)
+    if name is not None:
+        event.name = name
+    if description is not None:
+        event.description = description
+    if rules is not None:
+        event.rules = rules
+    if starttime is not None:
+        try:
+            event.starttime = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return Response({"detail": "Invalid starttime format. Use 'YYYY-MM-DD HH:MM:SS'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+    if endtime is not None:
+        try:
+            event.endtime = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return Response({"detail": "Invalid endtime format. Use 'YYYY-MM-DD HH:MM:SS'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+    if isactive is not None:
+        event.isactive = bool(isactive)
+    if ispublic is not None:
+        event.ispublic = bool(ispublic)
+    if joinapproval is not None:
+        event.joinapproval = bool(joinapproval)
+
+    if location is not None:
+        event.location = location
+        # Save the updated event
+    event.save()
+
+    # Return a success response
+    return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def search_users(request):
+    search_str = request.data.get('query', '')
+    limit = request.data.get('limit', None)
+
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not search_str:
+        return Response({"detail": "Query string required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Filter users where username contains the search string (case-insensitive)
+    users = Users.objects.filter(username__icontains=search_str)
+
+    # If a limit is provided, apply it
+    if limit:
+        try:
+            limit = int(limit)
+            users = users[:limit]
+        except ValueError:
+            return Response({"detail": "Limit must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Serialize the data
+    user_data = [{"id": user.uid, "username": user.username} for user in users]
+
+    return Response({"users": user_data}, status=status.HTTP_200_OK)

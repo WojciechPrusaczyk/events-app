@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Events, UserSettings
+from .models import Users, Events, UserSettings, Locations
 
 class LoginUserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -34,4 +34,9 @@ class UserSettingsSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Events
+        fields = '__all__'
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Locations
         fields = '__all__'

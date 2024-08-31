@@ -45,9 +45,6 @@ urlpatterns = [
     path("api/create-event/", views.createEvent, name="api_create_event"),
     path("api/get-event/", views.getEvent, name="api_get_event"),
     path("api/edit-event/", views.editEventApi, name="api_edit_event"),
-    # TODO: Api do wyszukiwania użytkowników po fragmencie ich nicku
-    #  (zwraca listę użytkowników, którzy mają wspólną część nicku),
-    #  dodatkowo ten punkt API posiada także opcjonalny parametr limit,
-    #  który limituję długość zwracanej listy (max 32, default 8)
+    path("api/search-users/", views.searchUsers, name="api_edit_event")
 ]
 
