@@ -25,8 +25,8 @@ class Eventsparticipants(models.Model):
         db_table = "eventsParticipants"
 
 class Locations(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=128, blank=True, null=True)
+    placeId = models.CharField(primary_key=True)
+    formattedAddress = models.CharField(max_length=256, blank=True, null=True)
     latitude = models.CharField(max_length=64)
     longitude = models.CharField(max_length=64)
 
