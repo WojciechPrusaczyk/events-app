@@ -376,7 +376,7 @@ def view_account_verification(request, token=""):
         return Response("Token not provided.", status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
-def create_event(request):
+def createEvent(request):
     token = request.COOKIES.get('token')
 
     if not token:
@@ -423,3 +423,42 @@ def editEvent(request, id=None):
         return render(request, "index.html", {"token": id})
     else:
         return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
+
+@csrf_exempt
+@api_view(["POST"])
+def getEvent(request):
+
+    # Finding event
+    eventId = request.data.get("id")
+    if not eventId:
+        return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
+    event = Events.objects.get(id=eventId)
+    eventSerializer = EventSerializer(event)
+
+    try:
+        return Response({"detail": eventSerializer.data}, status=status.HTTP_400_BAD_REQUEST)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@api_view(["POST"])
+def editEvent(request):
+
+    # Checking token and user
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    user = Users.objects.get(token=token)
+
+    # Finding event
+    eventId = request.data.get("id")
+    if not eventId:
+        return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
+    event = Events.objects.get(id=eventId, supervisor=user)
+
+    # TODO: Obsługa edycji wydarzenia
+
+    if not user:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({"detail": "Invalid token."}, status=status.HTTP_501_NOT_IMPLEMENTED)
