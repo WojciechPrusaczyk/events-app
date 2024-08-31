@@ -14,9 +14,9 @@ function App() {
         <Route path="/" exact element={ <Home /> } />
         <Route path="/register" element={ <Register /> } />
         <Route path="/login" element={ <Login /> } />
-        <Route path="/forgot_password" element={ <ForgotPassword /> } />
-        <Route path="/reset_password/:token" element={ <ResetPassword /> } />
-        <Route path="/account_verification/:token" element={ <AccountVerification /> } />
+        <Route path="/forgot-password" element={ <ForgotPassword /> } />
+        <Route path="/reset-password/:token" element={ <ResetPassword /> } />
+        <Route path="/account-verification/:token" element={ <AccountVerification /> } />
         <Route path="/edit-event/:id" element={ <EditEvent /> } />
       </Routes>
     </Router>

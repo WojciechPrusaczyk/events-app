@@ -14,7 +14,7 @@ const ResetPassword = () => {
 
     const resetPassword = (new_password) => {
        axios
-          .post(`${window.location.protocol}//${window.location.host}/api/reset_password/`, {
+          .post(`${window.location.protocol}//${window.location.host}/api/reset-password/`, {
               password: new_password,
               token: token
           }).then(response => {
