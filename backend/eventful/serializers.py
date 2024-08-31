@@ -30,13 +30,15 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = UserSettings
         fields = '__all__'
 
-
-class EventSerializer(serializers.ModelSerializer):
-    class Meta(object):
-        model = Events
-        fields = '__all__'
-
 class LocationSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Locations
         fields = '__all__'
+
+class EventSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(read_only=True)
+    class Meta(object):
+        model = Events
+        fields = '__all__'
+
+

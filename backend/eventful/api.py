@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Users, Events, UserSettings
-from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
+from .models import Users, Events, UserSettings, Locations
+from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, LocationSerializer
 from .utils import *
 
 from datetime import datetime, timedelta
@@ -345,6 +345,11 @@ def createEvent(request):
     letters = string.ascii_lowercase
     length = 12
     event_token = ''.join(random.choice(letters) for i in range(length))  # Zmieniono nazwę tokena na event_token
+    location = Locations(
+        longitude= "18.0166862",
+        latitude="53.1231938"
+    )
+    location.save()
 
     # Tworzenie obiektu wydarzenia
     newEvent = Events(
@@ -357,7 +362,8 @@ def createEvent(request):
         isactive=False,
         ispublic=False,
         joinapproval=True,
-        token=event_token
+        token=event_token,
+        location=location
     )
     newEvent.save()
 
@@ -385,7 +391,7 @@ def getEvent(request):
 @api_view(["POST"])
 def editEventApi(request):
     # Checking token and user
-    token = request.data.get('token')
+    token = request.COOKIES.get('token')
     if not token:
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
@@ -398,9 +404,14 @@ def editEventApi(request):
     if not eventId:
         return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
     event = Events.objects.get(id=eventId, supervisor=user)
+    locationObject = Locations()
 
     try:
-        locationData = UserSettingsSerializer(data=request.data.get("location"))
+        locationObject.placeId = request.data.get('location').get("placeId")
+        locationObject.formattedAddress = request.data.get('location').get("formattedAddress")
+        locationObject.latitude = request.data.get('location').get("latitude")
+        locationObject.longitude = request.data.get('location').get("longitude")
+        locationObject.save()
     except:
         return Response({"detail": "Cant assign location"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -413,9 +424,9 @@ def editEventApi(request):
     isactive = request.data.get('isactive')
     ispublic = request.data.get('ispublic')
     joinapproval = request.data.get('joinapproval')
-    location = locationData
+    location = locationObject
 
-    if name is not None:
+    if name is not None and name != "New Event" and name != "":
         event.name = name
     if description is not None:
         event.description = description

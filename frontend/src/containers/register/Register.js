@@ -140,7 +140,7 @@ class Register extends Component {
 
   validateUsername = async (username) => {
       try {
-          const result = await axios.post(`${window.location.protocol}//${window.location.host}/api/checkUsername/`, {
+          const result = await axios.post(`${window.location.protocol}//${window.location.host}/api/check-username/`, {
               username: username
           });
           return !result.data.detail;
