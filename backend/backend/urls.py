@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from eventful import views
+from eventful import api
 from rest_framework import routers
 
 
@@ -27,24 +28,24 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),
     path("login/", views.index, name="login"),
-    path("forgot_password/", views.index, name="forgot_password"),
+    path("forgot-password/", views.index, name="forgot_password"),
 
-    path("reset_password/<str:token>", views.view_reset_password, name="reset_password"),
-    path("account_verification/<str:token>", views.view_account_verification, name="account_verification"),
+    path("reset-password/<str:token>", views.view_reset_password, name="reset_password"),
+    path("account-verification/<str:token>", views.view_account_verification, name="account_verification"),
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
 
-    path("api/", views.viewAPI, name="view_api"),
-    path("api/register/", views.register, name="api_register"),
-    path("api/login/", views.login, name="api_login"),
-    path("api/user/", views.user, name="api_user"),
-    path("api/checkUsername/", views.checkUsername, name="api_check_user"),
-    path("api/logout/", views.logout, name="api_logout"),
-    path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
-    path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
-    path("api/reset_password/", views.reset_password, name="api_reset_password"),
-    path("api/create-event/", views.createEvent, name="api_create_event"),
-    path("api/get-event/", views.getEvent, name="api_get_event"),
-    path("api/edit-event/", views.editEventApi, name="api_edit_event"),
-    path("api/search-users/", views.searchUsers, name="api_edit_event")
+    path("api/", api.viewAPI, name="view_api"),
+    path("api/register/", api.register, name="api_register"),
+    path("api/login/", api.login, name="api_login"),
+    path("api/user/", api.user, name="api_user"),
+    path("api/check-username/", api.checkUsername, name="api_check_user"),
+    path("api/logout/", api.logout, name="api_logout"),
+    path("api/logout-username/", api.logoutUsername, name="api_logout_username"),
+    path("api/forgot-password/", api.forgotPassword, name="api_forgot_password"),
+    path("api/reset-password/", api.resetPassword, name="api_reset_password"),
+    path("api/create-event/", api.createEvent, name="api_create_event"),
+    path("api/get-event/", api.getEvent, name="api_get_event"),
+    path("api/edit-event/", api.editEventApi, name="api_edit_event"),
+    path("api/search-users/", api.searchUsers, name="api_edit_event")
 ]
 
