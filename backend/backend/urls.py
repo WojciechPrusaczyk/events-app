@@ -30,8 +30,8 @@ urlpatterns = [
     path("login/", views.index, name="login"),
     path("forgot-password/", views.index, name="forgot_password"),
 
-    path("reset-password/<str:token>", views.view_reset_password, name="reset_password"),
-    path("account-verification/<str:token>", views.view_account_verification, name="account_verification"),
+    path("reset-password/<str:token>", views.viewResetPassword, name="reset_password"),
+    path("account-verification/<str:token>", views.viewAccountVerification, name="account_verification"),
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
 
     path("api/", api.viewAPI, name="view_api"),
