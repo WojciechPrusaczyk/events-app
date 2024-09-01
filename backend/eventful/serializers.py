@@ -4,7 +4,7 @@ from .models import Users, Events, UserSettings, Locations
 class LoginUserSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Users
-        exclude = ("password","lastlocation","lastlogin","userSetting","recentip","registrationdate")
+        exclude = ("password","lastlocation","lastlogin","userSetting","recentip","registrationdate","isactive","token")
         read_only_fields = ["uid"]
 
 class RegisterUserSerializer(serializers.ModelSerializer):

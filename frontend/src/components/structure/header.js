@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 
 const Logout = () => {
     axios
-        .post(`${window.location.protocol}//${window.location.host}/api/logoutUsername/`, {
+        .post(`${window.location.protocol}//${window.location.host}/api/logout-username/`, {
                 username: Cookies.get('username')
             }, {
                 headers: {
@@ -52,10 +52,8 @@ const Header = (props) => {
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
                     username: Cookies.get('username')
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${Cookies.get('token')}`
-                    }
+                },{
+                    withCredentials: true
                 })
                 .then(result => {
                     if (result.status === 201) {

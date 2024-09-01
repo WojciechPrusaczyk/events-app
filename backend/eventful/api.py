@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from .models import Users, Events, UserSettings, Locations
-from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, LocationSerializer
+from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
+    LocationSerializer
 from .utils import *
 
 from datetime import datetime, timedelta
@@ -63,7 +64,6 @@ def login(request):
                         expires=1209600)
 
     return response
-
 
 
 @api_view(["POST"])
@@ -136,10 +136,25 @@ def register(request):
 
         return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
+
 @csrf_exempt
 @api_view(["POST"])
 def user(request):
+    # Checking token and user
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
     username = request.data.get("username")
+    id = request.data.get("id", None)
+
+    if id is not None:
+        userSerializer = LoginUserSerializer(Users.objects.get(uid=id))
+        return Response({"user": userSerializer.data}, status=status.HTTP_200_OK)
     if not username:
         return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
@@ -159,7 +174,6 @@ def user(request):
         )
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @csrf_exempt
@@ -186,7 +200,6 @@ def checkUsername(request):
 
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(["POST"])
@@ -217,7 +230,6 @@ def logout(request):
     response.delete_cookie('token')
 
     return response
-
 
 
 @api_view(["POST"])
@@ -299,7 +311,6 @@ def forgotPassword(request):
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
 
-
 @api_view(["POST"])
 def resetPassword(request):
     token = request.data.get("token")
@@ -320,7 +331,6 @@ def resetPassword(request):
         return Response({"detail": "Password changed"}, status=status.HTTP_200_OK)
 
     return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(["POST"])
@@ -346,7 +356,6 @@ def createEvent(request):
     # Konwersja na strefę czasową Europe/Warsaw
     warsaw_tz = pytz.timezone('Europe/Warsaw')
     currentTime = currentTimeUTC.astimezone(warsaw_tz)
-
 
     # Tworzenie unikalnego tokenu
     letters = string.ascii_lowercase
@@ -404,7 +413,9 @@ def getEvent(request):
         except Users.DoesNotExist:
             return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"detail": "User has no privileges to get requested event."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "User has no privileges to get requested event."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -428,6 +439,7 @@ def getEvents(request):
         return Response({"events": eventSerializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({"detail": "User is not supervising any events."}, status=status.HTTP_204_NO_CONTENT)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -502,12 +514,12 @@ def editEventApi(request):
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@csrf_exempt
+@api_view(['POST'])
 def searchUsers(request):
     search_str = request.data.get('query', '')
     limit = request.data.get('limit', None)
     token = request.COOKIES.get('token')
-
     if not token:
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
@@ -522,14 +534,16 @@ def searchUsers(request):
     users = Users.objects.filter(username__icontains=search_str)
 
     # If a limit is provided, apply it
-    if limit:
+    if limit and 32 >= limit > 0:
         try:
             limit = int(limit)
             users = users[:limit]
         except ValueError:
             return Response({"detail": "Limit must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail": "Limit must be between 32 and 1."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Serialize the data
-    user_data = [{"id": user.uid, "username": user.username} for user in users]
+    user_data = [{"id": user.uid, "username": user.username, "email": user.email} for user in users]
 
     return Response({"users": user_data}, status=status.HTTP_200_OK)

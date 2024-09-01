@@ -12,6 +12,7 @@ import TimeIcon from "../../images/icons/clockIcon.svg"
 import DateIcon from "../../images/icons/dateIcon.svg"
 import TextEditor from "../../components/textEditor";
 import Loader from "../../components/loader";
+import Cookies from "js-cookie";
 
 const EditEvent = () => {
     const {id: eventId} = useParams();
@@ -38,6 +39,8 @@ const EditEvent = () => {
     const [placeId, setPlaceId] = useState("");
     const [markerPosition, setMarkerPosition] = useState(null);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [usersList, setUsersList] = useState([]);
+    const [supervisor, setSupervisor] = useState({});
 
     useEffect(() => {
         if (eventId) {
@@ -79,6 +82,7 @@ const EditEvent = () => {
                             if ( null != data.location.placeId)
                                 setPlaceId(data.location.placeId);
                         }
+                        changeSupervisor(data.supervisor);
                         setIsDataLoaded(true);
                     }
                 });
@@ -122,6 +126,12 @@ const EditEvent = () => {
             const elem = document.getElementById("title");
             elem.classList += " error"
             window.location.href = "#title";
+        }
+        else if (usersList.length > 0)
+        {
+            const elem = document.getElementById("list-root");
+            elem.classList += " error"
+            window.location.href = "#list-root";
         } else {
             const preparedData = {
                 id: eventId,
@@ -194,6 +204,49 @@ const EditEvent = () => {
             console.error('e.latLng is undefined');
         }
     };
+
+    const handleSupervisorInputChange = (username) =>
+    {
+        axios
+            .post(`${window.location.protocol}//${window.location.host}/api/search-users/`, {
+                query: username,
+                limit: 8,
+            },{
+                withCredentials: true
+            }).then((response) => {
+               if (response.status === 200) {
+                    setUsersList(response.data.users);
+               }
+            })
+    }
+    const changeSupervisor = (id) => {
+
+        axios
+        .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
+            id: id
+        },{
+            withCredentials: true
+        }).then((response) => {
+           if (response.status === 200) {
+                setSupervisor(response.data.user);
+                setUsersList([]);
+                document.getElementById("supervisor").value = response.data.user.username;
+           }
+        })
+    }
+
+    let usersListView = <div id="users-list"><div id="list-root"> {usersList.map((user) => {
+        return <p key={Object.values(user)[0]}>
+            <button onClick={(e) => {
+                e.preventDefault()
+                changeSupervisor(Object.values(user)[0])
+            }} aria-label="choose selected supervisor">
+                <h1>{Object.values(user)[1]}</h1>
+                <h2>{Object.values(user)[2]}</h2>
+            </button>
+        </p>
+    })}
+    </div></div>
 
     return (
         <div>
@@ -279,7 +332,11 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-caption">User who manages event. Changes after saving event.</span>
                             </label>
                             <input id="supervisor" type="text" className="univForm-container-textInput"
-                                   onChange={handleChange('supervisor')} defaultValue={formData.supervisor}/>
+                                   onChange={ (e) => {
+                                       handleSupervisorInputChange(e.target.value)
+                                   }} defaultValue={supervisor.username}
+                            />
+                            {usersList.length > 0 && usersListView}
                         </p>
                         <p className="toggle-wrapper">
                             <p className="univForm-container-toggle">

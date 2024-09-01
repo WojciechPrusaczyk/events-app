@@ -19,8 +19,8 @@ Service for creating and managing events.
 1. [x] Name, logo, deciding about tech stack
 2. [x] Registration
 3. [x] Signing in
-4. [ ] Creating event (mostly basic info)
-5. [ ] Event edition
+4. [x] Creating event (mostly basic info)
+5. [x] Event edition
 6. [ ] Creating segments
 7. [ ] Segment edition
 8. [ ] Joining and sharing events
@@ -28,6 +28,11 @@ Service for creating and managing events.
 10. [ ] Galleries (for events and segments)
 11. [ ] Event map
 12. [ ] Mobile app
+
+### Bugs
+
+1. [ ] date picker in registration is broken
+2. [ ] toggle nie jest focusable
 
 # Installation
 
