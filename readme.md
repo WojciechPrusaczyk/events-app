@@ -32,7 +32,9 @@ Service for creating and managing events.
 ### Bugs
 
 1. [ ] date picker in registration is broken
-2. [ ] toggle nie jest focusable
+2. [ ] toggle is not jest focusable
+3. [ ] email sent to verify user have wrong template (or is just copied)
+4. [ ] not verified user can still use app in every way
 
 # Installation
 
