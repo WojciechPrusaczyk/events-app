@@ -28,10 +28,11 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),
     path("login/", views.index, name="login"),
-    path("forgot-password/", views.index, name="forgot_password"),
+    path("forgot-password/", views.index, name="forgotPassword"),
+    path("events-list/", views.index, name="events_list"),
 
-    path("reset-password/<str:token>", views.viewResetPassword, name="reset_password"),
-    path("account-verification/<str:token>", views.viewAccountVerification, name="account_verification"),
+    path("reset-password/<str:token>", views.viewResetPassword, name="resetPassword"),
+    path("account-verification/<str:token>", views.viewAccountVerification, name="accountVerification"),
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
 
     path("api/", api.viewAPI, name="view_api"),
@@ -45,7 +46,8 @@ urlpatterns = [
     path("api/reset-password/", api.resetPassword, name="api_reset_password"),
     path("api/create-event/", api.createEvent, name="api_create_event"),
     path("api/get-event/", api.getEvent, name="api_get_event"),
+    path("api/get-events/", api.getEvents, name="api_get_events"),
     path("api/edit-event/", api.editEventApi, name="api_edit_event"),
-    path("api/search-users/", api.searchUsers, name="api_edit_event")
+    path("api/search-users/", api.searchUsers, name="api_search_users")
 ]
 

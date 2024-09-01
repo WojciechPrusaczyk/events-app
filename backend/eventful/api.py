@@ -380,19 +380,54 @@ def createEvent(request):
 @csrf_exempt
 @api_view(["POST"])
 def getEvent(request):
+    # Checking token and user
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding event
     eventId = request.data.get("id")
     if not eventId:
         return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
-    event = Events.objects.get(id=eventId)
+    event = Events.objects.get(id=eventId, supervisor=user.uid)
     eventSerializer = EventSerializer(event)
 
-    try:
-        return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    # TODO: jesli użytkownik nie jest nadzorcą, to sprawdzić czy jest na liście uczestników (chyba że wydarzenie jest publiczne)
 
+    if event:
+        try:
+            return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
+        except Users.DoesNotExist:
+            return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail": "User has no privileges to get requested event."}, status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@api_view(["POST"])
+def getEvents(request):
+    # Checking token and user
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Finding events where user is a supervisor
+    events = Events.objects.filter(supervisor=user.uid)
+
+    # Serializing events
+    if events.exists():
+        eventSerializer = EventSerializer(events, many=True)
+        return Response({"events": eventSerializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({"detail": "User is not supervising any events."}, status=status.HTTP_204_NO_CONTENT)
 
 @csrf_exempt
 @api_view(["POST"])

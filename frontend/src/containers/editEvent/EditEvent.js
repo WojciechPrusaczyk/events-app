@@ -11,6 +11,7 @@ import TimePicker from "../../components/timePicker";
 import TimeIcon from "../../images/icons/clockIcon.svg"
 import DateIcon from "../../images/icons/dateIcon.svg"
 import TextEditor from "../../components/textEditor";
+import Loader from "../../components/loader";
 
 const EditEvent = () => {
     const {id: eventId} = useParams();
@@ -43,6 +44,8 @@ const EditEvent = () => {
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/get-event/`, {
                     id: eventId
+                }, {
+                    withCredentials: true
                 })
                 .then((response) => {
                     if (response.status === 200) {
@@ -196,9 +199,7 @@ const EditEvent = () => {
         <div>
             <Header/>
             <main>
-                {!isDataLoaded && <div className="loader">
-                    Loading, please wait
-                </div>}
+                {!isDataLoaded && <Loader />}
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>

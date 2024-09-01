@@ -3,6 +3,7 @@ import axios from "axios";
 import logo from "../../images/logo.png";
 import userIcon from "../../images/icons/userIcon.svg";
 import addIcon from "../../images/icons/addIcon.svg";
+import listIcon from "../../images/icons/listIcon.svg";
 import Cookies from 'js-cookie';
 
 const Logout = () => {
@@ -73,18 +74,24 @@ const Header = (props) => {
     const company_name = "Eventful";
     const company_logo = logo;
     const userNavigation = <div className="header-user">
-        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
-        <button aria-label="add bew event" className="header-user-button" onClick={CreateEvent}>
-            <img src={addIcon} alt="add new event" aria-hidden={true} />
+        <button className="header-user-button"
+                onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN
         </button>
-        <button aria-label="user settings" className="header-user-button" onClick={ (e) => {
+        <button aria-label="show events list" className="header-user-button" onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/events-list`}>
+            <img src={listIcon} alt="add new event" aria-hidden={true}/>
+        </button>
+        <button aria-label="add new event" className="header-user-button" onClick={CreateEvent}>
+            <img src={addIcon} alt="add new event" aria-hidden={true}/>
+        </button>
+        <button aria-label="user settings" className="header-user-button" onClick={(e) => {
             Logout();
         }}>
-            <img src={userIcon} alt="user settings" aria-hidden={true} />
+            <img src={userIcon} alt="user settings" aria-hidden={true}/>
         </button>
     </div>;
     const navigation = <div className="header-user">
-        <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
+        <button className="header-user-button"
+                onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>
         <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/register`}> Sign up</button>
         <button className="header-user-button" onClick={ () => window.location.href = `${window.location.protocol}//${window.location.host}/login`}>Log in</button>
     </div>

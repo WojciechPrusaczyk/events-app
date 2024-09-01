@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from "./containers/register/Register";
 import Home from "./containers/home/Home";
 import Login from "./containers/login/Login";
-import ForgotPassword from "./containers/forgot_password/ForgotPassword";
-import ResetPassword from "./containers/reset_password/ResetPassword";
-import AccountVerification from "./containers/account_verification/AccountVerification";
-import EditEvent from "./containers/createEvent/EditEvent";
+import ForgotPassword from "./containers/forgotPassword/ForgotPassword";
+import ResetPassword from "./containers/resetPassword/ResetPassword";
+import AccountVerification from "./containers/accountVerification/AccountVerification";
+import EditEvent from "./containers/editEvent/EditEvent";
+import EventsList from "./containers/eventsList/EventsList";
 function App() {
   return (
     <Router>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/reset-password/:token" element={ <ResetPassword /> } />
         <Route path="/account-verification/:token" element={ <AccountVerification /> } />
         <Route path="/edit-event/:id" element={ <EditEvent /> } />
+        <Route path="/events-list" element={ <EventsList /> } />
       </Routes>
     </Router>
   );

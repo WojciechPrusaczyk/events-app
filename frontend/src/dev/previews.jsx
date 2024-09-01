@@ -1,6 +1,6 @@
 import {ComponentPreview, Previews} from '@react-buddy/ide-toolbox'
 import {PaletteTree} from './palette'
-import EditEvent from "../containers/createEvent/EditEvent";
+import EditEvent from "../containers/editEvent/EditEvent";
 
 const ComponentPreviews = () => {
     return (

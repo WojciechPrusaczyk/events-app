@@ -47,7 +47,7 @@ def open_email_template():
     current_dir = os.path.dirname(__file__)
 
     # Construct the relative path to EmailTemplate.html
-    template_path = os.path.join(current_dir, '..', '..', 'frontend', 'src', 'containers', 'forgot_password',
+    template_path = os.path.join(current_dir, '..', '..', 'frontend', 'src', 'containers', 'forgotPassword',
                                  'EmailTemplate.html')
 
     # Normalize the path (optional)
@@ -68,7 +68,7 @@ def open_verification_template():
     current_dir = os.path.dirname(__file__)
 
     # Construct the relative path to EmailTemplate.html
-    template_path = os.path.join(current_dir, '..', '..', 'frontend', 'src', 'containers', 'account_verification',
+    template_path = os.path.join(current_dir, '..', '..', 'frontend', 'src', 'containers', 'accountVerification',
                                  'AccountVerificationTemplate.html')
 
     # Normalize the path (optional)
