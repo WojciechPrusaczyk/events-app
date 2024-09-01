@@ -2,7 +2,13 @@
 @import url("../components/footer.scss");
 @import "../colors";
 
+@font-face {
+ font-family: 'Inter';
+ src: url("../../fonts/Inter/Inter-VariableFont_opsz,wght.ttf");
+}
+
 body {
   background-color: $main-white;
+  font-family: "Inter", serif;
 }
 

@@ -1,4 +1,6 @@
+import pytz
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
@@ -339,14 +341,19 @@ def createEvent(request):
         return Response({"event_id": existingEvent.id, "detail": "Event already exists."}, status=status.HTTP_200_OK)
 
     # Tworzenie nowego wydarzenia
-    currentTime = datetime.now()  # aktualna data
+    currentTimeUTC = timezone.now()
+
+    # Konwersja na strefę czasową Europe/Warsaw
+    warsaw_tz = pytz.timezone('Europe/Warsaw')
+    currentTime = currentTimeUTC.astimezone(warsaw_tz)
+
 
     # Tworzenie unikalnego tokenu
     letters = string.ascii_lowercase
     length = 12
     event_token = ''.join(random.choice(letters) for i in range(length))  # Zmieniono nazwę tokena na event_token
     location = Locations(
-        longitude= "18.0166862",
+        longitude="18.0166862",
         latitude="53.1231938"
     )
     location.save()

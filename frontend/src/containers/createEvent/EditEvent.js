@@ -3,9 +3,13 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
 import axios from "axios";
-import Cookies from "js-cookie";
 import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
 import {useParams} from 'react-router-dom';
+import "../../styles/components/form.scss"
+import DatePicker from "../../components/datePicker";
+import TimePicker from "../../components/timePicker";
+import TimeIcon from "../../images/icons/clockIcon.svg"
+import DateIcon from "../../images/icons/dateIcon.svg"
 
 const EditEvent = () => {
     const {id: eventId} = useParams();
@@ -61,7 +65,7 @@ const EditEvent = () => {
                         {
                             const lat = parseFloat(data.location.latitude);
                             const lng = parseFloat(data.location.longitude);
-                            console.log({lat, lng})
+
                             setSelectedLocation({lat, lng});
                             setMarkerPosition({lat, lng});
 
@@ -77,18 +81,16 @@ const EditEvent = () => {
         }
     }, [eventId]);
 
-    // Funkcja do konwersji daty z bazy danych na format dla <input type="date">
     const formatDateForInput = (dateString) => {
-      const date = new Date(dateString);
+      const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Dodaj 1, bo miesiące są 0-indeksowane
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są 0-indeksowane
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     };
 
-    // Funkcja do konwersji godziny z bazy danych na format dla <input type="time">
     const formatTimeForInput = (dateString) => {
-      const date = new Date(dateString);
+      const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       return `${hours}:${minutes}`;
@@ -97,7 +99,15 @@ const EditEvent = () => {
     function formatForBackend(dateInput, timeInput) {
         const combinedDateTime = `${dateInput}T${timeInput}`;
         const dateObject = new Date(combinedDateTime);
-        return dateObject.toISOString();
+
+        // Obliczanie offsetu w minutach i przeliczanie na milisekundy
+        const timezoneOffset = dateObject.getTimezoneOffset() * 60 * 1000;
+
+        // Korygowanie daty przez odjęcie offsetu
+        const localTime = new Date(dateObject.getTime() - timezoneOffset);
+
+        // Zwraca w formacie ISO z zachowaniem lokalnej strefy czasowej
+        return localTime.toISOString().slice(0, 19);  // usunięcie 'Z' na końcu, aby nie było błędnie interpretowane jako UTC
     }
 
     const handleFormSubmit = (event) => {
@@ -197,7 +207,7 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-title">Description</span>
                                 <span className="univForm-container-label-caption">Describe your event to users, encourage them to attend, include social media links.</span>
                             </label>
-                            <textarea id="description" style={{resize: "none"}} className="univForm-container-textInput"
+                            <textarea id="description" className="univForm-container-textInput"
                                       onChange={handleChange('description')} defaultValue={formData.description}/>
                         </p>
                         <p>
@@ -205,31 +215,55 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-title">Rules</span>
                                 <span className="univForm-container-label-caption">Establish set of rules for attendants, to inform them what is inacceptable.</span>
                             </label>
-                            <textarea id="rules" style={{resize: "none"}} className="univForm-container-textInput"
+                            <textarea id="rules" className="univForm-container-textInput"
                                       onChange={handleChange('rules')} defaultValue={formData.rules}/>
                         </p>
                         <p>
                             <fieldset>
-                                <legend>
+                                <legend className="univForm-container-label">
                                     <span className="univForm-container-label-title">Start time</span>
                                     <span className="univForm-container-label-caption">Time when event is going to start. Attendants will be informed automatically before event starts.</span>
                                 </legend>
-                                <input id="startDate" type="date" className="univForm-container-date"
-                                       aria-label="start date" onChange={handleChange('startDate')} defaultValue={formData.startDate}/>
-                                <input id="startTime" type="time" className="univForm-container-time"
-                                       aria-label="start time" onChange={handleChange('startTime')} defaultValue={formData.startTime}/>
+                                <TimePicker
+                                    id="startTime"
+                                    className="univForm-container-time"
+                                    handleChange={(e) => handleChange('startTime')(e)}
+                                    timeValue={formData.startTime}
+                                />
+                                <img className="univForm-container-dateTimeIcons" src={TimeIcon}
+                                     alt="choose time icon"/>
+                                <DatePicker
+                                    id="startDate"
+                                    className="univForm-container-date"
+                                    handleChange={(e) => handleChange('startDate')(e)}
+                                    dateValue={formData.startDate}
+                                />
+                                <img className="univForm-container-dateTimeIcons" src={DateIcon}
+                                     alt="choose date icon"/>
                             </fieldset>
                         </p>
                         <p>
                             <fieldset>
-                                <legend>
+                                <legend className="univForm-container-label">
                                     <span className="univForm-container-label-title">End time</span>
                                     <span className="univForm-container-label-caption">Time when event is going to end. Attendants will be informed automatically before event ends.</span>
                                 </legend>
-                                <input id="endDate" type="date" className="univForm-container-date"
-                                       aria-label="end date" onChange={handleChange('endDate')} defaultValue={formData.endDate}/>
-                                <input id="endTime" type="time" className="univForm-container-time"
-                                       aria-label="end time" onChange={handleChange('endTime')} defaultValue={formData.endTime}/>
+                                <TimePicker
+                                    id="endTime"
+                                    className="univForm-container-time"
+                                    handleChange={(e) => handleChange('endTime')(e)}
+                                    timeValue={formData.endTime}
+                                />
+                                <img className="univForm-container-dateTimeIcons" src={TimeIcon}
+                                     alt="choose time icon"/>
+                                <DatePicker
+                                    id="endDate"
+                                    className="univForm-container-date"
+                                    handleChange={(e) => handleChange('endDate')(e)}
+                                    dateValue={formData.endDate}
+                                />
+                                <img className="univForm-container-dateTimeIcons" src={DateIcon}
+                                     alt="choose date icon"/>
                             </fieldset>
                         </p>
                         <p>
@@ -240,45 +274,67 @@ const EditEvent = () => {
                             <input id="supervisor" type="text" className="univForm-container-textInput"
                                    onChange={handleChange('supervisor')} defaultValue={formData.supervisor}/>
                         </p>
-                        <p>
-                            <label className="univForm-container-label" htmlFor="isActive">
-                                <span className="univForm-container-label-title">Is active</span>
-                                <span className="univForm-container-label-caption">Determines if is event active and visible to all users.</span>
-                            </label>
-                            <input id="isActive" type="checkbox" className="univForm-container-checkboxInput"
-                                   onChange={handleChange('isActive')} defaultChecked={formData.isActive}/>
+                        <p className="toggle-wrapper">
+                            <p className="univForm-container-toggle">
+                                <p>
+                                    <span className="univForm-container-toggle-label-title">Is active</span>
+                                    <span className="univForm-container-toggle-label-caption">Determines if is event active and visible to all users.</span>
+                                </p>
+                                <div className="univForm-container-toggle-wrapper">
+                                    <input className="univForm-container-toggle tgl tgl-light" id="isActive" type="checkbox"
+                                           aria-label="is active" onChange={handleChange('isActive')}
+                                           defaultChecked={formData.isActive}/>
+                                    <label title="is active" aria-hidden="true" className="tgl-btn" htmlFor="isActive"/>
+                                </div>
+                            </p>
+                            <p className="univForm-container-toggle">
+                                <p>
+                                    <span className="univForm-container-toggle-label-title">Is public</span>
+                                    <span className="univForm-container-toggle-label-caption">Determines if is event publicly accessible.</span>
+                                </p>
+                                <div className="univForm-container-toggle-wrapper">
+                                    <input className="univForm-container-toggle tgl tgl-light" id="isPublic" type="checkbox"
+                                           aria-label="is public" onChange={handleChange('isPublic')}
+                                           defaultChecked={formData.isPublic}/>
+                                    <label title="is public" aria-hidden="true" className="tgl-btn" htmlFor="isPublic"/>
+                                </div>
+                            </p>
+                            <p className="univForm-container-toggle">
+                                <p>
+                                    <span className="univForm-container-toggle-label-title">Join through approval</span>
+                                    <span className="univForm-container-toggle-label-caption">Allows users to join only after your approval.</span>
+                                </p>
+                                <div className="univForm-container-toggle-wrapper">
+                                    <input className="univForm-container-toggle tgl tgl-light" id="joinApproval" type="checkbox"
+                                           aria-label="Join approval" onChange={handleChange('joinApproval')}
+                                           defaultChecked={formData.joinApproval}/>
+                                    <label title="Join approval" aria-hidden="true" className="tgl-btn" htmlFor="joinApproval"/>
+                                </div>
+                            </p>
                         </p>
                         <p>
-                            <label className="univForm-container-label" htmlFor="isPublic">
-                                <span className="univForm-container-label-title">Is public</span>
-                                <span className="univForm-container-label-caption">Determines if is event publicly accessible.</span>
+                            <label className="univForm-container-label" htmlFor="map">
+                                <span className="univForm-container-label-title">Main location</span>
+                                <span className="univForm-container-label-caption">Choose main location where event will take place.</span>
                             </label>
-                            <input id="isPublic" type="checkbox" className="univForm-container-checkboxInput"
-                                   onChange={handleChange('isPublic')} defaultChecked={formData.isPublic}/>
+                            <APIProvider apiKey={'AIzaSyDOYFpDSbiZEuqLgSWLkOYEhZnEPKa-g7g'}
+                                         onLoad={() => console.log('Maps API has loaded.')}>
+                                <Map
+                                    defaultZoom={13}
+                                    defaultCenter={selectedLocation}
+                                    onClick={handleMapClick}
+                                    className="univForm-container-mapInput"
+                                    id="map"
+                                >
+                                    {markerPosition && (
+                                        <Marker position={markerPosition}/>
+                                    )}
+                                </Map>
+                            </APIProvider>
                         </p>
-                        <p>
-                            <label className="univForm-container-label" htmlFor="joinApproval">
-                                <span className="univForm-container-label-title">Join through approval</span>
-                                <span className="univForm-container-label-caption">Allows users to join only after your approval.</span>
-                            </label>
-                            <input id="joinApproval" type="checkbox" className="univForm-container-checkboxInput"
-                                   onChange={handleChange('joinApproval')} defaultChecked={formData.joinApproval}/>
-                        </p>
-                        <APIProvider apiKey={'AIzaSyDOYFpDSbiZEuqLgSWLkOYEhZnEPKa-g7g'}
-                                     onLoad={() => console.log('Maps API has loaded.')}>
-                            <Map
-                                defaultZoom={13}
-                                defaultCenter={selectedLocation}
-                                onClick={handleMapClick} // Dodanie obsługi zdarzenia kliknięcia
-                                style={{height: "400px"}}
-                            >
-                                {markerPosition && (
-                                    <Marker position={markerPosition}/>
-                                )}
-                            </Map>
-                        </APIProvider>
                         <p>
                             <input id="submit" type="submit" className="univForm-container-submitInput"
+                                   value="Save"
                                    onClick={handleFormSubmit}/>
                         </p>
                     </form>}

@@ -1,0 +1,121 @@
+@import "../colors";
+@import "../mixins";
+.univForm-container{
+  background-color: $main-lighter;
+  padding: 20px;
+  width: 70%;
+  border-radius: 20px;
+  margin: auto;
+  &-title{
+    width: 100%;
+    font-size: 1.65rem;
+    margin: 0;
+    color: $black;
+    font-weight: 900;
+  }
+  p{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: start;
+  }
+  &-label, &-toggle-label{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    span{
+      width: 100%;
+    }
+    &-title{
+      font-size: 1.4rem;
+      color: $black;
+      font-weight: 800;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    &-caption{
+      font-size: 1rem;
+      color: $black-light;
+      font-weight: 700;
+      margin: 12.5px 0;
+    }
+  }
+  fieldset{
+    border: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: 100%;
+  }
+  &-textInput{
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+    width: calc( 100% - 30px );
+  }
+  textarea{
+    resize: none;
+    height: 200px;
+  }
+  &-mapInput{
+    height: 450px;
+    width: 100%;
+    margin: auto;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+    > div{
+      border-radius: 20px;
+    }
+  }
+  &-submitInput {
+    margin: 50px auto auto;
+    @include button($success-light, $black);
+    width: 50%;
+  }
+  .error {
+    border: 3px solid $danger;
+    &:focus-visible{
+      outline: none;
+    }
+  }
+  &-date{
+    @include input-date($black-light, $main-white);
+    padding: 15px;
+    font-size: 1.1rem;
+    width: 40%;
+    margin-left: 40px;
+    input, select{
+      padding: 15px;
+      font-size: 1.1rem;
+    }
+  }
+  &-time{
+    @include input-time($black-light, $main-white);
+    padding: 15px 15px 15px 0;
+    font-size: 1.1rem;
+    width: 15%;
+    input, span{
+      padding: 15px;
+      font-size: 1.1rem;
+    }
+  }
+  &-dateTimeIcons {
+    height: 35px;
+    width: 35px;
+    margin: 25px 5px;
+  }
+  &-toggle {
+    @include input-checkbox( $black, $white, $main-dark);
+    width: 33%;
+  }
+  .toggle-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    .univForm-container-toggle{
+      width: 33%;
+      height: 100%;
+    }
+  }
+}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-const DatePicker = ({ handleChange, id, dateValue }) => {
+const DatePicker = ({ handleChange, id, dateValue, className }) => {
   const actualId = id || "date-picker";
+  const actualClassName = className || "date-picker";
 
   const parseDate = (dateStr) => {
     if (dateStr) {
@@ -27,20 +28,30 @@ const DatePicker = ({ handleChange, id, dateValue }) => {
   }, [dateValue]);
 
   const synchronizeTime = (newDay, newMonth, newYear) => {
-    const dayValue = newDay !== undefined ? newDay : day;
+    let tempDayValue = newDay !== undefined ? newDay : day;
+    tempDayValue = tempDayValue > 31 ? 31 : tempDayValue
+    let dayValue = "";
+    if(tempDayValue.length === 3)
+    {
+        dayValue = tempDayValue.toString().substring(1);
+    } else {
+        dayValue = tempDayValue.toString();
+    }
+
+
     const monthValue = newMonth !== undefined ? newMonth : month;
     const yearValue = newYear !== undefined ? newYear : year;
 
     if (dayValue && monthValue !== undefined && yearValue) {
       const formattedMonth = (Number(monthValue) + 1).toString().padStart(2, '0'); // Convert to one-indexed month
-      const formattedDay = dayValue.toString().padStart(2, '0');
+      const formattedDay = dayValue.padStart(2, '0');
       const formattedDate = `${yearValue}-${formattedMonth}-${formattedDay}`;
       handleChange({ target: { value: formattedDate } });
     }
   };
 
   return (
-    <div className="date-wrapper">
+    <div className={actualClassName}>
       {/* Dzień */}
       <input
         id={`${actualId}-day`}
@@ -90,7 +101,7 @@ const DatePicker = ({ handleChange, id, dateValue }) => {
         aria-label="year"
         placeholder="yyyy"
         min="1900"
-        max={Number(new Date().getFullYear() - 12)}
+        max="2100"
         value={year}
         onChange={(e) => {
           const newYear = e.target.value;
