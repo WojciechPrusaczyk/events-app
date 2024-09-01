@@ -138,8 +138,7 @@ const EditEvent = () => {
                     longitude: selectedLocation.lng,
                 }
             }
-            console.log(preparedData);
-            /*axios
+            axios
                 .post(`${window.location.protocol}//${window.location.host}/api/edit-event/`, preparedData, {
                     withCredentials: true,
                 })
@@ -148,7 +147,7 @@ const EditEvent = () => {
                     {
                         window.location.href = `${window.location.protocol}//${window.location.host}/`
                     }
-                })*/
+                })
         }
     };
 
