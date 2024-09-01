@@ -55,9 +55,24 @@
     box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
     width: calc( 100% - 30px );
   }
-  textarea{
-    resize: none;
-    height: 200px;
+  &-bigTextInput{
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+    width: calc( 100% - 30px );
+    background-color: $main-white;
+    .ql-toolbar.ql-snow{
+      border: none;
+      border-radius: 10px;
+      background-color: $main-light;
+    }
+    .ql-container.ql-snow{
+      min-height: 300px;
+      border: none;
+      font-size: 1rem;
+      font-family: "Inter", serif;
+    }
   }
   &-mapInput{
     height: 450px;

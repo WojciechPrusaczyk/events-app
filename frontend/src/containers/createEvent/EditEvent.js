@@ -10,13 +10,14 @@ import DatePicker from "../../components/datePicker";
 import TimePicker from "../../components/timePicker";
 import TimeIcon from "../../images/icons/clockIcon.svg"
 import DateIcon from "../../images/icons/dateIcon.svg"
+import TextEditor from "../../components/textEditor";
 
 const EditEvent = () => {
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
         title: "",
-        description: "",
-        rules: "",
+        description: [],
+        rules: [],
         startDate: "",
         startTime: "",
         endDate: "",
@@ -137,7 +138,8 @@ const EditEvent = () => {
                     longitude: selectedLocation.lng,
                 }
             }
-            axios
+            console.log(preparedData);
+            /*axios
                 .post(`${window.location.protocol}//${window.location.host}/api/edit-event/`, preparedData, {
                     withCredentials: true,
                 })
@@ -146,7 +148,7 @@ const EditEvent = () => {
                     {
                         window.location.href = `${window.location.protocol}//${window.location.host}/`
                     }
-                })
+                })*/
         }
     };
 
@@ -156,6 +158,13 @@ const EditEvent = () => {
             [field]: event.target.type !== "checkbox" ? event.target.value : event.target.checked,
         }));
     };
+
+    const handleArrayChange = (field) => (newDataArray) => {
+    setFormData((prevState) => ({
+        ...prevState,
+        [field]: newDataArray,
+    }));
+};
 
     const handleMapClick = (e) => {
         if (e.detail.latLng) {
@@ -207,16 +216,14 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-title">Description</span>
                                 <span className="univForm-container-label-caption">Describe your event to users, encourage them to attend, include social media links.</span>
                             </label>
-                            <textarea id="description" className="univForm-container-textInput"
-                                      onChange={handleChange('description')} defaultValue={formData.description}/>
+                            <TextEditor id="description" className="univForm-container-bigTextInput" handleChange={handleArrayChange('description')} defaultValue={formData.description} />
                         </p>
                         <p>
                             <label className="univForm-container-label" htmlFor="rules">
                                 <span className="univForm-container-label-title">Rules</span>
                                 <span className="univForm-container-label-caption">Establish set of rules for attendants, to inform them what is inacceptable.</span>
                             </label>
-                            <textarea id="rules" className="univForm-container-textInput"
-                                      onChange={handleChange('rules')} defaultValue={formData.rules}/>
+                            <TextEditor id="rules" className="univForm-container-bigTextInput" handleChange={handleArrayChange('rules')} defaultValue={formData.rules} />
                         </p>
                         <p>
                             <fieldset>
