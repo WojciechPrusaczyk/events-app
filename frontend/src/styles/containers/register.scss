@@ -50,6 +50,11 @@
 .btn-next {
   @include button( $success-light, $black-light );
   margin-top: 40px;
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-top: 40px;
+    margin-bottom: 30px;
+  }
 }
 
 h2.form-page-title {
@@ -116,6 +121,10 @@ h3.form-page-title {
       margin: 25px 0 15px;
       font-weight: 600;
     }
+
+    @media (max-width: $breakpoint-mobile) {
+      width: 70%;
+    }
   }
   &-password {
     width: 30%;
@@ -123,6 +132,9 @@ h3.form-page-title {
       @include input-password-wrapper($black, $main-white, $main-lighter);
     }
     &-validation {
+    }
+    @media (max-width: $breakpoint-mobile) {
+      width: 70%;
     }
   }
   &-info {
@@ -150,6 +162,10 @@ h3.form-page-title {
       font-weight: bold;
       color: $danger;
     }
+
+    @media (max-width: $breakpoint-mobile) {
+      width: 80%;
+    }
   }
   &-tos {
     width: 30%;
@@ -176,6 +192,11 @@ h3.form-page-title {
         margin-left: 10px;
       }
     }
+    
+    @media (max-width: $breakpoint-mobile) {
+      width: 80%;
+    }
+    
   }
   &-confirmation {
     width: 30%;

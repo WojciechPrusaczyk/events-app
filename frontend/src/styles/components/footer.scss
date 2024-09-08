@@ -72,10 +72,17 @@
         padding: 20px;
         justify-content: space-between;
 
+
+
         &-app {
             display: flex;
             width: 85%; // Adjusted width to leave space for social media links
             justify-content: space-between;
+            
+            @media (max-width: $breakpoint-mobile) {
+                display: flex;
+                flex-wrap: wrap;
+              }
 
             &-list {
                 ul {

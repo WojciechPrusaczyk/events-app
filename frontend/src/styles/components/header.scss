@@ -9,6 +9,12 @@
   border-radius: 20px;
   @include double-gradient(90deg, $main, $main-dark);
 
+  @media (max-width: $breakpoint-mobile) {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
   &-logo{
     background: $main-white;
     padding: 15px;
@@ -28,6 +34,11 @@
     color: $main-white;
     > h1 {
       margin: 0;
+    }
+    @media (max-width: $breakpoint-mobile) {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
     }
   }
   &-user {
@@ -54,5 +65,12 @@
         display: block;
       }
     }
+    @media (max-width: $breakpoint-mobile) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+    }
   }
 }
+
