@@ -16,13 +16,16 @@ const ForgotPassword = () => {
     const forgotPassword = (event, email) => {
         event.preventDefault();
         axios
-            .get(`${window.location.protocol}//${window.location.host}/api/forgot-password/`)
+            .post(`${window.location.protocol}//${window.location.host}/api/forgot-password/`)
             .then(response => {
 
                 if (response.status == 200) {
                     isFormSubmited = true;
+                    // TODO: upewnić się że działa wiadomość w przyapdku sukcesu
                 } else {
-                    console.log(response)
+                    // TODO: wyświetlić komunikat o błędzie wyświetlić czerwony tekst pod inputem
+                    //  z wiadomością o treści "Wystąpił błąd po stronmie serwera, spróbuj ponownie później."
+                    console.log(response);
                 }
             })
             .catch(error => {
