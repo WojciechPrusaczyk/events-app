@@ -24,7 +24,7 @@ const ForgotPassword = () => {
                     // TODO: upewnić się że działa wiadomość w przyapdku sukcesu
                 } else {
                     // TODO: wyświetlić komunikat o błędzie wyświetlić czerwony tekst pod inputem
-                    //  z wiadomością o treści "Wystąpił błąd po stronmie serwera, spróbuj ponownie później."
+                    //  z wiadomością o treści "Wystąpił błąd po stronie serwera, spróbuj ponownie później."
                     console.log(response);
                 }
             })

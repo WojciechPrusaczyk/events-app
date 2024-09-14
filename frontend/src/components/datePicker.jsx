@@ -51,7 +51,7 @@ const DatePicker = ({ handleChange, id, dateValue, className }) => {
   };
 
   return (
-    <div className={actualClassName}>
+    <div id={`${actualId}`} className={actualClassName}>
       {/* Dzień */}
       <input
         id={`${actualId}-day`}

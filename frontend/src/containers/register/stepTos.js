@@ -1,9 +1,9 @@
 import React from 'react';
 import PageCounter from "./pageCounter";
-import PasswordInput from "../../components/passwordInput";
 
 const StepTos = ({ register, handleChange, formData, prevStep }) => {
     let isFormValid = true;
+    let errorOccured = "";
     return (
         <div className="form-container-tos">
             <PageCounter page={3} prevStep={prevStep}/>
@@ -23,7 +23,7 @@ const StepTos = ({ register, handleChange, formData, prevStep }) => {
                     <span className="checkmark"></span>
                 </label>
             </p>
-            <p className="form-container-tos-agreement">
+            <p id="privacy-policy" className="form-container-tos-agreement">
                 <label className="agreement">
                     I accept <a href={`${window.location.protocol}//${window.location.host}/`}>Terms of service</a>
                     <input className="checkbox" type="checkbox" onChange={ handleChange('acceptedTos') } />
@@ -37,7 +37,17 @@ const StepTos = ({ register, handleChange, formData, prevStep }) => {
                 </a>
             </p>
             <input
-                onClick={register}
+                onClick={ () => {
+                    const elem = document.getElementById("privacy-policy");
+                    elem.classList.remove("error");
+
+                    if (!formData.acceptedTos) {
+                        elem.classList += " error"
+                        window.location.href = "#privacy-policy";
+                    } else {
+                        register();
+                    }
+                }}
                 type="button"
                 aria-label="Register"
                 title="Register"
@@ -45,6 +55,9 @@ const StepTos = ({ register, handleChange, formData, prevStep }) => {
                 className="form-container-tos-next btn-next"
                 disabled={!isFormValid}
             />
+            { (errorOccured !== "") && <p>
+                <h2 className="form-container-tos-error">{errorOccured}</h2>
+            </p>}
         </div>
     );
 };

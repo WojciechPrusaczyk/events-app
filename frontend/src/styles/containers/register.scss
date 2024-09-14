@@ -142,7 +142,7 @@ h3.form-page-title {
     &-username, &-name, &-surname {
       @include input-text($black, $main-white, $main-lighter);
     }
-    .date-wrapper {
+    .date-picker {
       @include input-date($black-light, $main-white);
     }
     &-h3 {
@@ -191,6 +191,11 @@ h3.form-page-title {
       a {
         margin-left: 10px;
       }
+    }
+    &-error {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: $danger;
     }
     
     @media (max-width: $breakpoint-mobile) {
@@ -256,5 +261,12 @@ h3.form-page-title {
       transform: translateX(100%);
       transition: opacity 300ms ease-out, transform 300ms ease-out;
     }
+  }
+}
+
+.error {
+  border: 3px solid $danger;
+  &:focus-visible {
+    outline: none;
   }
 }

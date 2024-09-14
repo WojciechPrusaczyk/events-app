@@ -54,6 +54,9 @@ def login(request):
     if not check_password(password, user.password):
         return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
 
+    if not user.isactive:
+        return Response({"detail": "User account is not active."}, status=status.HTTP_400_BAD_REQUEST)
+
     user.token = generate_token()
     user.save()
 
@@ -63,6 +66,7 @@ def login(request):
     response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
                         expires=1209600)
 
+    # TODO: dodać obsługę remember me
     return response
 
 
@@ -77,7 +81,7 @@ def register(request):
         return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
     if Users.objects.filter(email=serializerUser.validated_data["email"]).exists():
-        return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "User with provided email already exists."}, status=status.HTTP_406_NOT_ACCEPTABLE)
     # Check password validity before saving the user
     if not is_valid_password(request.data["password"]):
         return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)

@@ -10,9 +10,10 @@ import StepInfo from "./stepInfo";
 import StepTos from "./stepTos";
 import StepConfirmation from "./stepConfirmation";
 import axios from "axios";
+import StepError from "./stepError";
 
 const minStep = 0;
-const maxStep = 4;
+const maxStep = 5;
 const validateEmail = (email) => {
   return email.match(
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -134,8 +135,14 @@ class Register extends Component {
           if (result.status === 201) {
               this.nextStep();
           }
+          return result.status;
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          this.setState(() => ({
+              step: 5,
+              direction: 'forward'
+            }));
+      });
   };
 
   validateUsername = async (username) => {
@@ -169,6 +176,7 @@ class Register extends Component {
               {step === 2 && <StepInfo nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} validateUsername={this.validateUsername} />}
               {step === 3 && <StepTos register={this.register} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
               {step === 4 && <StepConfirmation />}
+              {step === 5 && <StepError />}
             </main>
           </CSSTransition>
         </TransitionGroup>

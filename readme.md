@@ -31,10 +31,11 @@ Service for creating and managing events.
 
 ### Bugs
 
-1. [ ] date picker in registration is broken
-2. [ ] toggle is not jest focusable
-3. [ ] email sent to verify user have wrong template (or is just copied)
-4. [ ] not verified user can still use app in every way
+1. [x] date picker in registration is broken
+2. [ ] toggle nie może być focusowany
+3. [ ] email wysyłany do potwierdzenia maila wysyła zły template
+4. [ ] użytkownik bez zweryfikowanego emaila może używać aplikacji
+5. [ ] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
 
 # Installation
 
