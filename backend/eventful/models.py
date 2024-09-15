@@ -27,10 +27,11 @@ class Eventsparticipants(models.Model):
 
 class Locations(models.Model):
     id = models.AutoField(primary_key=True)
-    placeId = models.CharField(null=True)
+    placeId = models.CharField(null=True, default="default", db_column="placeId")
     formattedAddress = models.CharField(max_length=256, blank=True, null=True)
-    latitude = models.CharField(max_length=64)
-    longitude = models.CharField(max_length=64)
+    latitude = models.CharField(max_length=64, default="0")
+    longitude = models.CharField(max_length=64, default="0")
+
 
     class Meta:
         db_table = "locations"

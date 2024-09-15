@@ -118,7 +118,7 @@ def register(request):
             message = f"Cześć. Wejdź w tego linka: {link}"
             username = user.username
             rawHTML = open_verification_template()  # Ensure this loads properly
-            if rawHTML is "File doesn't exist.":
+            if rawHTML == "File doesn't exist.":
                 return Response({"detail": "File doesn't exist."},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             html_message = rawHTML.replace("[Imię]", username)
@@ -141,44 +141,41 @@ def register(request):
         return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
 
-@csrf_exempt
 @api_view(["POST"])
 def user(request):
-    # Checking token and user
     token = request.COOKIES.get('token')
     if not token:
+        print("Token not found in cookies.")
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
+        print(f"Invalid token: {token}")
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     username = request.data.get("username")
     id = request.data.get("id", None)
 
     if id is not None:
-        userSerializer = LoginUserSerializer(Users.objects.get(uid=id))
-        return Response({"user": userSerializer.data}, status=status.HTTP_200_OK)
+        try:
+            userSerializer = LoginUserSerializer(Users.objects.get(uid=id))
+            return Response({"user": userSerializer.data}, status=status.HTTP_200_OK)
+        except Users.DoesNotExist:
+            print(f"User with ID {id} does not exist.")
+            return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
     if not username:
+        print("Username is required.")
         return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         if not Users.objects.filter(username=username).exists():
-            return Response(
-                {
-                    "detail": "User does not exist.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            print(f"User with username {username} does not exist.")
+            return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
         serializer = LoginUserSerializer(Users.objects.get(username=username))
-        return Response(
-            {
-                "user": serializer.data
-            },
-            status=status.HTTP_201_CREATED,
-        )
+        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
     except Users.DoesNotExist:
+        print(f"User with username {username} does not exist.")
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 @csrf_exempt
 @api_view(["POST"])
@@ -296,7 +293,7 @@ def forgotPassword(request):
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     username = user.username
     rawHTML = open_email_template()
-    if rawHTML is "File doesn't exist.":
+    if rawHTML == "File doesn't exist.":
         return Response({"detail": "File doesn't exist."},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     html_message = rawHTML.replace("[Imię]", username)
