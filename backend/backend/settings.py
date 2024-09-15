@@ -148,3 +148,7 @@ EMAIL_HOST_PASSWORD = 'Qg90e0yf1@@@6'
 
 
 CSRF_TRUSTED_ORIGINS = ['https://eventfull.pl']
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -9,12 +9,16 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Users, Events, UserSettings, Locations
+from .models import Users, Events, UserSettings, Locations, Photos
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
     LocationSerializer
 from .utils import *
 
 from datetime import datetime, timedelta
+
+import os
+from django.core.files.storage import FileSystemStorage
+from mimetypes import guess_extension, guess_type
 
 
 @api_view(["GET"])
@@ -380,9 +384,11 @@ def createEvent(request):
         ispublic=False,
         joinapproval=True,
         token=event_token,
-        location=location
+        location=location,
+        icon="",
     )
     newEvent.save()
+
 
     return Response({"event_id": newEvent.id, "detail": "Event created successfully."}, status=status.HTTP_201_CREATED)
 
@@ -432,11 +438,14 @@ def getEvents(request):
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding events where user is a supervisor
-    events = Events.objects.filter(supervisor=user.uid)
+    events = Events.objects.filter(supervisor=user.uid).select_related('icon')
+
 
     # Serializing events
     if events.exists():
         eventSerializer = EventSerializer(events, many=True)
+
+        print(eventSerializer.data)
         return Response({"events": eventSerializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({"detail": "User is not supervising any events."}, status=status.HTTP_204_NO_CONTENT)
@@ -459,13 +468,16 @@ def editEventApi(request):
     if not eventId:
         return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
     event = Events.objects.get(id=eventId, supervisor=user)
+
     locationObject = Locations()
 
     try:
-        locationObject.placeId = request.data.get('location').get("placeId")
-        locationObject.formattedAddress = request.data.get('location').get("formattedAddress")
-        locationObject.latitude = request.data.get('location').get("latitude")
-        locationObject.longitude = request.data.get('location').get("longitude")
+        print(request.data.get("image"))
+        locationObject.placeId = request.data.get('location[placeId]')
+        locationObject.formattedAddress = request.data.get('location[formattedAddress]')
+        locationObject.latitude = request.data.get('location[latitude]')
+        locationObject.longitude = request.data.get('location[longitude]')
+
         locationObject.save()
     except:
         return Response({"detail": "Cant assign location"}, status=status.HTTP_400_BAD_REQUEST)
@@ -508,11 +520,78 @@ def editEventApi(request):
 
     if location is not None:
         event.location = location
+
+    uploaded_file = request.FILES.get('image')
+
+    if uploaded_file:
+        mime_type, _ = guess_type(uploaded_file.name)
+        if mime_type and mime_type.startswith('image/'):
+            fs = FileSystemStorage(location='media/images')
+            filename = fs.save(uploaded_file.name, uploaded_file)
+            file_url = fs.url(filename)
+
+            # Create a Photo record in the database (example)
+            photo = Photos(
+                addedby=user,
+                filename=filename,
+                extension=os.path.splitext(filename)[1][1:],  # Extract file extension without the dot
+                originalfilename=uploaded_file.name,
+                isdeleted=False,
+                eventid=event
+            )
+            photo.save()
+            event.icon = photo
+        else:
+            return Response({"detail": "Invalid file type, expected an image."}, status=status.HTTP_400_BAD_REQUEST)
+
         # Save the updated event
     event.save()
 
+
+
     # Return a success response
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["POST"])
+def uploadImage(request):
+    # Retrieve the uploaded file
+    uploaded_file = request.FILES.get('image')
+
+    # Check if file exists
+    if not uploaded_file:
+        return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the file is an image by its MIME type
+    mime_type, _ = guess_type(uploaded_file.name)
+    if mime_type is None or not mime_type.startswith('image/'):
+        return Response({"detail": "Uploaded file is not an image."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Set up file storage and save the image
+    fs = FileSystemStorage(location='media/images')  # Specify your media folder
+    filename = fs.save(uploaded_file.name, uploaded_file)
+    file_url = fs.url(filename)
+
+    # Extract file extension
+    file_extension = os.path.splitext(filename)[1][1:]  # Without the dot
+
+    # Get event and user from the request (you should handle this part based on your logic)
+    event_id = request.data.get('event_id')
+    user = Users.objects.get(token=request.COOKIES.get('token'))
+
+    # Create photo record in the database
+    photo = Photos(
+        addedby=user,
+        filename=filename,
+        extension=file_extension,
+        originalfilename=uploaded_file.name,
+        isdeleted=False,
+        eventid=Events.objects.get(id=event_id)
+    )
+    photo.save()
+
+    return Response({"detail": "Image uploaded and saved successfully.", "file_url": file_url}, status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt

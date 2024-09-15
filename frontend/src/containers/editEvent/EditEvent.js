@@ -28,6 +28,7 @@ const EditEvent = () => {
         isActive: false,
         isPublic: false,
         joinApproval: false,
+        image: null,
     });
 
     const [selectedLocation, setSelectedLocation] = useState({
@@ -41,6 +42,7 @@ const EditEvent = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [usersList, setUsersList] = useState([]);
     const [supervisor, setSupervisor] = useState({});
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         if (eventId) {
@@ -65,6 +67,7 @@ const EditEvent = () => {
                             isActive: data.isactive,
                             isPublic: data.ispublic,
                             joinApproval: data.joinapproval,
+                            image: data.image,
                         })
 
                         // ustawienie lokalizacji
@@ -149,11 +152,15 @@ const EditEvent = () => {
                     formattedAddress: formattedAddress,
                     latitude: selectedLocation.lat,
                     longitude: selectedLocation.lng,
-                }
+                },
+                image: formData.image,
             }
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/edit-event/`, preparedData, {
                     withCredentials: true,
+                    headers: {
+                        "Content-Type": "multipart/form-data",  // Ensure the form is sent as multipart/form-data
+                    }
                 })
                 .then((response) => {
                     if (response.status === 200)
@@ -177,6 +184,15 @@ const EditEvent = () => {
         [field]: newDataArray,
     }));
 };
+
+
+const handleImageChange = (e) => {
+        const file = e.target.files[0]; // Get the selected file
+        setFormData((prev) => ({
+            ...prev,
+            image: file,  // Store the file object in state
+        }));
+    };
 
     const getCSRFToken = () => {
     let cookieValue = null;
@@ -411,6 +427,19 @@ const EditEvent = () => {
                                     )}
                                 </Map>
                             </APIProvider>
+                        </p>
+                        <p>
+                            <label className="univForm-container-label" htmlFor="image">
+                                <span className="univForm-container-label-title">Event Image</span>
+                                <span className="univForm-container-label-caption">Upload an image to represent your event.</span>
+                            </label>
+                            <input
+                                id="image"
+                                type="file"
+                                accept="image/*"
+                                className="univForm-container-fileInput"
+                                onChange={handleImageChange}
+                            />
                         </p>
                         <p>
                             <input id="submit" type="submit" className="univForm-container-submitInput"

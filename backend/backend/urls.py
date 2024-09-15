@@ -19,6 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from eventful import views
 from eventful import api
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import routers
 
 
@@ -48,6 +50,8 @@ urlpatterns = [
     path("api/get-event/", api.getEvent, name="api_get_event"),
     path("api/get-events/", api.getEvents, name="api_get_events"),
     path("api/edit-event/", api.editEventApi, name="api_edit_event"),
-    path("api/search-users/", api.searchUsers, name="api_search_users")
-]
+    path("api/search-users/", api.searchUsers, name="api_search_users"),
+    path("api/upload-image/", api.uploadImage, name="api_upload_image")
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -65,9 +65,18 @@ class EventsList extends Component {
         if ( null !== this.state.eventsList && this.state.eventsList.length > 0)
         {
             eventsList = this.state.eventsList.map((event, index) => {
+                const imageUrl = event.iconFilename ? `${window.location.protocol}//${window.location.host}/media/images/${event.iconFilename}` : '';
                 return <p key={event.id}>
                     <h2>{event.name}</h2>
-                    <a href={`${window.location.protocol}//${window.location.host}/edit-event/${event.id}`}>edit event</a>
+                    {event.icon && (
+                        <img
+                            src={imageUrl}
+                            alt={`${event.name} image`}
+                            style={{width: "150px", height: "auto"}} // Set image dimensions as needed
+                        />
+                    )}
+                    <a href={`${window.location.protocol}//${window.location.host}/edit-event/${event.id}`}>edit
+                        event</a>
                 </p>
             });
         }

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Events, UserSettings, Locations
+from .models import Users, Events, UserSettings, Locations, Photos
 
 class LoginUserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -35,10 +35,20 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Locations
         fields = '__all__'
 
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Photos
+        fields = '__all__'
+
 class EventSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
+    photo = PhotoSerializer(read_only=True)
+    iconFilename = serializers.SerializerMethodField()
     class Meta(object):
         model = Events
         fields = '__all__'
 
-
+    def get_iconFilename(self, obj):
+        if obj.icon:
+            return obj.icon.filename
+        return None

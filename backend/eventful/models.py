@@ -13,6 +13,7 @@ class Events(models.Model):
     joinapproval = models.BooleanField(db_column="joinApproval", blank=True, null=True)
     token = models.CharField(max_length=16, blank=True, null=True)
     location = models.ForeignKey("Locations", models.DO_NOTHING, db_column="location", blank=True, null=True)
+    icon = models.ForeignKey("Photos", models.DO_NOTHING, db_column="photo", blank=True, null=True)
 
     class Meta:
         db_table = "events"
@@ -46,7 +47,7 @@ class Logs(models.Model):
         db_table = "logs"
 
 class Photos(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     addedby = models.ForeignKey("Users", models.DO_NOTHING, db_column="addedBy", blank=True, null=True)
     filename = models.CharField(max_length=255, blank=True, null=True)
     extension = models.CharField(max_length=16, blank=True, null=True)
