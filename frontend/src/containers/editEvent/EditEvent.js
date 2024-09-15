@@ -178,6 +178,18 @@ const EditEvent = () => {
     }));
 };
 
+    const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
+
     const handleMapClick = (e) => {
         if (e.detail.latLng) {
             const lat = e.detail.latLng.lat;
@@ -220,12 +232,16 @@ const EditEvent = () => {
             })
     }
     const changeSupervisor = (id) => {
+    const csrfToken = getCSRFToken(); // Get CSRF token from cookies
 
         axios
         .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
             id: id
         },{
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+                'X-SCRFToken': getCSRFToken(),
+            }
         }).then((response) => {
            if (response.status === 200) {
                 setSupervisor(response.data.user);

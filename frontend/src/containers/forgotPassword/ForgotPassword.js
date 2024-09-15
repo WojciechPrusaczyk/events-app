@@ -8,16 +8,20 @@ import Cookies from "js-cookie";
 import PageCounter from "../register/pageCounter";
 import confirmationIcon from "../../images/confirmationIcon.svg";
 
+
+
 const ForgotPassword = () => {
 
     let tempMail;
     let isFormSubmited = false;
 
     const forgotPassword = (event, email) => {
+
         event.preventDefault();
         axios
-            .post(`${window.location.protocol}//${window.location.host}/api/forgot-password/`)
-            .then(response => {
+             .post(
+            `${window.location.protocol}//${window.location.host}/api/forgot-password/`,)
+        .then(response => {
 
                 if (response.status == 200) {
                     isFormSubmited = true;

@@ -47,6 +47,20 @@ const validatePassword = (password) => {
   return isLengthValid && hasSpecialChar && hasThreeNumbers;
 };
 
+// Helper function to get the CSRF token from the cookies
+const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
+
+
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -116,6 +130,7 @@ class Register extends Component {
       isEntireFormValid = false;
       console.log("Invalid form: Invalid username");
     }
+    const csrfToken = getCSRFToken(); // Retrieve the CSRF token
 
     axios
       .post(`${window.location.protocol}//${window.location.host}/api/register/`, {
@@ -129,9 +144,13 @@ class Register extends Component {
         acceptedSharingDetails: formData.acceptedSharingDetails,
         acceptedTos: formData.acceptedTos,
         sex: formData.gender,
-        languge: "en",
+        language: "en",
+      }, {
+        headers: {
+          'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+        }
       })
-      .then( result => {
+      .then(result => {
           if (result.status === 201) {
               this.nextStep();
           }
@@ -145,13 +164,22 @@ class Register extends Component {
       });
   };
 
+
+
   validateUsername = async (username) => {
-      try {
-          const result = await axios.post(`${window.location.protocol}//${window.location.host}/api/check-username/`, {
-              username: username
-          });
-          return !result.data.detail;
+      const csrfToken = getCSRFToken(); // Retrieve the CSRF token
+
+    try {
+        const response = await axios.post(`${window.location.protocol}//${window.location.host}/api/check-username/`, {
+            username: username
+        }, {
+            headers: {
+                'X-CSRFToken': csrfToken  // Include the CSRF token in headers
+            }
+        });
+          return !response.data.detail;
       } catch (err) {
+          console.error("Error validating username:", err);
           return false;
       }
   }

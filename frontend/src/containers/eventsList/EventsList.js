@@ -10,6 +10,19 @@ import PasswordInput from "../../components/passwordInput";
 import Cookies from 'js-cookie';
 import Loader from "../../components/loader";
 
+
+const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
+const csrfToken = getCSRFToken(); // Get CSRF token from cookies
 class EventsList extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +39,10 @@ class EventsList extends Component {
     getEvents() {
         axios
             .post(`${window.location.protocol}//${window.location.host}/api/get-events/`, {}, {
-                withCredentials: true
+                withCredentials: true,
+                headers:{
+                        'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+                    }
             })
             .then((response) => {
                 if(response.status === 200 )

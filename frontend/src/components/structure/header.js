@@ -6,6 +6,19 @@ import addIcon from "../../images/icons/addIcon.svg";
 import listIcon from "../../images/icons/listIcon.svg";
 import Cookies from 'js-cookie';
 
+const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
+const csrfToken = getCSRFToken(); // Get CSRF token from cookies
+
 const Logout = () => {
     axios
         .post(`${window.location.protocol}//${window.location.host}/api/logout-username/`, {
@@ -30,6 +43,9 @@ const CreateEvent = () => {
     axios
         .post(`${window.location.protocol}//${window.location.host}/api/create-event/`, {}, {
             withCredentials: true,
+                    headers:{
+                        'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+                    }
         })
         .then(response => {
             if (response.status === 201 || response.status === 200) {  // Sprawdzanie, czy event został stworzony
@@ -49,11 +65,16 @@ const Header = (props) => {
 
     useEffect(() => {
         const checkAuth = async () => {
+
+
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
                     username: Cookies.get('username')
                 },{
-                    withCredentials: true
+                    withCredentials: true,
+                    headers:{
+                        'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+                    }
                 })
                 .then(result => {
                     if (result.status === 201) {
