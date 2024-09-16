@@ -525,6 +525,11 @@ def editEventApi(request):
 
     if uploaded_file:
         mime_type, _ = guess_type(uploaded_file.name)
+        # TODO: nie są spawdzane wyszczególnione formaty obrazów, można wrzucić np. webp
+        # TODO: nie widzę także sprawdzania wielkości pliku (max 2MB)
+        # TODO: nowo zapisywane pliki mają wciąż fragment starej nazwy (powinien być tylko nic nie znaczący ciąg znaków)
+        # TODO: backend wraz z nazwą pliku na serwerze zwraca jego id, a nie powinien
+
         if mime_type and mime_type.startswith('image/'):
             fs = FileSystemStorage(location='media/images')
             filename = fs.save(uploaded_file.name, uploaded_file)

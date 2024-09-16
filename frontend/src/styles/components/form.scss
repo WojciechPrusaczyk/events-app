@@ -112,6 +112,12 @@
     }
   }
 
+  .file-error{
+    color: $danger;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
   &-date {
     @include input-date($black-light, $main-white);
     padding: 15px;
@@ -157,6 +163,33 @@
       width: 33%;
       height: 100%;
     }
+  }
+  &-file {
+    width: calc( 100% - 40px);
+    cursor: pointer;
+    background-color: $main-light;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    flex-direction: column;
+    padding: 25px;
+    border-radius: 20px;
+    font-weight: bold;
+
+    &-caption {
+      color: $black-light;
+      font-size: 1.3rem;
+      &.hidden{
+        visibility: hidden;
+      }
+    }
+    &-icon {
+      width: 50px;
+      height: 50px;
+      margin: 15px
+    }
+    &-input { display: none; }
   }
 }
 

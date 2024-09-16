@@ -12,8 +12,11 @@ import TimeIcon from "../../images/icons/clockIcon.svg"
 import DateIcon from "../../images/icons/dateIcon.svg"
 import TextEditor from "../../components/textEditor";
 import Loader from "../../components/loader";
-import Cookies from "js-cookie";
+import AddIcon from "../../images/icons/addIcon.svg";
+import DownloadIcon from "../../images/icons/downloadIcon.svg";
 
+let fileHandle;
+let dragoverTimeout;
 const EditEvent = () => {
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
@@ -42,7 +45,8 @@ const EditEvent = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [usersList, setUsersList] = useState([]);
     const [supervisor, setSupervisor] = useState({});
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [isDraggingItem, setDraggingItem] = useState(false);
+    const [fileError, setFileError] = useState("");
 
     useEffect(() => {
         if (eventId) {
@@ -67,7 +71,7 @@ const EditEvent = () => {
                             isActive: data.isactive,
                             isPublic: data.ispublic,
                             joinApproval: data.joinapproval,
-                            image: data.image,
+                            image: data.iconFilename,
                         })
 
                         // ustawienie lokalizacji
@@ -179,32 +183,11 @@ const EditEvent = () => {
     };
 
     const handleArrayChange = (field) => (newDataArray) => {
-    setFormData((prevState) => ({
-        ...prevState,
-        [field]: newDataArray,
-    }));
-};
-
-
-const handleImageChange = (e) => {
-        const file = e.target.files[0]; // Get the selected file
-        setFormData((prev) => ({
-            ...prev,
-            image: file,  // Store the file object in state
+        setFormData((prevState) => ({
+            ...prevState,
+            [field]: newDataArray,
         }));
     };
-
-    const getCSRFToken = () => {
-    let cookieValue = null;
-    const cookies = document.cookie.split(';');
-    cookies.forEach(cookie => {
-        cookie = cookie.trim();
-        if (cookie.startsWith('csrftoken=')) {
-            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
-        }
-    });
-    return cookieValue;
-};
 
     const handleMapClick = (e) => {
         if (e.detail.latLng) {
@@ -248,16 +231,12 @@ const handleImageChange = (e) => {
             })
     }
     const changeSupervisor = (id) => {
-    const csrfToken = getCSRFToken(); // Get CSRF token from cookies
 
         axios
         .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
             id: id
         },{
             withCredentials: true,
-            headers: {
-                'X-SCRFToken': getCSRFToken(),
-            }
         }).then((response) => {
            if (response.status === 200) {
                 setSupervisor(response.data.user);
@@ -280,6 +259,54 @@ const handleImageChange = (e) => {
     })}
     </div></div>
 
+    /*
+    File upload section
+     */
+
+
+    const handleImageChange = (image) => {
+        // dopuszczalne typy plików
+		const validImageTypes = [
+			"image/gif",
+			"image/jpeg",
+			"image/jpg",
+			"image/png",
+			"image/svg",
+		];
+
+        if ( null === image || undefined === image || image.kind === "file") {
+            setFileError("Invalid file was uploaded.");
+            return 0;
+        }
+        const file = image instanceof DataTransferItem ? image.getAsFile() : image;
+
+        if (file.size > 2097152) {
+            setFileError("File exceeds image size limit of 2MB.");
+        } else if (!validImageTypes.includes(file.type)) {
+            setFileError( 'Filetype is invalid. Make sure your image is in one of following formats: "gif", "jpg", "jpeg", "jpg", or "svg"' );
+        } else {
+            setFormData((prev) => ({
+            ...prev,
+            image: file
+        }));
+        }
+    };
+
+    // called with click
+    const clickHandler = (event) => {
+		const file = event.target.files[0];
+        setDraggingItem(false);
+        handleImageChange(file);
+	};
+
+    // called with drag and drop
+    const dropHandler = (event) => {
+		event.preventDefault();
+        const file = event.dataTransfer.items[0];
+        setDraggingItem(false);
+        handleImageChange(file);
+	};
+
     return (
         <div>
             <Header/>
@@ -288,6 +315,61 @@ const handleImageChange = (e) => {
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
+                        <p>
+                            <label className="univForm-container-label" htmlFor="image">
+                                <span className="univForm-container-label-title">Event Cover</span>
+                                <span className="univForm-container-label-caption">Upload a cover promoting event. (max 2MB)</span>
+                            </label>
+                            <div
+                                className="univForm-container-file"
+                                onDrop={(event) => dropHandler(event)}
+                                onDragOver={(event) => {
+                                    event.preventDefault();
+                                    setDraggingItem(true);
+                                    if (dragoverTimeout) {
+                                        window.clearTimeout(dragoverTimeout);
+                                        dragoverTimeout = null;
+                                    }
+                                }}
+                                onDragLeave={() => {
+                                    if (!dragoverTimeout) {
+                                        dragoverTimeout = window.setTimeout(() => {
+                                            setDraggingItem(false);
+                                        }, 10);
+                                    }
+                                }}
+                                onClick={() => fileHandle.click()}
+                                aria-label="file input to upload event image"
+                            >
+                                <span className={`univForm-container-file-caption${isDraggingItem?" hidden":""}`}>Drag file, or click.</span>
+                                <img
+                                    className="univForm-container-file-icon"
+                                    src={(isDraggingItem) ? DownloadIcon : AddIcon}
+                                    alt="ikona dodawania zdjęcia"
+                                />
+                                <input
+                                    className="univForm-container-file-input"
+                                    type="file"
+                                    ref={(input) => {
+                                        fileHandle = input;
+                                    }}
+                                    onChange={clickHandler}
+                                    accept="image/png, image/gif, image/jpg, image/jpeg, image/svg"
+                                />
+                            </div>
+                        </p>
+                        { (fileError !== "" ) && <p><span className="file-error"> {fileError} </span></p>}
+
+                        { ( null !== formData.image && undefined !== formData.image && formData.image instanceof File) &&
+                            <p>
+                                <img className="univForm-container-file-image" src={URL.createObjectURL(formData.image)}
+                                     alt="uploaded image"/>
+                            </p>}
+                        { ( null !== formData.image && undefined !== formData.image && typeof formData.image === 'string') &&
+                            <p>
+                                <img className="univForm-container-file-image" src={`/media/images/${formData.image}`} alt="uploaded image"/>
+                            </p>}
+
                         <p>
                             <label className="univForm-container-label" htmlFor="title">
                                 <span className="univForm-container-label-title">Title</span>
@@ -301,14 +383,17 @@ const handleImageChange = (e) => {
                                 <span className="univForm-container-label-title">Description</span>
                                 <span className="univForm-container-label-caption">Describe your event to users, encourage them to attend, include social media links.</span>
                             </label>
-                            <TextEditor id="description" className="univForm-container-bigTextInput" handleChange={handleArrayChange('description')} defaultValue={formData.description} />
+                            <TextEditor id="description" className="univForm-container-bigTextInput"
+                                        handleChange={handleArrayChange('description')}
+                                        defaultValue={formData.description}/>
                         </p>
                         <p>
                             <label className="univForm-container-label" htmlFor="rules">
                                 <span className="univForm-container-label-title">Rules</span>
                                 <span className="univForm-container-label-caption">Establish set of rules for attendants, to inform them what is inacceptable.</span>
                             </label>
-                            <TextEditor id="rules" className="univForm-container-bigTextInput" handleChange={handleArrayChange('rules')} defaultValue={formData.rules} />
+                            <TextEditor id="rules" className="univForm-container-bigTextInput"
+                                        handleChange={handleArrayChange('rules')} defaultValue={formData.rules}/>
                         </p>
                         <p>
                             <fieldset>
@@ -364,7 +449,7 @@ const handleImageChange = (e) => {
                                 <span className="univForm-container-label-caption">User who manages event. Changes after saving event.</span>
                             </label>
                             <input id="supervisor" type="text" className="univForm-container-textInput"
-                                   onChange={ (e) => {
+                                   onChange={(e) => {
                                        handleSupervisorInputChange(e.target.value)
                                    }} defaultValue={supervisor.username}
                             />
@@ -377,7 +462,8 @@ const handleImageChange = (e) => {
                                     <span className="univForm-container-toggle-label-caption">Determines if is event active and visible to all users.</span>
                                 </p>
                                 <div className="univForm-container-toggle-wrapper">
-                                    <input className="univForm-container-toggle tgl tgl-light" id="isActive" type="checkbox"
+                                    <input className="univForm-container-toggle tgl tgl-light" id="isActive"
+                                           type="checkbox"
                                            aria-label="is active" onChange={handleChange('isActive')}
                                            defaultChecked={formData.isActive}/>
                                     <label title="is active" aria-hidden="true" className="tgl-btn" htmlFor="isActive"/>
@@ -389,7 +475,8 @@ const handleImageChange = (e) => {
                                     <span className="univForm-container-toggle-label-caption">Determines if is event publicly accessible.</span>
                                 </p>
                                 <div className="univForm-container-toggle-wrapper">
-                                    <input className="univForm-container-toggle tgl tgl-light" id="isPublic" type="checkbox"
+                                    <input className="univForm-container-toggle tgl tgl-light" id="isPublic"
+                                           type="checkbox"
                                            aria-label="is public" onChange={handleChange('isPublic')}
                                            defaultChecked={formData.isPublic}/>
                                     <label title="is public" aria-hidden="true" className="tgl-btn" htmlFor="isPublic"/>
@@ -401,10 +488,12 @@ const handleImageChange = (e) => {
                                     <span className="univForm-container-toggle-label-caption">Allows users to join only after your approval.</span>
                                 </p>
                                 <div className="univForm-container-toggle-wrapper">
-                                    <input className="univForm-container-toggle tgl tgl-light" id="joinApproval" type="checkbox"
+                                    <input className="univForm-container-toggle tgl tgl-light" id="joinApproval"
+                                           type="checkbox"
                                            aria-label="Join approval" onChange={handleChange('joinApproval')}
                                            defaultChecked={formData.joinApproval}/>
-                                    <label title="Join approval" aria-hidden="true" className="tgl-btn" htmlFor="joinApproval"/>
+                                    <label title="Join approval" aria-hidden="true" className="tgl-btn"
+                                           htmlFor="joinApproval"/>
                                 </div>
                             </p>
                         </p>
@@ -427,19 +516,6 @@ const handleImageChange = (e) => {
                                     )}
                                 </Map>
                             </APIProvider>
-                        </p>
-                        <p>
-                            <label className="univForm-container-label" htmlFor="image">
-                                <span className="univForm-container-label-title">Event Image</span>
-                                <span className="univForm-container-label-caption">Upload an image to represent your event.</span>
-                            </label>
-                            <input
-                                id="image"
-                                type="file"
-                                accept="image/*"
-                                className="univForm-container-fileInput"
-                                onChange={handleImageChange}
-                            />
                         </p>
                         <p>
                             <input id="submit" type="submit" className="univForm-container-submitInput"

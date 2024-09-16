@@ -36,6 +36,7 @@ Service for creating and managing events.
 3. [ ] email wysyłany do potwierdzenia maila wysyła zły template
 4. [ ] użytkownik bez zweryfikowanego emaila może używać aplikacji
 5. [ ] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
+6. [ ] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
 
 # Installation
 
