@@ -37,6 +37,7 @@ Service for creating and managing events.
 4. [ ] użytkownik bez zweryfikowanego emaila może używać aplikacji
 5. [ ] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
 6. [ ] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
+7. [ ] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane
 
 # Installation
 

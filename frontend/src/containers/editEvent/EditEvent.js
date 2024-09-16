@@ -14,6 +14,7 @@ import TextEditor from "../../components/textEditor";
 import Loader from "../../components/loader";
 import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
+import TrashIcon from "../../images/icons/trashIcon.svg";
 
 let fileHandle;
 let dragoverTimeout;
@@ -94,6 +95,8 @@ const EditEvent = () => {
                     }
                 });
         }
+
+
     }, [eventId]);
 
     const formatDateForInput = (dateString) => {
@@ -307,6 +310,59 @@ const EditEvent = () => {
         handleImageChange(file);
 	};
 
+    // setting letters for cover if image is not present
+    const getShortName = (name) => {
+        if(formData.title.length >= 3 )
+        {
+            if (formData.title.includes(" "))
+            {
+                return  name.trim().split(/\s+/).map(word => word[0]).slice(0, 2).join('').toUpperCase();
+            } else {
+                return name[0].toUpperCase()+name[1].toUpperCase();
+            }
+        } else if(formData.title.length === 2 ) {
+            return name[0].toUpperCase()+name[1].toUpperCase();
+        } else if(formData.title.length === 1 ) {
+            return name[0].toUpperCase();
+        } else {
+            return "E";
+        }
+    }
+
+    function generateColorFromText(text) {
+        const hash = [...text].reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+        // creating colors
+        const r = (hash * 17) % 128 + 127; // 127 to 255
+        const g = (hash * 37) % 128 + 127;
+        const b = (hash * 53) % 128 + 127;
+
+        const lightColor = `rgb(${r}, ${g}, ${b})`;
+
+        // darkening color
+        const darkerFactor = 0.7;  // Współczynnik ciemnienia
+        const darkerColor = `rgb(${Math.floor(r * darkerFactor)}, ${Math.floor(g * darkerFactor)}, ${Math.floor(b * darkerFactor)})`;
+
+        // colors to hex
+        const lightHex = rgbToHex(r, g, b);
+        const darkHex = rgbToHex(Math.floor(r * darkerFactor), Math.floor(g * darkerFactor), Math.floor(b * darkerFactor));
+
+        return { lightHex, darkHex };
+    }
+
+    function rgbToHex(r, g, b) {
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+    }
+
+    function applyStylesToElements(shortName) {
+        const {lightHex, darkHex} = generateColorFromText(shortName);
+
+        return {
+            backgroundColor: lightHex,
+            color: darkHex
+        };
+    }
+
     return (
         <div>
             <Header/>
@@ -361,18 +417,49 @@ const EditEvent = () => {
                         { (fileError !== "" ) && <p><span className="file-error"> {fileError} </span></p>}
 
                         { ( null !== formData.image && undefined !== formData.image && formData.image instanceof File) &&
-                            <p>
-                                <img className="univForm-container-file-image" src={URL.createObjectURL(formData.image)}
-                                     alt="uploaded image"/>
+                            <p className="univForm-container-file-imageWrapper">
+                                <img className="univForm-container-file-image dp-large" src={URL.createObjectURL(formData.image)}
+                                     alt="uploaded image large"/>
+                                <img className="univForm-container-file-image dp-medium" src={URL.createObjectURL(formData.image)}
+                                     alt="uploaded image medium"/>
+                                <img className="univForm-container-file-image dp-small" src={URL.createObjectURL(formData.image)}
+                                     alt="uploaded image small"/>
                             </p>}
-                        { ( null !== formData.image && undefined !== formData.image && typeof formData.image === 'string') &&
-                            <p>
-                                <img className="univForm-container-file-image" src={`/media/images/${formData.image}`} alt="uploaded image"/>
+                        {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string') &&
+                            <p className="univForm-container-file-imageWrapper">
+                                <img className="univForm-container-file-image dp-large" src={`/media/images/${formData.image}`}
+                                     alt="uploaded image large"/>
+                                <img className="univForm-container-file-image dp-medium" src={`/media/images/${formData.image}`}
+                                     alt="uploaded image medium"/>
+                                <img className="univForm-container-file-image dp-small" src={`/media/images/${formData.image}`}
+                                     alt="uploaded image small"/>
+                            </p>}
+                        {(null === formData.image || undefined === formData.image) &&
+                            <p className="univForm-container-file-imageWrapper">
+                                <span className="univForm-container-file-image dp-large" aria-label="cover large" style={applyStylesToElements(getShortName(formData.title))}>
+                                    {getShortName(formData.title)}
+                                </span>
+                                <span className="univForm-container-file-image dp-medium" aria-label="cover medium" style={applyStylesToElements(getShortName(formData.title))}>
+                                    {getShortName(formData.title)}
+                                </span>
+                                <span className="univForm-container-file-image dp-small" aria-label="cover small" style={applyStylesToElements(getShortName(formData.title))}>
+                                    {getShortName(formData.title)}
+                                </span>
                             </p>}
 
+                        { (null !== formData.image) && <p>
+                            <a className="univForm-container-file-trash" aria-label="delete photo"><img src={TrashIcon} alt="trash icon" onClick={ (e) => {
+                                e.preventDefault();
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    image: null
+                                }));
+                                }}
+                                /></a>
+                        </p>}
                         <p>
                             <label className="univForm-container-label" htmlFor="title">
-                                <span className="univForm-container-label-title">Title</span>
+                            <span className="univForm-container-label-title">Title</span>
                                 <span className="univForm-container-label-caption">Event’s name shown to users.</span>
                             </label>
                             <input id="title" type="text" className="univForm-container-textInput"

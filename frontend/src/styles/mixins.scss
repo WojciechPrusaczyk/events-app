@@ -1,3 +1,4 @@
+@import "colors";
 @mixin double-gradient($degrees, $main-color, $secondary-color) {
   background: $main-color;
   background: -moz-linear-gradient($degrees, $main-color 0%, $secondary-color 100%);
@@ -299,5 +300,60 @@
     text-align: center;
     font-size: 1.3rem;
     padding: 25px 20px;
+  }
+}
+
+@mixin event-cover()
+{
+  background: white;
+  border-radius: 10px;
+
+  // cover size multiplier
+  $cover-size: 12;
+
+  &.dp-large {
+    width: $cover-size * 24px;
+    height: $cover-size * 36px;
+    &:is(span){
+      font-size: 10rem;
+    }
+  }
+  &.dp-medium {
+    width: $cover-size * 18px;
+    height: $cover-size * 24px;
+    &:is(span){
+      font-size: 7rem;
+    }
+  }
+  &.dp-small {
+    width: $cover-size * 11px;
+    height: $cover-size * 17px;
+  }
+  @media (max-width: $breakpoint-mobile) {
+    width: $cover-size * 24px;
+    height: $cover-size * 36px;
+    &:is(span){
+      font-size: 10rem;
+    }
+  }
+  @media (max-width: $breakpoint-tablet) {
+    width: $cover-size * 18px;
+    height: $cover-size * 24px;
+    &:is(span){
+      font-size: 7rem;
+    }
+  }
+  @media (max-width: $breakpoint-desktop) {
+    width: $cover-size * 11px;
+    height: $cover-size * 17px;
+  }
+
+  &:is(span)
+  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4.5rem;
+    font-weight: 600;
   }
 }

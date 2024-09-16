@@ -190,6 +190,29 @@
       margin: 15px
     }
     &-input { display: none; }
+
+    &-imageWrapper{
+      display: flex;
+      flex-direction: row!important;
+      justify-content: space-evenly;
+      align-items: center!important;
+      margin: 30px 0;
+    }
+    &-image {
+      box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+      @include event-cover();
+    }
+    &-trash {
+      display: block;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      padding: 10px;
+      background-color: $danger-light;
+      border-radius: 10px;
+      box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+      margin: auto;
+    }
   }
 }
 
