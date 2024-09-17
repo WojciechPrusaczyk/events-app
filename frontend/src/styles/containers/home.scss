@@ -12,3 +12,37 @@ body {
   font-family: "Inter", serif;
 }
 
+
+/* Stylowanie całego elementu przewijania */
+::-webkit-scrollbar {
+  width: 32px;   // szerokość scrolla
+  height: 32px;  // wysokość dla poziomego scrolla
+}
+
+/* Stylowanie suwaka (thumb) */
+::-webkit-scrollbar-thumb {
+  background-color: $main;
+  border-radius: 10px;
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+/* Usuwanie tła scrolla (track) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Ukrywanie przycisków po bokach (dla starszych przeglądarek) */
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;  // upewniamy się, że przyciski są ukryte
+  background: none;
+}
+
+/* Firefox specific scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $main transparent;
+}

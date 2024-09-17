@@ -15,6 +15,7 @@ import Loader from "../../components/loader";
 import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";
+import {generateColorFromText, getShortName} from "../../components/Helpers";
 
 let fileHandle;
 let dragoverTimeout;
@@ -48,7 +49,7 @@ const EditEvent = () => {
     const [supervisor, setSupervisor] = useState({});
     const [isDraggingItem, setDraggingItem] = useState(false);
     const [fileError, setFileError] = useState("");
-
+    /* TODO: nie jest sprawdzane czy starttime < endtime */
     useEffect(() => {
         if (eventId) {
             axios
@@ -309,50 +310,6 @@ const EditEvent = () => {
         setDraggingItem(false);
         handleImageChange(file);
 	};
-
-    // setting letters for cover if image is not present
-    const getShortName = (name) => {
-        if(formData.title.length >= 3 )
-        {
-            if (formData.title.includes(" "))
-            {
-                return  name.trim().split(/\s+/).map(word => word[0]).slice(0, 2).join('').toUpperCase();
-            } else {
-                return name[0].toUpperCase()+name[1].toUpperCase();
-            }
-        } else if(formData.title.length === 2 ) {
-            return name[0].toUpperCase()+name[1].toUpperCase();
-        } else if(formData.title.length === 1 ) {
-            return name[0].toUpperCase();
-        } else {
-            return "E";
-        }
-    }
-
-    function generateColorFromText(text) {
-        const hash = [...text].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-
-        // creating colors
-        const r = (hash * 17) % 128 + 127; // 127 to 255
-        const g = (hash * 37) % 128 + 127;
-        const b = (hash * 53) % 128 + 127;
-
-        const lightColor = `rgb(${r}, ${g}, ${b})`;
-
-        // darkening color
-        const darkerFactor = 0.7;  // Współczynnik ciemnienia
-        const darkerColor = `rgb(${Math.floor(r * darkerFactor)}, ${Math.floor(g * darkerFactor)}, ${Math.floor(b * darkerFactor)})`;
-
-        // colors to hex
-        const lightHex = rgbToHex(r, g, b);
-        const darkHex = rgbToHex(Math.floor(r * darkerFactor), Math.floor(g * darkerFactor), Math.floor(b * darkerFactor));
-
-        return { lightHex, darkHex };
-    }
-
-    function rgbToHex(r, g, b) {
-        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-    }
 
     function applyStylesToElements(shortName) {
         const {lightHex, darkHex} = generateColorFromText(shortName);

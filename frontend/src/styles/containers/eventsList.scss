@@ -1,0 +1,55 @@
+@import "../colors";
+@import "../mixins";
+
+.events-list{
+  margin: 40px 20px;
+
+  &-events{
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    &-item{
+      display: block;
+      text-decoration: none;
+      color: $black;
+      box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+      border-radius: 10px;
+      margin: 10px 20px;
+      &:first-of-type{
+        margin: 10px 20px 10px 0;
+      }
+      &:last-of-type{
+        margin: 10px 0 10px 20px;
+      }
+      &:active, &:visited, &:focus {
+        text-decoration: none;
+        color: $black;
+      }
+      &-image{
+        @include event-cover();
+      }
+      &-title {
+        padding: 25px 10px;
+        margin: 0;
+        max-width: ($cover-size * 24px) - 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: $black;
+      }
+    }
+  }
+  &-title {
+    font-size: 2.2rem;
+    font-weight: bold;
+    letter-spacing: 4px;
+    color: $black;
+    cursor: pointer;
+    text-decoration: none;
+    &:active, &:visited, &:focus {
+      text-decoration: none;
+      color: $black;
+    }
+  }
+}
+

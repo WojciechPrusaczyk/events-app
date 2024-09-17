@@ -385,7 +385,7 @@ def createEvent(request):
         joinapproval=True,
         token=event_token,
         location=location,
-        icon="",
+        icon=None,
     )
     newEvent.save()
 
@@ -425,7 +425,7 @@ def getEvent(request):
 
 
 @csrf_exempt
-@api_view(["POST"])
+@api_view(["GET"])
 def getEvents(request):
     # Checking token and user
     token = request.COOKIES.get('token')
@@ -472,7 +472,6 @@ def editEventApi(request):
     locationObject = Locations()
 
     try:
-        print(request.data.get("image"))
         locationObject.placeId = request.data.get('location[placeId]')
         locationObject.formattedAddress = request.data.get('location[formattedAddress]')
         locationObject.latitude = request.data.get('location[latitude]')
@@ -499,6 +498,8 @@ def editEventApi(request):
         event.description = description
     if rules is not None:
         event.rules = rules
+
+    # TODO: nie jest sprawdzane czy starttime < endtime
     if starttime is not None:
         try:
             event.starttime = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
@@ -557,46 +558,46 @@ def editEventApi(request):
     # Return a success response
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
 
-
-@csrf_exempt
-@api_view(["POST"])
-def uploadImage(request):
-    # Retrieve the uploaded file
-    uploaded_file = request.FILES.get('image')
-
-    # Check if file exists
-    if not uploaded_file:
-        return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Check if the file is an image by its MIME type
-    mime_type, _ = guess_type(uploaded_file.name)
-    if mime_type is None or not mime_type.startswith('image/'):
-        return Response({"detail": "Uploaded file is not an image."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Set up file storage and save the image
-    fs = FileSystemStorage(location='media/images')  # Specify your media folder
-    filename = fs.save(uploaded_file.name, uploaded_file)
-    file_url = fs.url(filename)
-
-    # Extract file extension
-    file_extension = os.path.splitext(filename)[1][1:]  # Without the dot
-
-    # Get event and user from the request (you should handle this part based on your logic)
-    event_id = request.data.get('event_id')
-    user = Users.objects.get(token=request.COOKIES.get('token'))
-
-    # Create photo record in the database
-    photo = Photos(
-        addedby=user,
-        filename=filename,
-        extension=file_extension,
-        originalfilename=uploaded_file.name,
-        isdeleted=False,
-        eventid=Events.objects.get(id=event_id)
-    )
-    photo.save()
-
-    return Response({"detail": "Image uploaded and saved successfully.", "file_url": file_url}, status=status.HTTP_201_CREATED)
+# nie rozumiem celu uploadImage ~ wojtek
+# @csrf_exempt
+# @api_view(["POST"])
+# def uploadImage(request):
+#     # Retrieve the uploaded file
+#     uploaded_file = request.FILES.get('image')
+#
+#     # Check if file exists
+#     if not uploaded_file:
+#         return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#     # Check if the file is an image by its MIME type
+#     mime_type, _ = guess_type(uploaded_file.name)
+#     if mime_type is None or not mime_type.startswith('image/'):
+#         return Response({"detail": "Uploaded file is not an image."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#     # Set up file storage and save the image
+#     fs = FileSystemStorage(location='media/images')  # Specify your media folder
+#     filename = fs.save(uploaded_file.name, uploaded_file)
+#     file_url = fs.url(filename)
+#
+#     # Extract file extension
+#     file_extension = os.path.splitext(filename)[1][1:]  # Without the dot
+#
+#     # Get event and user from the request (you should handle this part based on your logic)
+#     event_id = request.data.get('event_id')
+#     user = Users.objects.get(token=request.COOKIES.get('token'))
+#
+#     # Create photo record in the database
+#     photo = Photos(
+#         addedby=user,
+#         filename=filename,
+#         extension=file_extension,
+#         originalfilename=uploaded_file.name,
+#         isdeleted=False,
+#         eventid=Events.objects.get(id=event_id)
+#     )
+#     photo.save()
+#
+#     return Response({"detail": "Image uploaded and saved successfully.", "file_url": file_url}, status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt
