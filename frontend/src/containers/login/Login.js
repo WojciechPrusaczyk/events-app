@@ -121,7 +121,13 @@ login(e) {
                       <p className="login-form-remember">
                           <div className="login-form-remember-wrapper">
                               <input className="login-form-remember tgl tgl-light" id="cb1-6" type="checkbox" aria-label="Remember me" onChange={this.handleChange('rememberUser')}/>
-                              <label title="Remember me" aria-hidden="true" className="tgl-btn" htmlFor="cb1-6" />
+                              <label aria-roledescription={"button"} title="Remember me" tabIndex={0} aria-hidden="true" className="tgl-btn" htmlFor="cb1-6" onKeyUp={ (e) => {
+                                  e.preventDefault();
+                                  if (e.key === "Enter" || e.key === " ") {
+                                      const el = document.getElementById("cb1-6");
+                                      el.checked = !el.checked;
+                                  }
+                              }} />
                           </div>
                           <span>Remember me</span>
                       </p>

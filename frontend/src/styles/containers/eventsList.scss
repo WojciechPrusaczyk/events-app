@@ -2,12 +2,13 @@
 @import "../mixins";
 
 .events-list{
-  margin: 40px 20px;
+  margin: 40px 20px 40px 10px;
 
   &-events{
     display: flex;
     flex-direction: row;
     overflow: auto;
+    padding: 10px 0;
     &-item{
       display: block;
       text-decoration: none;
@@ -15,8 +16,9 @@
       box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
       border-radius: 10px;
       margin: 10px 20px;
+      transition: scale, box-shadow .1s ease-in;
       &:first-of-type{
-        margin: 10px 20px 10px 0;
+        margin: 10px 20px 10px 10px;
       }
       &:last-of-type{
         margin: 10px 0 10px 20px;
@@ -24,6 +26,11 @@
       &:active, &:visited, &:focus {
         text-decoration: none;
         color: $black;
+      }
+      &:hover, &:focus {
+        scale: 1.01;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        transition: scale, box-shadow .1s ease-out;
       }
       &-image{
         @include event-cover();
@@ -46,9 +53,15 @@
     color: $black;
     cursor: pointer;
     text-decoration: none;
+    padding-left: 10px;
+    transition: letter-spacing .1s ease-in;
     &:active, &:visited, &:focus {
       text-decoration: none;
       color: $black;
+    }
+    &:hover, &:focus {
+      letter-spacing: 4.5px;
+      transition: letter-spacing .1s ease-out;
     }
   }
 }

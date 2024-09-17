@@ -172,6 +172,9 @@
   .tgl-light:checked + .tgl-btn {
     background: $checked-color;
   }
+  .tgl-btn:focus {
+    outline: 2px solid black;
+  }
 }
 
 

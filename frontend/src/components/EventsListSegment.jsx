@@ -24,7 +24,7 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
     }
 
     return (
-        <p id={Id} className={`${ClassName ? ClassName + " " : ""}events-list`}>
+        <p id={Id} className={`${ClassName ? ClassName + " " : ""}events-list`} style={{display: (EventsList.length > 0)?"":"none"}}>
             { "" !== ListTitle && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}`} onClick={ () => {
                     if (undefined !== HandleMoreButton) {
                         HandleMoreButton();

@@ -21,7 +21,7 @@ body {
 
 /* Stylowanie suwaka (thumb) */
 ::-webkit-scrollbar-thumb {
-  background-color: $main;
+  background-color: $main-dark;
   border-radius: 10px;
   &:hover{
     cursor: pointer;
@@ -44,5 +44,5 @@ body {
 /* Firefox specific scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: $main transparent;
+  scrollbar-color: $main-dark transparent;
 }

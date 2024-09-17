@@ -40,6 +40,26 @@ class EventsList extends Component {
     }
 
     render() {
+
+        const now = new Date(); // aktualny czas
+
+        // Filtracja list wydarzeń
+        const upcomingEvents = this.state.eventsList?.filter(event => {
+            const startTime = new Date(event.starttime);
+            return startTime > now; // Wydarzenia, które jeszcze się nie rozpoczęły
+        });
+
+        const ongoingEvents = this.state.eventsList?.filter(event => {
+            const startTime = new Date(event.starttime);
+            const endTime = new Date(event.endtime);
+            return startTime <= now && endTime >= now; // Wydarzenia, które trwają w tej chwili
+        });
+
+        const recentEvents = this.state.eventsList?.filter(event => {
+            const endTime = new Date(event.endtime);
+            return endTime < now; // Wydarzenia, które już się zakończyły
+        });
+
         return (
             <div>
                 <Header/>
@@ -48,9 +68,35 @@ class EventsList extends Component {
                     {this.state.eventsList === [] && <div className="loader">
                         Found no events associated with you.
                     </div>}
-                    { (this.state.eventsList !== null && this.state.eventsList.length > 0) &&
-                        <EventsListSegment Id="events-list" ListTitle={"Events list"} EventsList={this.state.eventsList} IsEditList={true}/>
-                    }
+                    {/* Lista nadchodzących wydarzeń */}
+                    {upcomingEvents && upcomingEvents.length > 0 && (
+                        <EventsListSegment
+                            Id="upcoming-events-list"
+                            ListTitle={"Upcoming Events"}
+                            EventsList={upcomingEvents}
+                            IsEditList={true}
+                        />
+                    )}
+
+                    {/* Lista trwających wydarzeń */}
+                    {ongoingEvents && ongoingEvents.length > 0 && (
+                        <EventsListSegment
+                            Id="ongoing-events-list"
+                            ListTitle={"Ongoing Events"}
+                            EventsList={ongoingEvents}
+                            IsEditList={true}
+                        />
+                    )}
+
+                    {/* Lista zakończonych wydarzeń */}
+                    {recentEvents && recentEvents.length > 0 && (
+                        <EventsListSegment
+                            Id="recent-events-list"
+                            ListTitle={"Recent Events"}
+                            EventsList={recentEvents}
+                            IsEditList={true}
+                        />
+                    )}
                 </main>
                 <Footer/>
             </div>
