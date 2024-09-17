@@ -1,2 +1,2 @@
-./backend/media/images/
-./backend/staticfiles/
+/backend/media/images/
+/backend/staticfiles/
