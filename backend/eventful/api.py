@@ -119,7 +119,7 @@ def register(request):
         link = f"{protocol}://{full_host}/account-verification/{user.userSetting.utilityToken}"
 
         try:
-            subject = "Weryfikacja"
+            subject = "Verification"
             message = f"Cześć. Wejdź w tego linka: {link}"
             username = user.username
             rawHTML = open_verification_template()  # Ensure this loads properly
@@ -289,7 +289,7 @@ def forgotPassword(request):
     except Exception as e:
         return Response({"detail": "Error sending email.", "error": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    subject = "Reset Hasła"
+    subject = "Password Reset"
     message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
     username = user.username
     rawHTML = open_email_template()
