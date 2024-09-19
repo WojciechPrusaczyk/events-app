@@ -1,5 +1,5 @@
 // src/containers/ResetPassword.js
-import React from 'react';
+import React, {useState} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/passwordReset.scss"
@@ -11,14 +11,20 @@ import confirmationIcon from "../../images/confirmationIcon.svg";
 
 
 const ForgotPassword = () => {
-
+const validateEmail = (email) => {
+    console.log(email);
+    var re = /\S+@\S+.\S+/;
+  return re.test(email);
+};
     let tempMail;
-    let isFormSubmited = false;
-
+    const [isFormSubmited, setisFormSubmited] = useState(false);
+    const [error, setError] = useState("");
     const forgotPassword = (event, email) => {
-
+        setError("")
         event.preventDefault();
-        axios
+        console.log(validateEmail(tempMail));
+        if(validateEmail(tempMail)){
+            axios
              .post(
             `${window.location.protocol}//${window.location.host}/api/forgot-password/`, {
                     email: tempMail
@@ -26,17 +32,23 @@ const ForgotPassword = () => {
         .then(response => {
 
                 if (response.status == 200) {
-                    isFormSubmited = true;
-                    // TODO: upewnić się że działa wiadomość w przyapdku sukcesu
+                    setisFormSubmited(true);
+                    // TODO: upewnić się że działa wiadomość w przyapdku sukcesu - działa
+                    setError("");
                 } else {
                     // TODO: wyświetlić komunikat o błędzie wyświetlić czerwony tekst pod inputem
-                    //  z wiadomością o treści "Wystąpił błąd po stronie serwera, spróbuj ponownie później."
-                    console.log(response);
+                    //  z wiadomością o treści "Wystąpił błąd po stronie serwera, spróbuj ponownie później.
+                    setError("Server side error, please try again later.");
                 }
             })
             .catch(error => {
-                console.log(error);
+                setError("Error occurred, try again later.");
             })
+        }
+        else{
+            setError("Invalid email provided.")
+        }
+
 
     }
     const PasswordRecoveryForm = <form className="passwordResetForm form-container-email">
@@ -55,6 +67,7 @@ const ForgotPassword = () => {
                    placeholder="Email address"
             />
         </p>
+        { (error !== "" ) && <p><span className="resetError"> {error} </span></p>}
         <p>
             <input type="submit" aria-label="Submit" title="Submit" value="Submit"
                    className="login-form-submit" onClick={(event) => {
