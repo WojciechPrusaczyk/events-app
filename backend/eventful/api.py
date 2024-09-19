@@ -1,5 +1,4 @@
-import uuid
-
+import json
 import pytz
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -478,6 +477,7 @@ def editEventApi(request):
     except:
         return Response({"detail": "Cant assign location"}, status=status.HTTP_400_BAD_REQUEST)
 
+
     # Retrieve fields from the request and update the event
     name = request.data.get('name')
     description = request.data.get('description')
@@ -488,6 +488,10 @@ def editEventApi(request):
     ispublic = request.data.get('isPublic')
     joinapproval = request.data.get('joinApproval')
     location = locationObject
+
+    #TODO description nie dziala napraw ktos ok?
+
+
     if name is not None and name != "New Event" and name != "":
         event.name = name
     if description is not None:

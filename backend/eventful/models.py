@@ -3,8 +3,8 @@ from django.db import models
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    rules = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, null=True)
+    rules = models.JSONField(blank=True, null=True)
     starttime = models.DateTimeField(db_column="startTime")
     endtime = models.DateTimeField(db_column="endTime")
     supervisor = models.ForeignKey("Users", models.DO_NOTHING, db_column="supervisor", blank=True, null=True)
