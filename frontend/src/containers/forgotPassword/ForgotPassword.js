@@ -20,7 +20,9 @@ const ForgotPassword = () => {
         event.preventDefault();
         axios
              .post(
-            `${window.location.protocol}//${window.location.host}/api/forgot-password/`,)
+            `${window.location.protocol}//${window.location.host}/api/forgot-password/`, {
+                    email: tempMail
+                 })
         .then(response => {
 
                 if (response.status == 200) {
