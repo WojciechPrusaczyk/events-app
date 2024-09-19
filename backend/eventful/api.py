@@ -113,7 +113,6 @@ def register(request):
         # Generate and save utility token
         user.userSetting.utilityToken = generate_token()
         user.userSetting.save()
-
         # Create verification link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
@@ -280,12 +279,13 @@ def forgotPassword(request):
         # Generate a password reset token
         userSetting = UserSettings.objects.get(id=user.userSetting.id)
         userSetting.utilityToken = generate_token()
-        user.save()  # Save the token to the database
+        print(userSetting.utilityToken)
+        userSetting.save()  # Save the token to the database
 
         # Construct the reset link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
-        link = f"{protocol}://{full_host}/reset-password/{user.userSetting.utilityToken}"
+        link = f"{protocol}://{full_host}/reset-password/{userSetting.utilityToken}"
     except Exception as e:
         return Response({"detail": "Error sending email.", "error": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -316,11 +316,10 @@ def forgotPassword(request):
 def resetPassword(request):
     token = request.data.get("token")
     new_password = request.data.get("password")
-
+    print(request.data)
     try:
         userSettings = UserSettings.objects.get(utilityToken=token)
         user = Users.objects.get(userSetting=userSettings)
-
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
