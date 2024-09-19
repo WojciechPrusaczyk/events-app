@@ -100,7 +100,7 @@ class Users(models.Model):
     surname = models.CharField(max_length=64)
     email = models.CharField(max_length=320)
     password = models.CharField(max_length=64)
-    isactive = models.CharField(db_column="isActive", blank=True, null=True, default="False")
+    isactive = models.BooleanField(db_column="isActive", blank=True, null=True, default=False)
     registrationdate = models.CharField(db_column="registrationDate", max_length=64)
     lastlogin = models.CharField(db_column="lastLogin", blank=True, null=True, max_length=64)
     birthdate = models.DateField(db_column="birthDate", blank=True, null=True)

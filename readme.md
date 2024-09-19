@@ -34,7 +34,7 @@ Service for creating and managing events.
 1. [x] date picker in registration is broken
 2. [x] toggle nie może być focusowany
 3. [x] email wysyłany do potwierdzenia maila wysyła zły template
-4. [ ] użytkownik bez zweryfikowanego emaila może używać aplikacji
+4. [x] użytkownik bez zweryfikowanego emaila może używać aplikacji
 5. [ ] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
 6. [ ] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
 7. [ ] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane

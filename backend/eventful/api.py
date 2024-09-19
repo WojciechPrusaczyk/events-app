@@ -1,3 +1,5 @@
+import uuid
+
 import pytz
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -149,12 +151,10 @@ def register(request):
 def user(request):
     token = request.COOKIES.get('token')
     if not token:
-        print("Token not found in cookies.")
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
-        print(f"Invalid token: {token}")
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     username = request.data.get("username")
@@ -165,20 +165,16 @@ def user(request):
             userSerializer = LoginUserSerializer(Users.objects.get(uid=id))
             return Response({"user": userSerializer.data}, status=status.HTTP_200_OK)
         except Users.DoesNotExist:
-            print(f"User with ID {id} does not exist.")
             return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
     if not username:
-        print("Username is required.")
         return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         if not Users.objects.filter(username=username).exists():
-            print(f"User with username {username} does not exist.")
             return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
         serializer = LoginUserSerializer(Users.objects.get(username=username))
         return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
     except Users.DoesNotExist:
-        print(f"User with username {username} does not exist.")
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
@@ -412,7 +408,7 @@ def getEvent(request):
     event = Events.objects.get(id=eventId, supervisor=user.uid)
     eventSerializer = EventSerializer(event)
 
-    # TODO: jesli użytkownik nie jest nadzorcą, to sprawdzić czy jest na liście uczestników (chyba że wydarzenie jest publiczne)
+    # TODO: jesli użytkownik nie jest nadzorcą, to sprawdzić czy jest na liście uczestników (chyba że wydarzenie jest publiczne) NA RAZIE WYWALA BLAD
 
     if event:
         try:
@@ -438,15 +434,17 @@ def getEvents(request):
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding events where user is a supervisor
-    events = Events.objects.filter(supervisor=user.uid).select_related('icon')
-
+    eventsUser = Events.objects.filter(supervisor=user.uid).select_related('icon')
+    eventsPublic = Events.objects.filter(ispublic=True).select_related('icon')
+    events = eventsUser | eventsPublic
 
     # Serializing events
     if events.exists():
         eventSerializer = EventSerializer(events, many=True)
-
-        print(eventSerializer.data)
-        return Response({"events": eventSerializer.data}, status=status.HTTP_200_OK)
+        eventData = eventSerializer.data
+        for event in eventData:
+            event.pop('icon', None)
+        return Response({"events": eventData}, status=status.HTTP_200_OK)
     else:
         return Response({"detail": "User is not supervising any events."}, status=status.HTTP_204_NO_CONTENT)
 
@@ -485,13 +483,12 @@ def editEventApi(request):
     name = request.data.get('name')
     description = request.data.get('description')
     rules = request.data.get('rules')
-    starttime = request.data.get('starttime')
-    endtime = request.data.get('endtime')
-    isactive = request.data.get('isactive')
-    ispublic = request.data.get('ispublic')
-    joinapproval = request.data.get('joinapproval')
+    starttime = request.data.get('startTime')
+    endtime = request.data.get('endTime')
+    isactive = request.data.get('isActive')
+    ispublic = request.data.get('isPublic')
+    joinapproval = request.data.get('joinApproval')
     location = locationObject
-
     if name is not None and name != "New Event" and name != "":
         event.name = name
     if description is not None:
@@ -499,19 +496,26 @@ def editEventApi(request):
     if rules is not None:
         event.rules = rules
 
-    # TODO: nie jest sprawdzane czy starttime < endtime
+    # TODO: nie jest sprawdzane czy starttime < endtime   DONE
     if starttime is not None:
         try:
+            starttime = starttime.replace('T', ' ')
             event.starttime = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
         except ValueError:
             return Response({"detail": "Invalid starttime format. Use 'YYYY-MM-DD HH:MM:SS'."},
                             status=status.HTTP_400_BAD_REQUEST)
     if endtime is not None:
         try:
+            endtime = endtime.replace('T', ' ')
             event.endtime = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
         except ValueError:
             return Response({"detail": "Invalid endtime format. Use 'YYYY-MM-DD HH:MM:SS'."},
                             status=status.HTTP_400_BAD_REQUEST)
+
+    if starttime > endtime:
+        return Response({"detail": "Invalid timeline"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
     if isactive is not None:
         event.isactive = bool(isactive)
     if ispublic is not None:
@@ -524,23 +528,38 @@ def editEventApi(request):
 
     uploaded_file = request.FILES.get('image')
 
+
     if uploaded_file:
+        max_size = 2 * 1024 * 1024
+        if uploaded_file.size > max_size:
+            return Response({"detail": "File too large."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
         mime_type, _ = guess_type(uploaded_file.name)
-        # TODO: nie są spawdzane wyszczególnione formaty obrazów, można wrzucić np. webp
-        # TODO: nie widzę także sprawdzania wielkości pliku (max 2MB)
-        # TODO: nowo zapisywane pliki mają wciąż fragment starej nazwy (powinien być tylko nic nie znaczący ciąg znaków)
-        # TODO: backend wraz z nazwą pliku na serwerze zwraca jego id, a nie powinien
+        # TODO: nie są spawdzane wyszczególnione formaty obrazów, można wrzucić np. webp   DONE
+        # TODO: nie widzę także sprawdzania wielkości pliku (max 2MB)   DONE
+        # TODO: nowo zapisywane pliki mają wciąż fragment starej nazwy (powinien być tylko nic nie znaczący ciąg znaków)   DONE
+        # TODO: backend wraz z nazwą pliku na serwerze zwraca SAjego id, a nie powinien DONE
 
         if mime_type and mime_type.startswith('image/'):
-            fs = FileSystemStorage(location='media/images')
-            filename = fs.save(uploaded_file.name, uploaded_file)
-            file_url = fs.url(filename)
+            if uploaded_file.content_type == 'image/webp':
+                return Response({"detail": "webp files not supported"},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if uploaded_file.content_type == 'image/gif':
+                return Response({"detail": "gif files not supported"},
+                                status=status.HTTP_400_BAD_REQUEST)
 
+            fs = FileSystemStorage(location='media/images')
+            randomFilename = "".join(random.choices(string.ascii_letters + string.digits, k=8))
+            ext = os.path.splitext(uploaded_file.name)[1][1:]
+            filename = fs.save(randomFilename, uploaded_file)
+            file_url = fs.url(filename)
             # Create a Photo record in the database (example)
             photo = Photos(
                 addedby=user,
                 filename=filename,
-                extension=os.path.splitext(filename)[1][1:],  # Extract file extension without the dot
+                extension=ext,  # Extract file extension without the dot
                 originalfilename=uploaded_file.name,
                 isdeleted=False,
                 eventid=event
@@ -553,12 +572,11 @@ def editEventApi(request):
         # Save the updated event
     event.save()
 
-
-
     # Return a success response
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
 
 # nie rozumiem celu uploadImage ~ wojtek
+# spoko ok ~ adrian
 # @csrf_exempt
 # @api_view(["POST"])
 # def uploadImage(request):
