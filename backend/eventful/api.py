@@ -1,6 +1,4 @@
-import json
 import pytz
-from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
@@ -19,7 +17,9 @@ from datetime import datetime, timedelta
 
 import os
 from django.core.files.storage import FileSystemStorage
-from mimetypes import guess_extension, guess_type
+from mimetypes import guess_type
+
+from backend.settings import MEDIA_ROOT
 
 
 @api_view(["GET"])
@@ -549,9 +549,7 @@ def editEventApi(request):
             if uploaded_file.content_type == 'image/webp':
                 return Response({"detail": "webp files not supported"},
                                 status=status.HTTP_400_BAD_REQUEST)
-            if uploaded_file.content_type == 'image/gif':
-                return Response({"detail": "gif files not supported"},
-                                status=status.HTTP_400_BAD_REQUEST)
+
 
             fs = FileSystemStorage(location='media/images')
             randomFilename = "".join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -578,47 +576,39 @@ def editEventApi(request):
     # Return a success response
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
 
-# nie rozumiem celu uploadImage ~ wojtek
-# spoko ok ~ adrian
-# @csrf_exempt
-# @api_view(["POST"])
-# def uploadImage(request):
-#     # Retrieve the uploaded file
-#     uploaded_file = request.FILES.get('image')
-#
-#     # Check if file exists
-#     if not uploaded_file:
-#         return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     # Check if the file is an image by its MIME type
-#     mime_type, _ = guess_type(uploaded_file.name)
-#     if mime_type is None or not mime_type.startswith('image/'):
-#         return Response({"detail": "Uploaded file is not an image."}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     # Set up file storage and save the image
-#     fs = FileSystemStorage(location='media/images')  # Specify your media folder
-#     filename = fs.save(uploaded_file.name, uploaded_file)
-#     file_url = fs.url(filename)
-#
-#     # Extract file extension
-#     file_extension = os.path.splitext(filename)[1][1:]  # Without the dot
-#
-#     # Get event and user from the request (you should handle this part based on your logic)
-#     event_id = request.data.get('event_id')
-#     user = Users.objects.get(token=request.COOKIES.get('token'))
-#
-#     # Create photo record in the database
-#     photo = Photos(
-#         addedby=user,
-#         filename=filename,
-#         extension=file_extension,
-#         originalfilename=uploaded_file.name,
-#         isdeleted=False,
-#         eventid=Events.objects.get(id=event_id)
-#     )
-#     photo.save()
-#
-#     return Response({"detail": "Image uploaded and saved successfully.", "file_url": file_url}, status=status.HTTP_201_CREATED)
+@csrf_exempt
+@api_view(["POST"])
+def deleteEvent(request):
+    # Checking token and user
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    eventId = request.data.get("id")
+
+    if not eventId:
+        return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        event = Events.objects.get(id=eventId, supervisor=user)
+    except Events.DoesNotExist:
+        return Response({"detail": "Event not found or you don't have permission to delete it."},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    photo = Photos.objects.get(eventid=eventId)
+    filePath = os.path.join(MEDIA_ROOT, event.filename)
+    if os.path.exists(filePath):
+        os.remove(filePath)
+        photo.isdeleted = True
+        photo.save()
+
+    event.delete()
+    return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
+
 
 
 @csrf_exempt
