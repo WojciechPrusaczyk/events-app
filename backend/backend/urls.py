@@ -52,8 +52,9 @@ urlpatterns = [
     path("api/edit-event/", api.editEventApi, name="api_edit_event"),
     path("api/search-users/", api.searchUsers, name="api_search_users"),
     # path("api/upload-image/", api.uploadImage, name="api_upload_image")
+    path("api/delete-event/", api.deleteEvent, name="api_delete_event"),
 
-    # TODO: ścieżka api do usunięcia wydarzenia
+                  # TODO: ścieżka api do usunięcia wydarzenia
     # TODO: ścieżka api pobierająca wszystkie segmenty danego wydarzenia o podanym id
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
