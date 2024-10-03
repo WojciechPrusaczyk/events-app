@@ -562,8 +562,7 @@ def editEventApi(request):
                 filename=filename,
                 extension=ext,  # Extract file extension without the dot
                 originalfilename=uploaded_file.name,
-                isdeleted=False,
-                eventid=event
+                isdeleted=False
             )
             photo.save()
             event.icon = photo
@@ -599,12 +598,16 @@ def deleteEvent(request):
         return Response({"detail": "Event not found or you don't have permission to delete it."},
                         status=status.HTTP_403_FORBIDDEN)
 
-    photo = Photos.objects.get(eventid=eventId)
-    filePath = os.path.join(MEDIA_ROOT, event.filename)
+    photo = event.icon
+    filePath = os.path.join(MEDIA_ROOT, photo.filename)
+    print(filePath)
     if os.path.exists(filePath):
+        print("exist(istnieje)")
         os.remove(filePath)
         photo.isdeleted = True
+        event.icon = None
         photo.save()
+
 
     event.delete()
     return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)

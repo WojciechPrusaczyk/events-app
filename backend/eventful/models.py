@@ -53,8 +53,7 @@ class Photos(models.Model):
     extension = models.CharField(max_length=16, blank=True, null=True)
     originalfilename = models.CharField(db_column="originalFilename", max_length=255, blank=True, null=True)
     isdeleted = models.BooleanField(db_column="isDeleted", blank=True, null=True)
-    eventid = models.ForeignKey(Events, models.DO_NOTHING, db_column="eventId", blank=True, null=True)
-    segmentid = models.ForeignKey("Segments", models.DO_NOTHING, db_column="segmentId", blank=True, null=True)
+
 
     class Meta:
         db_table = "photos"

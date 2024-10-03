@@ -320,6 +320,33 @@ const EditEvent = () => {
         };
     }
 
+    const DeleteButton = (e) => {
+
+            e.preventDefault();  // Zatrzymuje domyślne zachowanie przycisku (przeładowanie strony)
+            axios
+                .post(
+                    `${window.location.protocol}//${window.location.host}/api/delete-event/`, 
+                     {id: eventId },  // Przekazanie id wydarzenia do API
+                    {
+                        withCredentials: true
+                    }
+                 ) // Upewnij się, że ciasteczka są uwzględniane
+                    
+                
+                .then((response) => {
+
+                    console.log("Wydarzenie usunięte", response);
+                    window.location.href = `${window.location.protocol}//${window.location.host}/events-list/`;
+
+                    // Możesz tutaj dodać przekierowanie lub inne działania po usunięciu
+                })
+                .catch((error) => {
+                    console.error(eventId);
+                });
+        };
+
+    
+
     return (
         <div>
             <Header/>
@@ -328,6 +355,7 @@ const EditEvent = () => {
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
+                        <button className='Delete' onClick={(e) => DeleteButton(e)}>Usuń wydarzenie</button>
                         <p>
                             <label className="univForm-container-label" htmlFor="image">
                                 <span className="univForm-container-label-title">Event Cover</span>
