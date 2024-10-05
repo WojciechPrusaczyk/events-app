@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Events, UserSettings, Locations, Photos
+from .models import Users, Events, UserSettings, Locations, Photos, Segments
 
 class LoginUserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -52,3 +52,8 @@ class EventSerializer(serializers.ModelSerializer):
         if obj.icon:
             return obj.icon.filename
         return None
+
+class SegmentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Segments
+        fields = ['id', 'event', 'name', 'description', 'starttime', 'endtime', 'speaker', 'isactive', 'location']

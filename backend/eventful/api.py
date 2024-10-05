@@ -8,9 +8,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Users, Events, UserSettings, Locations, Photos
+from .models import Users, Events, UserSettings, Locations, Photos, Segments
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
-    LocationSerializer
+    LocationSerializer, SegmentsSerializer
 from .utils import *
 
 from datetime import datetime, timedelta
@@ -67,11 +67,18 @@ def login(request):
 
     serializer = LoginUserSerializer(user, )
 
+    if rememberMe:
+        # Expire in 30 days
+        expires = 30 * 24 * 60 * 60  # 30 days
+    else:
+        # Expire in 1 day
+        expires = 1 * 24 * 60 * 60  # 1 day
+
     response = Response({"user": serializer.data}, status=status.HTTP_200_OK)
     response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
-                        expires=1209600)
+                        expires=expires)
 
-    # TODO: dodać obsługę remember me
+    # TODO: dodać obsługę remember me DONE
     return response
 
 
@@ -494,6 +501,8 @@ def editEventApi(request):
 
     if name is not None and name != "New Event" and name != "":
         event.name = name
+
+    print(description)
     if description is not None:
         event.description = description
     if rules is not None:
@@ -646,3 +655,12 @@ def searchUsers(request):
     user_data = [{"id": user.uid, "username": user.username, "email": user.email} for user in users]
 
     return Response({"users": user_data}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getSegments(request, event_id):
+    try:
+        segments = Segments.objects.filter(event_id=event_id)
+        serializer = SegmentsSerializer(segments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Segments.DoesNotExist:
+        return Response({"detail": "Event not found or no segments available."}, status=status.HTTP_404_NOT_FOUND)

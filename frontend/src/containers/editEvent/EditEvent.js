@@ -23,8 +23,8 @@ const EditEvent = () => {
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
         title: "",
-        description: [],
-        rules: [],
+        description: "",
+        rules: "",
         startDate: "",
         startTime: "",
         endDate: "",
@@ -187,9 +187,11 @@ const EditEvent = () => {
     };
 
     const handleArrayChange = (field) => (newDataArray) => {
+        const textContent = newDataArray.map(op => op.insert).join('');
+        console.log(`New data for ${field}:`, textContent);
         setFormData((prevState) => ({
             ...prevState,
-            [field]: newDataArray,
+            [field]: textContent,
         }));
     };
 
@@ -465,7 +467,8 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-caption">Establish set of rules for attendants, to inform them what is inacceptable.</span>
                             </label>
                             <TextEditor id="rules" className="univForm-container-bigTextInput"
-                                        handleChange={handleArrayChange('rules')} defaultValue={formData.rules}/>
+                                        handleChange={handleArrayChange('rules')}
+                                        defaultValue={formData.rules}/>
                         </p>
                         <p>
                             <fieldset>
