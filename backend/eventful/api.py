@@ -599,10 +599,9 @@ def deleteEvent(request):
                         status=status.HTTP_403_FORBIDDEN)
 
     photo = event.icon
-    filePath = os.path.join(MEDIA_ROOT, photo.filename)
-    print(filePath)
+    imagesPath = os.path.join(MEDIA_ROOT, "images")
+    filePath = os.path.join(imagesPath, photo.filename)
     if os.path.exists(filePath):
-        print("exist(istnieje)")
         os.remove(filePath)
         photo.isdeleted = True
         event.icon = None
