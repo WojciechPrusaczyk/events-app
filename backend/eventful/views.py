@@ -60,3 +60,21 @@ def editEvent(request, id=None):
     else:
         return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
 
+
+def joinEvent(request, id=None):
+    # weryfikacja zalogowania
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    if id and user:
+        return render(request, "index.html", {"token": id})
+    else:
+        return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
+#def /join do wpisywania
+
+#def /join/numer do pokazania

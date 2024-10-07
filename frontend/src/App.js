@@ -8,6 +8,7 @@ import ResetPassword from "./containers/resetPassword/ResetPassword";
 import AccountVerification from "./containers/accountVerification/AccountVerification";
 import EditEvent from "./containers/editEvent/EditEvent";
 import EventsList from "./containers/eventsList/EventsList";
+import JoinEvent from "./containers/joinEvent/JoinEvent";
 function App() {
   return (
     <Router>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/account-verification/:token" element={ <AccountVerification /> } />
         <Route path="/edit-event/:id" element={ <EditEvent /> } />
         <Route path="/events-list" element={ <EventsList /> } />
+        <Route path="/join" element={ <JoinEvent /> } />
       </Routes>
     </Router>
   );
