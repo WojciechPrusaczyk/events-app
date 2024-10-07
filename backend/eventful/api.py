@@ -496,7 +496,7 @@ def editEventApi(request):
     joinapproval = request.data.get('joinApproval')
     location = locationObject
 
-    #TODO description nie dziala napraw ktos ok?
+    #TODO description nie dziala napraw ktos ok? DONE? jest w bazie danych zapisywane Rules to samo
 
 
     if name is not None and name != "New Event" and name != "":
