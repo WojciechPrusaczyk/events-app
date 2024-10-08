@@ -16,10 +16,11 @@ import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";
 import {generateColorFromText, getShortName} from "../../components/Helpers";
-
 let fileHandle;
 let dragoverTimeout;
 const EditEvent = () => {
+    const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+    console.log(apiKey)
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
         title: "",
@@ -208,7 +209,7 @@ const EditEvent = () => {
             // pobieranie lokalizacji
             if (e.detail.placeId) {
                 axios
-                    .get(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${e.detail.placeId}&key=AIzaSyDOYFpDSbiZEuqLgSWLkOYEhZnEPKa-g7g`)
+                    .get(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${e.detail.placeId}&key=${apiKey}`)
                     .then((response) => {
                         if (response.status === 200 && response.data.results.length > 0) {
                             const result = response.data.results[0];
@@ -577,7 +578,7 @@ const EditEvent = () => {
                                 <span className="univForm-container-label-title">Main location</span>
                                 <span className="univForm-container-label-caption">Choose main location where event will take place.</span>
                             </label>
-                            <APIProvider apiKey={'AIzaSyDOYFpDSbiZEuqLgSWLkOYEhZnEPKa-g7g'}
+                            <APIProvider apiKey={apiKey}
                                          onLoad={() => console.log('Maps API has loaded.')}>
                                 <Map
                                     defaultZoom={13}
