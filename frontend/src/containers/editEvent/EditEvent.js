@@ -20,7 +20,6 @@ let fileHandle;
 let dragoverTimeout;
 const EditEvent = () => {
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
-    console.log(apiKey)
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
         title: "",
