@@ -1,4 +1,4 @@
 /backend/media/images/
 /backend/staticfiles/
 /frontend/.env
-/backend/.env.example
+/backend/.env
