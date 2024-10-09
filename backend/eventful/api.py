@@ -664,3 +664,5 @@ def getSegments(request, event_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Segments.DoesNotExist:
         return Response({"detail": "Event not found or no segments available."}, status=status.HTTP_404_NOT_FOUND)
+
+# TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów

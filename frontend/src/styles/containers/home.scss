@@ -1,6 +1,8 @@
 @import url("../components/header.scss");
 @import url("../components/footer.scss");
 @import "../colors";
+@import "../mixins";
+
 
 @font-face {
  font-family: 'Inter';
@@ -45,4 +47,20 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: $main-dark transparent;
+}
+
+.btn {
+  @include button( $main, $black-light );
+  width: initial;
+  text-decoration: none;
+  &:active{
+    text-decoration: none;
+    color: $black-light;
+  }
+}
+.btn-success {
+  background-color: $success-light;
+}
+.btn-danger {
+  background-color: $danger-light;
 }

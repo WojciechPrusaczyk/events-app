@@ -63,8 +63,8 @@ const EditEvent = () => {
                         const data = response.data.detail;
                         setFormData({
                             title: data.name,
-                            description: JSON.parse(data.description),
-                            rules: JSON.parse(data.rules),
+                            description: (data.description != "")?JSON.parse(data.description):"",
+                            rules: (data.rules != "")?JSON.parse(data.rules):"",
                             startDate: formatDateForInput(data.starttime),
                             startTime: formatTimeForInput(data.starttime),
                             endDate: formatDateForInput(data.endtime),
@@ -357,7 +357,14 @@ const EditEvent = () => {
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
-                        <button className='Delete' onClick={(e) => DeleteButton(e)}>Usuń wydarzenie</button>
+                        <p>
+                            <label className="univForm-container-label" htmlFor="edit-segments">
+                                <span className="univForm-container-label-caption">Edit event's points of interest and crucial parts of it.</span>
+                            </label>
+                            <a id={"edit-segments"} className={"btn"}
+                               href={`${window.location.protocol}//${window.location.host}/edit-segments/${eventId}`}>Edit
+                                segments</a>
+                        </p>
                         <p>
                             <label className="univForm-container-label" htmlFor="image">
                                 <span className="univForm-container-label-title">Event Cover</span>
@@ -384,7 +391,7 @@ const EditEvent = () => {
                                 onClick={() => fileHandle.click()}
                                 aria-label="file input to upload event image"
                             >
-                                <span className={`univForm-container-file-caption${isDraggingItem?" hidden":""}`}>Drag file, or click.</span>
+                                <span className={`univForm-container-file-caption${isDraggingItem ? " hidden" : ""}`}>Drag file, or click.</span>
                                 <img
                                     className="univForm-container-file-icon"
                                     src={(isDraggingItem) ? DownloadIcon : AddIcon}
@@ -401,52 +408,64 @@ const EditEvent = () => {
                                 />
                             </div>
                         </p>
-                        { (fileError !== "" ) && <p><span className="file-error"> {fileError} </span></p>}
+                        {(fileError !== "") && <p><span className="file-error"> {fileError} </span></p>}
 
-                        { ( null !== formData.image && undefined !== formData.image && formData.image instanceof File) &&
+                        {(null !== formData.image && undefined !== formData.image && formData.image instanceof File) &&
                             <p className="univForm-container-file-imageWrapper">
-                                <img className="univForm-container-file-image dp-large" src={URL.createObjectURL(formData.image)}
+                                <img className="univForm-container-file-image dp-large"
+                                     src={URL.createObjectURL(formData.image)}
                                      alt="uploaded image large"/>
-                                <img className="univForm-container-file-image dp-medium" src={URL.createObjectURL(formData.image)}
+                                <img className="univForm-container-file-image dp-medium"
+                                     src={URL.createObjectURL(formData.image)}
                                      alt="uploaded image medium"/>
-                                <img className="univForm-container-file-image dp-small" src={URL.createObjectURL(formData.image)}
+                                <img className="univForm-container-file-image dp-small"
+                                     src={URL.createObjectURL(formData.image)}
                                      alt="uploaded image small"/>
                             </p>}
                         {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string') &&
                             <p className="univForm-container-file-imageWrapper">
-                                <img className="univForm-container-file-image dp-large" src={`/media/images/${formData.image}`}
+                                <img className="univForm-container-file-image dp-large"
+                                     src={`/media/images/${formData.image}`}
                                      alt="uploaded image large"/>
-                                <img className="univForm-container-file-image dp-medium" src={`/media/images/${formData.image}`}
+                                <img className="univForm-container-file-image dp-medium"
+                                     src={`/media/images/${formData.image}`}
                                      alt="uploaded image medium"/>
-                                <img className="univForm-container-file-image dp-small" src={`/media/images/${formData.image}`}
+                                <img className="univForm-container-file-image dp-small"
+                                     src={`/media/images/${formData.image}`}
                                      alt="uploaded image small"/>
                             </p>}
                         {(null === formData.image || undefined === formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
-                                <span className="univForm-container-file-image dp-large" aria-label="cover large" style={applyStylesToElements(getShortName(formData.title))}>
+                                <span className="univForm-container-file-image dp-large" aria-label="cover large"
+                                      style={applyStylesToElements(getShortName(formData.title))}>
                                     {getShortName(formData.title)}
                                 </span>
-                                <span className="univForm-container-file-image dp-medium" aria-label="cover medium" style={applyStylesToElements(getShortName(formData.title))}>
+                                <span className="univForm-container-file-image dp-medium" aria-label="cover medium"
+                                      style={applyStylesToElements(getShortName(formData.title))}>
                                     {getShortName(formData.title)}
                                 </span>
-                                <span className="univForm-container-file-image dp-small" aria-label="cover small" style={applyStylesToElements(getShortName(formData.title))}>
+                                <span className="univForm-container-file-image dp-small" aria-label="cover small"
+                                      style={applyStylesToElements(getShortName(formData.title))}>
                                     {getShortName(formData.title)}
                                 </span>
                             </p>}
 
-                        { (null !== formData.image) && <p>
-                            <a className="univForm-container-file-trash" aria-label="delete photo"><img src={TrashIcon} alt="trash icon" onClick={ (e) => {
-                                e.preventDefault();
-                                setFormData((prev) => ({
-                                    ...prev,
-                                    image: null
-                                }));
-                                }}
+                        {(null !== formData.image) && <p>
+                            <a className="univForm-container-file-trash" aria-label="delete photo">
+                                <img src={TrashIcon}
+                                     alt="trash icon"
+                                     onClick={(e) => {
+                                         e.preventDefault();
+                                         setFormData((prev) => ({
+                                             ...prev,
+                                             image: null
+                                         }));
+                                     }}
                                 /></a>
                         </p>}
                         <p>
                             <label className="univForm-container-label" htmlFor="title">
-                            <span className="univForm-container-label-title">Title</span>
+                                <span className="univForm-container-label-title">Title</span>
                                 <span className="univForm-container-label-caption">Event’s name shown to users.</span>
                             </label>
                             <input id="title" type="text" className="univForm-container-textInput"
@@ -596,6 +615,17 @@ const EditEvent = () => {
                             <input id="submit" type="submit" className="univForm-container-submitInput"
                                    value="Save"
                                    onClick={handleFormSubmit}/>
+                        </p>
+                        <p>
+                            <label className="univForm-container-label" htmlFor="delete-event">
+                                <span className="univForm-container-label-caption">Permanently delete event.</span>
+                            </label>
+                            <button id={"delete-event"} className='btn btn-danger'
+                                    onClick={(e) => DeleteButton(e)}>
+                                <img src={TrashIcon}
+                                     alt="delete event icon"
+                                />
+                            </button>
                         </p>
                     </form>}
             </main>
