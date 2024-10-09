@@ -387,9 +387,9 @@ def createEvent(request):
         token=event_token,
         location=location,
         icon=None,
+        joinCode=generate_code()
     )
     newEvent.save()
-
 
     return Response({"event_id": newEvent.id, "detail": "Event created successfully."}, status=status.HTTP_201_CREATED)
 

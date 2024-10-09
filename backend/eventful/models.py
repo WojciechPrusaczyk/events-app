@@ -14,7 +14,7 @@ class Events(models.Model):
     token = models.CharField(max_length=16, blank=True, null=True)
     location = models.ForeignKey("Locations", models.DO_NOTHING, db_column="location", blank=True, null=True)
     icon = models.ForeignKey("Photos", models.DO_NOTHING, db_column="photo", blank=True, null=True)
-    joinCode = models.CharField(max_length=255, blank=True, null=True)
+    joinCode = models.CharField(max_length=255, blank=True, null=True, db_column="joinCode")
 
     class Meta:
         db_table = "events"
