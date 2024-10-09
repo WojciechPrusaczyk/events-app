@@ -98,6 +98,18 @@ BEGIN
     END LOOP;
 END $$;
 ```
+
+### Wstępne dane
+Aby załadować wstępne dane należy użyć poniższej komendy
+```commandline
+cd .\backend\
+python manage.py loaddata initial_data
+```
+Utworzy to automatycznie użytkownika:
+Username: john_doe
+Email: john.doe@example.com
+Password: 71WF@IP4
+
 <!--
 # Mapa aplikacji
 - Strona główna (/):  

@@ -143,12 +143,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'wojciechp.atthost24.pl'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'no-reply@eventfull.pl'
-EMAIL_HOST_PASSWORD = 'Qg90e0yf1@@@6'
-
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 CSRF_TRUSTED_ORIGINS = ['https://eventfull.pl']
 

@@ -2,3 +2,5 @@
 /backend/staticfiles/
 /frontend/.env
 /backend/.env
+
+.idea
