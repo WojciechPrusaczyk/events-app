@@ -10,6 +10,11 @@ def generate_token(length=64):
     return token
 
 
+def generate_code(length=8):
+    characters = string.ascii_lowercase + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
 def hash(string):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(string.encode('utf-8'), salt)

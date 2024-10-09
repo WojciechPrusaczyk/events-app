@@ -387,6 +387,7 @@ def createEvent(request):
         token=event_token,
         location=location,
         icon=None,
+        joinCode=generate_code()
     )
     newEvent.save()
 

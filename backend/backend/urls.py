@@ -38,6 +38,7 @@ urlpatterns = [
     path("account-verification/<str:token>", views.viewAccountVerification, name="accountVerification"),
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
     path("edit-segments/<int:id>", views.editSegments, name="editSegments"),
+    path("join/<str:code>", views.index, name="show_event"),
 
     path("api/", api.viewAPI, name="view_api"),
     path("api/register/", api.register, name="api_register"),

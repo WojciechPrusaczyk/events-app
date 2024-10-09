@@ -76,7 +76,7 @@ def editSegments(request, id=None):
         return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
 
 
-def joinEvent(request, id=None):
+def joinEvent(request):
     # weryfikacja zalogowania
     token = request.COOKIES.get('token')
     if not token:
@@ -86,10 +86,22 @@ def joinEvent(request, id=None):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    if id and user:
-        return render(request, "index.html", {"token": id})
+    if user:
+        return render(request, "index.html")
     else:
-        return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
-#def /join do wpisywania
+        return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)
 
-#def /join/numer do pokazania
+
+def showEvent(request, code=None):
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUcd .EST)
+
+    if user:
+        return render(request, "index.html", {"code": code})
+    else:
+        return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)
