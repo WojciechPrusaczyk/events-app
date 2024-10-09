@@ -37,6 +37,7 @@ urlpatterns = [
     path("reset-password/<str:token>", views.viewResetPassword, name="resetPassword"),
     path("account-verification/<str:token>", views.viewAccountVerification, name="accountVerification"),
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
+    path("edit-segments/<int:id>", views.editSegments, name="editSegments"),
 
     path("api/", api.viewAPI, name="view_api"),
     path("api/register/", api.register, name="api_register"),

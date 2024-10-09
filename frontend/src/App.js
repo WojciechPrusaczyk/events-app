@@ -10,6 +10,7 @@ import EditEvent from "./containers/editEvent/EditEvent";
 import EventsList from "./containers/eventsList/EventsList";
 import JoinEvent from "./containers/joinEvent/JoinEvent";
 import ShowEvent from "./containers/showEvent/ShowEvent";
+import EditSegments from "./containers/editSegments/EditSegments";
 function App() {
   return (
     <Router>
@@ -21,6 +22,7 @@ function App() {
         <Route path="/reset-password/:token" element={ <ResetPassword /> } />
         <Route path="/account-verification/:token" element={ <AccountVerification /> } />
         <Route path="/edit-event/:id" element={ <EditEvent /> } />
+        <Route path="/edit-segments/:id" element={ <EditSegments /> } />
         <Route path="/events-list" element={ <EventsList /> } />
         <Route path="/join" element={ <JoinEvent /> } />
         <Route path="/join/:code" element={ <ShowEvent /> } />

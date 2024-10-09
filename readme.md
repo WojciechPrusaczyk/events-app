@@ -39,6 +39,8 @@ Service for creating and managing events.
 6. [ ] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
 7. [ ] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane
 8. [ ] gdy kliknie się kilka razy rejestruj po wypełnieniu formularza, to utworzy się kilku użytkowników
+9. [ ] nie można usunąć wydarzenia
+10. [ ] nie da się zmienić daty
 
 # Installation
 

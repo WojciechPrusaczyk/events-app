@@ -63,8 +63,8 @@ const EditEvent = () => {
                         const data = response.data.detail;
                         setFormData({
                             title: data.name,
-                            description: data.description,
-                            rules: data.rules,
+                            description: JSON.parse(data.description),
+                            rules: JSON.parse(data.rules),
                             startDate: formatDateForInput(data.starttime),
                             startTime: formatTimeForInput(data.starttime),
                             endDate: formatDateForInput(data.endtime),
@@ -147,8 +147,8 @@ const EditEvent = () => {
             const preparedData = {
                 id: eventId,
                 name: formData.title,
-                description: formData.description,
-                rules: formData.rules,
+                description: JSON.stringify(formData.description),
+                rules: JSON.stringify(formData.rules),
                 startTime: formatForBackend(formData.startDate, formData.startTime),
                 endTime: formatForBackend(formData.endDate, formData.endTime),
                 supervisor: formData.supervisor,
@@ -187,11 +187,11 @@ const EditEvent = () => {
     };
 
     const handleArrayChange = (field) => (newDataArray) => {
-        const textContent = newDataArray.map(op => op.insert).join('');
-        console.log(`New data for ${field}:`, textContent);
+        const content = newDataArray;
+        console.log(`New data for ${field}:`, content);
         setFormData((prevState) => ({
             ...prevState,
-            [field]: textContent,
+            [field]: content,
         }));
     };
 
