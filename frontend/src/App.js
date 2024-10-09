@@ -9,6 +9,7 @@ import AccountVerification from "./containers/accountVerification/AccountVerific
 import EditEvent from "./containers/editEvent/EditEvent";
 import EventsList from "./containers/eventsList/EventsList";
 import JoinEvent from "./containers/joinEvent/JoinEvent";
+import ShowEvent from "./containers/showEvent/ShowEvent";
 function App() {
   return (
     <Router>
@@ -22,6 +23,7 @@ function App() {
         <Route path="/edit-event/:id" element={ <EditEvent /> } />
         <Route path="/events-list" element={ <EventsList /> } />
         <Route path="/join" element={ <JoinEvent /> } />
+        <Route path="/join/:code" element={ <ShowEvent /> } />
       </Routes>
     </Router>
   );
