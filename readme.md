@@ -35,11 +35,11 @@ Service for creating and managing events.
 2. [x] toggle nie może być focusowany
 3. [x] email wysyłany do potwierdzenia maila wysyła zły template
 4. [x] użytkownik bez zweryfikowanego emaila może używać aplikacji
-5. [ ] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
+5. [x] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
 6. [ ] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
 7. [ ] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane
 8. [ ] gdy kliknie się kilka razy rejestruj po wypełnieniu formularza, to utworzy się kilku użytkowników
-9. [ ] nie można usunąć wydarzenia
+9. [x] nie można usunąć wydarzenia
 10. [ ] nie da się zmienić daty
 11. [ ] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
 
