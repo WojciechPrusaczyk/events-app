@@ -30,6 +30,18 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = UserSettings
         fields = '__all__'
 
+class PublicUserdataSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Users
+        fields = [
+            "uid",
+            "username",
+            "language",
+            "sex"
+        ]
+        read_only_fields = ["uid"]
+
+
 class LocationSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Locations
@@ -44,6 +56,8 @@ class EventSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
     iconFilename = serializers.SerializerMethodField()
+    supervisor = PublicUserdataSerializer(read_only=True)
+
     class Meta(object):
         model = Events
         fields = '__all__'

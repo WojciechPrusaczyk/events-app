@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export function getShortName(name) {
     if(name.length >= 3 )
     {
@@ -39,4 +41,18 @@ export function generateColorFromText(text) {
 
 export function rgbToHex(r, g, b) {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+}
+
+export async function getAddressByLaLng(lat, lng) {
+    try {
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`);
+        if (response.data.results.length > 0) {
+            return response.data.results[0].formatted_address;
+        } else {
+            return "No address found";
+        }
+    } catch (error) {
+        console.error("Error fetching address:", error);
+        return "Error fetching address";
+    }
 }

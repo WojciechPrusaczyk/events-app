@@ -99,9 +99,19 @@ def showEvent(request, code=None):
     try:
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
-        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUcd .EST)
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user:
+    # Sprawdzenie czy dany event istnieje.
+    try:
+        event = Events.objects.get(joinCode=code.lower())
+    except Users.DoesNotExist:
+        return Response({"detail": "Event with provided join code not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if user and event:
+        # Zmiana z małych liter na duże.
+        for letter in code:
+            if letter.islower():
+                return redirect("show_event", code=code.upper())
         return render(request, "index.html", {"code": code})
     else:
         return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)

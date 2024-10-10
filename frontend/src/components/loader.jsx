@@ -1,12 +1,13 @@
 import React from 'react';
 
-const Loader = () => {
+const DataLoader = ({title = "Loading data, please wait."}) => {
 
   return (
     <div className="loader">
-        <h1 className="loader-title">Loading data, please wait.</h1>
+        <h1 className="loader-title">{title}</h1>
+        <div className={"loader-animation"}></div>
     </div>
   );
 };
 
-export default Loader;
+export default DataLoader;

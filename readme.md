@@ -41,6 +41,7 @@ Service for creating and managing events.
 8. [ ] gdy kliknie się kilka razy rejestruj po wypełnieniu formularza, to utworzy się kilku użytkowników
 9. [ ] nie można usunąć wydarzenia
 10. [ ] nie da się zmienić daty
+11. [ ] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
 
 # Installation
 

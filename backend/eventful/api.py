@@ -407,7 +407,14 @@ def getEvent(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Finding event
+    # check if join code provided
+    joinCode = request.data.get("code")
+    if joinCode:
+        event = Events.objects.get(joinCode=joinCode)
+        eventSerializer = EventSerializer(event)
+        return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
+
+    # Finding event by id
     eventId = request.data.get("id")
     if not eventId:
         return Response({"detail": "Event id required."}, status=status.HTTP_400_BAD_REQUEST)

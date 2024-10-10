@@ -16,6 +16,7 @@ import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";
 import {generateColorFromText, getShortName} from "../../components/Helpers";
+import DataLoader from "../../components/loader";
 let fileHandle;
 let dragoverTimeout;
 const EditEvent = () => {
@@ -353,7 +354,7 @@ const EditEvent = () => {
         <div>
             <Header/>
             <main>
-                {!isDataLoaded && <Loader />}
+                {!isDataLoaded && <DataLoader />}
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
