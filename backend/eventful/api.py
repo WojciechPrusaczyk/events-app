@@ -692,4 +692,128 @@ def getSegments(request, event_id):
     except Segments.DoesNotExist:
         return Response({"detail": "Event not found or no segments available."}, status=status.HTTP_404_NOT_FOUND)
 
-#TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów
+
+
+def createSegment(request):
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    event_id = request.data.get('event_id')
+    if not event_id:
+        return Response({"detail": "Event ID required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        event = Events.objects.get(id=event_id)
+        if event.supervisor != user:
+            return Response({"detail": "You are not the supervisor of this event."}, status=status.HTTP_403_FORBIDDEN)
+    except Events.DoesNotExist:
+        return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = SegmentsSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def editSegment(request):
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+    segmentId = request.data.get("id")
+    if not segmentId:
+        return Response({"detail": "Segment ID required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        segment = Segments.objects.select_related('event').get(id=segmentId)
+    except Segments.DoesNotExist:
+        return Response({"detail": "Segment not found."}, status=status.HTTP_404_NOT_FOUND)
+    if segment.event.supervisor != user:
+        return Response({"detail": "You are not the supervisor of this event."}, status=status.HTTP_403_FORBIDDEN)
+
+    name = request.data.get('name')
+    description = request.data.get('description')
+    starttime = request.data.get('startTime')
+    endtime = request.data.get('endTime')
+    location_id = request.data.get('location')
+    speaker_id = request.data.get('speaker')
+    isactive = request.data.get('isActive')
+
+    if name is not None:
+        segment.name = name
+    if description is not None:
+        segment.description = description
+    if starttime is not None:
+        try:
+            starttime = starttime.replace('T', ' ')
+            segment.starttime = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return Response({"detail": "Invalid starttime format. Use 'YYYY-MM-DD HH:MM:SS'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+    if endtime is not None:
+        try:
+            endtime = endtime.replace('T', ' ')
+            segment.endtime = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return Response({"detail": "Invalid endtime format. Use 'YYYY-MM-DD HH:MM:SS'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    if starttime and endtime and starttime > endtime:
+        return Response({"detail": "Invalid timeline. Start time must be before end time."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    if location_id is not None:
+        try:
+            location = Locations.objects.get(id=location_id)
+            segment.location = location
+        except Locations.DoesNotExist:
+            return Response({"detail": "Location not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if speaker_id is not None:
+        try:
+            speaker = Users.objects.get(id=speaker_id)
+            segment.speaker = speaker
+        except Users.DoesNotExist:
+            return Response({"detail": "Speaker not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if isactive is not None:
+        segment.isactive = convertBoolean(isactive)
+
+    segment.save()
+    return Response({"detail": "Segment updated successfully.", "segment_id": segment.id}, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def deleteSegment(request):
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    segmentId = request.data.get("id")
+    if not segmentId:
+        return Response({"detail": "Segment ID required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        segment = Segments.objects.select_related('event').get(id=segmentId)
+    except Segments.DoesNotExist:
+        return Response({"detail": "Segment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if segment.event.supervisor != user:
+        return Response({"detail": "You are not the supervisor of this event."}, status=status.HTTP_403_FORBIDDEN)
+
+    segment.delete()
+    return Response({"detail": "Segment deleted successfully."}, status=status.HTTP_200_OK)
+
+
+#TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów DONE
