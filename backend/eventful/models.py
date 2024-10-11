@@ -95,7 +95,7 @@ class UserSettings(models.Model):
 
 class Users(models.Model):
     uid = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=64)
+    username = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=64)
     surname = models.CharField(max_length=64)
     email = models.CharField(max_length=320)

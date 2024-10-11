@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -89,11 +89,20 @@ def register(request):
     if not serializerUser.is_valid():
         return Response(serializerUser.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if Users.objects.filter(username=serializerUser.validated_data["username"]).exists():
-        return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+    with transaction.atomic():
+        # Lock the rows for the duration of the transaction
+        existing_user_by_username = Users.objects.select_for_update().filter(
+            username=serializerUser.validated_data["username"]).exists()
+        existing_user_by_email = Users.objects.select_for_update().filter(
+            email=serializerUser.validated_data["email"]).exists()
 
-    if Users.objects.filter(email=serializerUser.validated_data["email"]).exists():
-        return Response({"detail": "User with provided email already exists."}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        if existing_user_by_username:
+            return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if existing_user_by_email:
+            return Response({"detail": "User with provided email already exists."},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+
     # Check password validity before saving the user
     if not is_valid_password(request.data["password"]):
         return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
@@ -138,13 +147,17 @@ def register(request):
             return Response({"detail": "Error creating link.", "error": str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         try:
+            connection = get_connection()
+            connection.open()
             send_mail(
                 subject,
                 message,
                 'no-reply@eventfull.pl',
                 [user.email],
                 html_message=html_message,
+                connection=connection
             )
+            connection.close()
         except Exception as e:
             return Response({"detail": "Error sending email.", "error": str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -154,33 +167,27 @@ def register(request):
 
 @api_view(["POST"])
 def user(request):
-    token = request.COOKIES.get('token')
-    if not token:
-        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    id = request.data.get('id')
+    username = request.COOKIES.get('username') or request.data.get('username')
+
+    if isinstance(id, dict):
+        id = id.get('id')
+
+
+    # Check if both id and username are missing
+    if not id and not username:
+        return Response({"detail": "id or username required."}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        user = Users.objects.get(token=token)
+        if id:
+            user = Users.objects.get(uid=id)
+        elif username:
+            user = Users.objects.get(username=username)
     except Users.DoesNotExist:
-        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Invalid token or username."}, status=status.HTTP_400_BAD_REQUEST)
 
-    username = request.data.get("username")
-    id = request.data.get("id", None)
-
-    if id is not None:
-        try:
-            userSerializer = LoginUserSerializer(Users.objects.get(uid=id))
-            return Response({"user": userSerializer.data}, status=status.HTTP_200_OK)
-        except Users.DoesNotExist:
-            return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not username:
-        return Response({"detail": "username required."}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        if not Users.objects.filter(username=username).exists():
-            return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = LoginUserSerializer(Users.objects.get(username=username))
-        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = LoginUserSerializer(user)
+    return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
 
 @csrf_exempt
 @api_view(["POST"])
@@ -285,7 +292,6 @@ def forgotPassword(request):
         # Generate a password reset token
         userSetting = UserSettings.objects.get(id=user.userSetting.id)
         userSetting.utilityToken = generate_token()
-        print(userSetting.utilityToken)
         userSetting.save()  # Save the token to the database
 
         # Construct the reset link
@@ -306,15 +312,19 @@ def forgotPassword(request):
     html_message = html_message.replace("[Link do resetu hasła]", link)
 
     try:
+        connection = get_connection()
+        connection.open()
         send_mail(
             subject,
             message,
             'no-reply@eventfull.pl',
             [email],
             html_message=html_message,
+            connection=connection,
         )
+        connection.close()
     except Exception as e:
-        return Response({"detail": "Error sending email."})
+        return Response({"detail": "Error sending email.", "error" :str(e)})
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
 
@@ -322,7 +332,6 @@ def forgotPassword(request):
 def resetPassword(request):
     token = request.data.get("token")
     new_password = request.data.get("password")
-    print(request.data)
     try:
         userSettings = UserSettings.objects.get(utilityToken=token)
         user = Users.objects.get(userSetting=userSettings)
@@ -446,10 +455,14 @@ def getEvents(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Finding events where user is a supervisor
-    eventsUser = Events.objects.filter(supervisor=user.uid).select_related('icon')
-    eventsPublic = Events.objects.filter(ispublic=True).select_related('icon')
-    events = eventsUser | eventsPublic
+    # Finding public and active events
+    eventsPublicActive = Events.objects.filter(ispublic=True, isactive=True).select_related('icon')
+
+    # Finding inactive events where user is a supervisor
+    eventsUserInactive = Events.objects.filter(supervisor=user.uid).select_related('icon')
+
+    # Combine the two querysets using union
+    events = eventsPublicActive | eventsUserInactive
 
     # Serializing events
     if events.exists():
@@ -504,13 +517,13 @@ def editEventApi(request):
     joinapproval = request.data.get('joinApproval')
     location = locationObject
 
-    #TODO description nie dziala napraw ktos ok? DONE? jest w bazie danych zapisywane Rules to samo
+
+    #TODO description nie dziala napraw ktos ok? DONE? jest w bazie danych zapisywane Rules to samo DONE
 
 
     if name is not None and name != "New Event" and name != "":
         event.name = name
 
-    print(description)
     if description is not None:
         event.description = description
     if rules is not None:
@@ -537,19 +550,25 @@ def editEventApi(request):
                         status=status.HTTP_400_BAD_REQUEST)
 
     if isactive is not None:
-        event.isactive = bool(isactive)
+        event.isactive = convertBoolean(isactive)
     if ispublic is not None:
-        event.ispublic = bool(ispublic)
+        event.ispublic = convertBoolean(ispublic)
     if joinapproval is not None:
-        event.joinapproval = bool(joinapproval)
+        event.joinapproval = convertBoolean(joinapproval)
 
     if location is not None:
         event.location = location
 
     uploaded_file = request.FILES.get('image')
+    if uploaded_file is None:
+        uploaded_file = request.data.get('image')
 
-
-    if uploaded_file:
+    print(uploaded_file)
+    if uploaded_file == "deleted":
+        event.icon = None
+    elif isinstance(uploaded_file, str):
+        event.icon = event.icon
+    elif uploaded_file:
         max_size = 2 * 1024 * 1024
         if uploaded_file.size > max_size:
             return Response({"detail": "File too large."},
@@ -673,4 +692,4 @@ def getSegments(request, event_id):
     except Segments.DoesNotExist:
         return Response({"detail": "Event not found or no segments available."}, status=status.HTTP_404_NOT_FOUND)
 
-# TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów
+#TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów

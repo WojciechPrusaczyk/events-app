@@ -54,7 +54,6 @@ urlpatterns = [
     path("api/get-events/", api.getEvents, name="api_get_events"),
     path("api/edit-event/", api.editEventApi, name="api_edit_event"),
     path("api/search-users/", api.searchUsers, name="api_search_users"),
-    # path("api/upload-image/", api.uploadImage, name="api_upload_image")
     path("api/delete-event/", api.deleteEvent, name="api_delete_event"),
     path("api/get-segments/", api.getSegments, name="api_get_segments"),
 

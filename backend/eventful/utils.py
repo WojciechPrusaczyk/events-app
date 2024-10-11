@@ -14,6 +14,14 @@ def generate_code(length=8):
     characters = string.ascii_lowercase + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+def convertBoolean(jsBool):
+    if jsBool == 'true':
+        return True
+    elif jsBool == 'false':
+        return False
+    else:
+        return None
+
 
 def hash(string):
     salt = bcrypt.gensalt()

@@ -132,6 +132,7 @@ const EditEvent = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
+        console.log(formData)
 
         if (formData.title === "New Event" || formData.title === "")
         {
@@ -411,7 +412,7 @@ const EditEvent = () => {
                         </p>
                         {(fileError !== "") && <p><span className="file-error"> {fileError} </span></p>}
 
-                        {(null !== formData.image && undefined !== formData.image && formData.image instanceof File) &&
+                        {(null !== formData.image && undefined !== formData.image && formData.image instanceof File && "deleted" !== formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
                                 <img className="univForm-container-file-image dp-large"
                                      src={URL.createObjectURL(formData.image)}
@@ -423,7 +424,7 @@ const EditEvent = () => {
                                      src={URL.createObjectURL(formData.image)}
                                      alt="uploaded image small"/>
                             </p>}
-                        {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string') &&
+                        {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string'  && "deleted" !== formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
                                 <img className="univForm-container-file-image dp-large"
                                      src={`/media/images/${formData.image}`}
@@ -435,7 +436,7 @@ const EditEvent = () => {
                                      src={`/media/images/${formData.image}`}
                                      alt="uploaded image small"/>
                             </p>}
-                        {(null === formData.image || undefined === formData.image) &&
+                        {(null === formData.image || undefined === formData.image || "deleted" === formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
                                 <span className="univForm-container-file-image dp-large" aria-label="cover large"
                                       style={applyStylesToElements(getShortName(formData.title))}>
@@ -459,7 +460,7 @@ const EditEvent = () => {
                                          e.preventDefault();
                                          setFormData((prev) => ({
                                              ...prev,
-                                             image: null
+                                             image: "deleted"
                                          }));
                                      }}
                                 /></a>
