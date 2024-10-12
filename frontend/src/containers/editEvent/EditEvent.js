@@ -11,7 +11,6 @@ import TimePicker from "../../components/timePicker";
 import TimeIcon from "../../images/icons/clockIcon.svg"
 import DateIcon from "../../images/icons/dateIcon.svg"
 import TextEditor from "../../components/textEditor";
-import Loader from "../../components/loader";
 import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";

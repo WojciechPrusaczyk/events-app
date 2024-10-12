@@ -1,0 +1,27 @@
+@import "../mixins";
+
+.show-event {
+  width: 35%;
+  padding: 25px;
+  @include double-gradient(180deg, #fff4f0, #f5f4ff);
+  margin: auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+  &-title {
+    text-align: center;
+    font-size: 2rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: $black;
+    font-weight: bold;
+  }
+  &-image {
+    @include event-cover();
+    margin: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+    display: block;
+  }
+  &-join {
+    @include button( $success-light, $black-light );
+  }
+}

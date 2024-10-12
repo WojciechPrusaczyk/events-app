@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
-import "../../styles/containers/newPassword.scss";
+import "../../styles/containers/showEvent.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import DataLoader from "../../components/loader";
-import {generateColorFromText, getAddressByLaLng, getShortName} from "../../components/Helpers";
+import { getAddressByLaLng } from "../../components/Helpers";
 import EventImage from "../../components/EventImage";
-
-
+import TimeIcon from "../../images/icons/clockIcon.svg"
+import DateIcon from "../../images/icons/dateIcon.svg"
 
 const ShowEvent = () => {
     const { code } = useParams();
@@ -50,38 +50,63 @@ const ShowEvent = () => {
     {
         if (address === "" ) fetchAddress();
 
-        event = <div>
+        event = <div className={"show-event"}>
             <p>
-                <h1>{eventData.name}</h1>
+                <h1 className={"show-event-title"}>{eventData.name}</h1>
             </p>
             <p>
-                <EventImage name={eventData.name} image={eventData.iconFilename} size={"medium"}/>
+                <EventImage className={"show-event-image"} name={eventData.name} image={eventData.iconFilename}
+                            size={"large"}/>
             </p>
             <p>
                 {((eventData.location.placeId == null || eventData.location.placeId === "default") && eventData.location.formattedAddress == null) &&
-                    <a href={`https://maps.google.com/?q=${eventData.location.latitude},${eventData.location.longitude}`}>
+                    <a className={"show-event-address"}
+                       href={`https://maps.google.com/?q=${eventData.location.latitude},${eventData.location.longitude}`}>
                         {address ? address : "Loading address."}
                     </a>
                 }
                 {(eventData.location.placeId !== null && eventData.location.placeId !== "default" && eventData.location.formattedAddress !== null) &&
-                    <a href={`https://maps.google.com/?q=${eventData.location.latitude},${eventData.location.longitude}`}>
+                    <a className={"show-event-address"}
+                       href={`https://maps.google.com/?q=${eventData.location.latitude},${eventData.location.longitude}`}>
                         {eventData.location.formattedAddress}
                     </a>
                 }
             </p>
-                <span>Start:</span>
-                <span>{eventData.starttime.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                <span>{eventData.starttime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
             <p>
+                <div className={"show-event-date"}>
+                    <span>Start:</span>
+                    <span>{eventData.starttime.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}</span>
+                    <span>{eventData.starttime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })}</span>
+                </div>
             </p>
-                <span>End:</span>
-                <span>{eventData.endtime.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                <span>{eventData.endtime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
             <p>
-                <h1>{eventData.supervisor.username}</h1>
+                <div className={"show-event-date"}>
+                    <span>End:</span>
+                    <span>{eventData.endtime.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}</span>
+                    <span>{eventData.endtime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })}</span>
+                </div>
             </p>
             <p>
-                <button>{eventData.joinApproval ? "Join" : "Send join request"}</button>
+                <h1 className={"show-event-supervisor"}>{eventData.supervisor.username}</h1>
+            </p>
+            <p>
+                <button className={"show-event-join"}>{eventData.joinApproval ? "Join" : "Send join request"}</button>
             </p>
         </div>
     }
