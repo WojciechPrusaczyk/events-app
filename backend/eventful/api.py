@@ -714,11 +714,31 @@ def createSegment(request):
     except Events.DoesNotExist:
         return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = SegmentsSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    location = Locations(
+        longitude="18.0166862",
+        latitude="53.1231938"
+    )
+    location.save()
+
+    currentTimeUTC = timezone.now()
+
+    warsaw_tz = pytz.timezone('Europe/Warsaw')
+    currentTime = currentTimeUTC.astimezone(warsaw_tz)
+
+    newSegment = Segments(
+        event=event,
+        name="",
+        description="",
+        starttime=currentTime,
+        endtime=currentTime + timedelta(days=10),  # Poprawiono generowanie endtime
+        speaker=user,
+        isactive=False,
+        location=location,
+    )
+    newSegment.save()
+
+    return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
+
 
 
 def editSegment(request):
