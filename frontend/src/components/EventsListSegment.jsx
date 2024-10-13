@@ -9,8 +9,16 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
         EventsListComponent = EventsList.map((item, index) => {
             const shortName = getShortName(item.name);
             const {lightHex, darkHex} = generateColorFromText(shortName);
+            let link = "";
+            if(IsEditList)
+            {
+                link = "edit-event/"+item.id;
+            }
+            else {
+                link = "join/"+item.joinCode;
+            }
 
-            return <a key={item.id} className="events-list-events-item" href={`${window.location.protocol}//${window.location.host}/${IsEditList ? "edit-event/" : "join/"}${item.joinCode}`}>
+            return <a key={item.id} className="events-list-events-item" href={`${window.location.protocol}//${window.location.host}/${link}`}>
                 { ( null !== item.iconFilename) &&
                     <img className="events-list-events-item-image dp-large" src={`/media/images/${item.iconFilename}`} alt="" />}
                 { ( null === item.iconFilename || undefined === item.iconFilename) &&
