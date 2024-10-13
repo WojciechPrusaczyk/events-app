@@ -29,11 +29,21 @@ def viewAPI(request):
         "api_login": "https://eventfull.pl/login{email/login, password}",
         "api_user": "https://eventfull.pl/user{username}",
         "api_check_user": "https://eventfull.pl/checkUsername{username}",
+        "search_users": "https://eventfull.pl/searchUsers{query, limit}",
         "api_logout": "https://eventfull.pl/logout{token}",
         "api_logout_username": "https://eventfull.pl/logoutUsername{username}",
         "api_create_event": "https://eventfull.pl/create_event{wszystko eventu}",
+        "api_delete_event": "https://eventfull.pl/delete_event{id}",
+        "api_get_event": "https://eventfull.pl/get_event{code, id}",
+        "api_get_events": "https://eventfull.pl/get_events(token}",
+        "api_edit_event": "https://eventfull.pl/editEventApi{wszystko eventu}",
         "api_forgot_password": "https://eventfull.pl/forgot_password{email}",
-        "api_reset_password": "https://eventfull.pl/reset_password{new_password}"
+        "api_reset_password": "https://eventfull.pl/reset_password{new_password}",
+        "api_get_segments": "https://eventfull.pl/getSegments{wszystko segmentu}",
+        "api_create_segment": "https://eventfull.pl/createSegment{event_id}",
+        "api_edit_segment": "https://eventfull.pl/editSegment{wszystko segmentu}",
+        "delete_segment": "https://eventfull.pl/delete_segment{wszystko segmentu}"
+
     }
     return Response(api, status=status.HTTP_400_BAD_REQUEST)
 
