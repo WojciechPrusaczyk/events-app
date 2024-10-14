@@ -693,8 +693,9 @@ def searchUsers(request):
 
     return Response({"users": user_data}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def getSegments(request, event_id):
+@api_view(['POST'])
+def getSegments(request):
+    event_id = request.data.get("id")
     try:
         segments = Segments.objects.filter(event_id=event_id)
         serializer = SegmentsSerializer(segments, many=True)
@@ -704,6 +705,7 @@ def getSegments(request, event_id):
 
 
 
+@api_view(['POST'])
 def createSegment(request):
     token = request.COOKIES.get('token')
     if not token:
@@ -713,10 +715,9 @@ def createSegment(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
-    event_id = request.data.get('event_id')
+    event_id = request.data.get('id')
     if not event_id:
         return Response({"detail": "Event ID required."}, status=status.HTTP_400_BAD_REQUEST)
-
     try:
         event = Events.objects.get(id=event_id)
         if event.supervisor != user:
@@ -740,14 +741,14 @@ def createSegment(request):
         name="",
         description="",
         starttime=currentTime,
-        endtime=currentTime + timedelta(days=10),  # Poprawiono generowanie endtime
+        endtime=currentTime + timedelta(days=10),
         speaker=user,
         isactive=False,
         location=location,
     )
     newSegment.save()
 
-    return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
+    return Response({"detail": "Segment created successfully."}, status=status.HTTP_201_CREATED)
 
 
 
