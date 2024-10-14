@@ -6,6 +6,7 @@ import axios from "axios";
 import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
 import {useParams} from 'react-router-dom';
 import "../../styles/components/form.scss"
+import "../../styles/containers/editEvent.scss"
 import DatePicker from "../../components/datePicker";
 import TimePicker from "../../components/timePicker";
 import TimeIcon from "../../images/icons/clockIcon.svg"
@@ -49,6 +50,8 @@ const EditEvent = () => {
     const [supervisor, setSupervisor] = useState({});
     const [isDraggingItem, setDraggingItem] = useState(false);
     const [fileError, setFileError] = useState("");
+    const [copyButtonText, setCopyButtonText] = useState('Copy');
+
     /* TODO: nie jest sprawdzane czy starttime < endtime */
     useEffect(() => {
         if (eventId) {
@@ -69,11 +72,12 @@ const EditEvent = () => {
                             startTime: formatTimeForInput(data.starttime),
                             endDate: formatDateForInput(data.endtime),
                             endTime: formatTimeForInput(data.endtime),
-                            supervisor: data.supervisor,
+                            supervisor: data.supervisor.uid,
                             isActive: data.isactive,
                             isPublic: data.ispublic,
                             joinApproval: data.joinapproval,
                             image: data.iconFilename,
+                            joinCode: data.joinCode,
                         })
 
                         // ustawienie lokalizacji
@@ -91,7 +95,8 @@ const EditEvent = () => {
                             if ( null != data.location.placeId)
                                 setPlaceId(data.location.placeId);
                         }
-                        changeSupervisor(data.supervisor);
+                        changeSupervisor(data.supervisor.uid);
+                        setCopyButtonText(data.joinCode.toUpperCase());
                         setIsDataLoaded(true);
                     }
                 });
@@ -238,15 +243,15 @@ const EditEvent = () => {
             })
     }
     const changeSupervisor = (id) => {
-
+                console.log(id)
         axios
         .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
             id: id
         },{
             withCredentials: true,
         }).then((response) => {
-           if (response.status === 200) {
-                setSupervisor(response.data.user);
+           if (response.status === 200 || response.status === 201) {
+                setSupervisor(response.data.user.uid);
                 setUsersList([]);
                 document.getElementById("supervisor").value = response.data.user.username;
            }
@@ -358,13 +363,36 @@ const EditEvent = () => {
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
-                        <p>
-                            <label className="univForm-container-label" htmlFor="edit-segments">
-                                <span className="univForm-container-label-caption">Edit event's points of interest and crucial parts of it.</span>
-                            </label>
-                            <a id={"edit-segments"} className={"btn"}
-                               href={`${window.location.protocol}//${window.location.host}/edit-segments/${eventId}`}>Edit
-                                segments</a>
+                        <p className="toggle-wrapper">
+                            <p className="univForm-container-toggle">
+                                <label className="univForm-container-label" htmlFor="edit-segments">
+                                    <span className="univForm-container-label-caption">Edit event's points of interest and crucial parts of it.</span>
+                                </label>
+                                <a id={"edit-segments"} className={"btn"}
+                                   href={`${window.location.protocol}//${window.location.host}/edit-segments/${eventId}`}>Edit
+                                    segments</a>
+                            </p>
+                            <p className="univForm-container-toggle">
+                                <label className="univForm-container-label" htmlFor="join-code">
+                                    <span className="univForm-container-label-caption">Copy code essential for users to join.</span>
+                                </label>
+                                <button id={"join-code"} className={"btn"} onClick={ (element) => {
+                                    element.preventDefault();
+                                    navigator.clipboard.writeText(formData.joinCode.toUpperCase())
+                                    .then(() => {
+                                        setCopyButtonText('Copied');
+                                        // Resetowanie tekstu przycisku po 2 sekundach
+                                        setTimeout(() => setCopyButtonText(formData.joinCode.toUpperCase()), 2000);
+                                    })
+                                    .catch((err) => {
+                                        setCopyButtonText('Failed');
+                                        setTimeout(() => setCopyButtonText(formData.joinCode.toUpperCase()), 2000);
+                                        console.error('Failed to copy text: ', err);
+                                    });
+                                }}>
+                                    { copyButtonText }
+                                </button>
+                            </p>
                         </p>
                         <p>
                             <label className="univForm-container-label" htmlFor="image">
@@ -413,42 +441,87 @@ const EditEvent = () => {
 
                         {(null !== formData.image && undefined !== formData.image && formData.image instanceof File && "deleted" !== formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
-                                <img className="univForm-container-file-image dp-large"
-                                     src={URL.createObjectURL(formData.image)}
-                                     alt="uploaded image large"/>
-                                <img className="univForm-container-file-image dp-medium"
-                                     src={URL.createObjectURL(formData.image)}
-                                     alt="uploaded image medium"/>
-                                <img className="univForm-container-file-image dp-small"
-                                     src={URL.createObjectURL(formData.image)}
-                                     alt="uploaded image small"/>
+                                <div className="file-image-wrapper">
+                                    <img className="univForm-container-file-image dp-large"
+                                         src={URL.createObjectURL(formData.image)}
+                                         alt="uploaded image large"/>
+                                    <span className="additional-info dp-large">
+                                        Large cover proportions: 24:36
+                                    </span>
+                                </div>
+                                <div>
+                                    <img className="univForm-container-file-image dp-medium"
+                                         src={URL.createObjectURL(formData.image)}
+                                         alt="uploaded image medium"/>
+                                    <span className="additional-info dp-medium">
+                                        Medium cover proportions: 18:24
+                                    </span>
+                                </div>
+                                <div className="file-image-wrapper">
+                                    <img className="univForm-container-file-image dp-small"
+                                         src={URL.createObjectURL(formData.image)}
+                                         alt="uploaded image small"/>
+                                    <span className="additional-info dp-small">
+                                        Small cover proportions: 11:17
+                                    </span>
+                                </div>
                             </p>}
-                        {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string'  && "deleted" !== formData.image) &&
+                        {(null !== formData.image && undefined !== formData.image && typeof formData.image === 'string' && "deleted" !== formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
-                                <img className="univForm-container-file-image dp-large"
-                                     src={`/media/images/${formData.image}`}
-                                     alt="uploaded image large"/>
-                                <img className="univForm-container-file-image dp-medium"
-                                     src={`/media/images/${formData.image}`}
-                                     alt="uploaded image medium"/>
-                                <img className="univForm-container-file-image dp-small"
-                                     src={`/media/images/${formData.image}`}
-                                     alt="uploaded image small"/>
+                                <div className="file-image-wrapper">
+                                    <img className="univForm-container-file-image dp-large"
+                                         src={`/media/images/${formData.image}`}
+                                         alt="uploaded image large"/>
+                                    <span className="additional-info dp-large">
+                                        Large cover proportions: 24:36
+                                    </span>
+                                </div>
+                                <div className="file-image-wrapper">
+                                    <img className="univForm-container-file-image dp-medium"
+                                         src={`/media/images/${formData.image}`}
+                                         alt="uploaded image medium"/>
+                                    <span className="additional-info dp-medium">
+                                        Medium cover proportions: 18:24
+                                    </span>
+                                </div>
+                                <div className="file-image-wrapper">
+                                    <img className="univForm-container-file-image dp-small"
+                                         src={`/media/images/${formData.image}`}
+                                         alt="uploaded image small"/>
+                                    <span className="additional-info dp-small">
+                                        Small cover proportions: 11:17
+                                    </span>
+                                </div>
                             </p>}
                         {(null === formData.image || undefined === formData.image || "deleted" === formData.image) &&
                             <p className="univForm-container-file-imageWrapper">
-                                <span className="univForm-container-file-image dp-large" aria-label="cover large"
-                                      style={applyStylesToElements(getShortName(formData.title))}>
-                                    {getShortName(formData.title)}
-                                </span>
-                                <span className="univForm-container-file-image dp-medium" aria-label="cover medium"
-                                      style={applyStylesToElements(getShortName(formData.title))}>
-                                    {getShortName(formData.title)}
-                                </span>
-                                <span className="univForm-container-file-image dp-small" aria-label="cover small"
-                                      style={applyStylesToElements(getShortName(formData.title))}>
-                                    {getShortName(formData.title)}
-                                </span>
+                                <div className="file-image-wrapper">
+                                    <span className="univForm-container-file-image dp-large" aria-label="cover large"
+                                          style={applyStylesToElements(getShortName(formData.title))}>
+                                        {getShortName(formData.title)}
+                                    </span>
+                                    <span className="additional-info dp-large">
+                                        Large cover proportions: 24:36
+                                    </span>
+                                </div>
+                                <div className="file-image-wrapper">
+                                    <span className="univForm-container-file-image dp-medium" aria-label="cover medium"
+                                          style={applyStylesToElements(getShortName(formData.title))}>
+                                        {getShortName(formData.title)}
+                                    </span>
+                                    <span className="additional-info dp-medium">
+                                        Medium cover proportions: 18:24
+                                    </span>
+                                </div>
+                                <div className="file-image-wrapper">
+                                    <span className="univForm-container-file-image dp-small" aria-label="cover small"
+                                          style={applyStylesToElements(getShortName(formData.title))}>
+                                        {getShortName(formData.title)}
+                                    </span>
+                                    <span className="additional-info dp-small">
+                                        Small cover proportions: 11:17
+                                    </span>
+                                </div>
                             </p>}
 
                         {(null !== formData.image) && <p>
