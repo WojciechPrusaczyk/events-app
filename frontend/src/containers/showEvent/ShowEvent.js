@@ -117,7 +117,7 @@ const ShowEvent = () => {
                 </h1>
             </p>
             <p>
-                <button className={"show-event-join"}>{eventData.joinApproval ? "Join" : "Send join request"}</button>
+                <button className={"show-event-join"}>{(eventData.joinapproval == false) ? "Join" : "Send join request"}</button>
             </p>
         </div>
     }

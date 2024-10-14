@@ -12,6 +12,7 @@
     font-size: 2rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
     color: $black;
     font-weight: bold;
     margin: 0;
@@ -33,6 +34,7 @@
     display: flex;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
     img {
       width: 30px;
       height: 30px;
