@@ -697,12 +697,11 @@ def searchUsers(request):
 def getSegments(request):
     event_id = request.data.get("id")
     try:
-        segments = Segments.objects.filter(event_id=event_id)
+        segments = Segments.objects.filter(event_id=event_id).order_by('starttime')
         serializer = SegmentsSerializer(segments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Segments.DoesNotExist:
         return Response({"detail": "Event not found or no segments available."}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 @api_view(['POST'])
@@ -710,6 +709,7 @@ def createSegment(request):
     token = request.COOKIES.get('token')
     if not token:
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         user = Users.objects.get(token=token)
     except Users.DoesNotExist:
@@ -718,6 +718,8 @@ def createSegment(request):
     event_id = request.data.get('id')
     if not event_id:
         return Response({"detail": "Event ID required."}, status=status.HTTP_400_BAD_REQUEST)
+
+
     try:
         event = Events.objects.get(id=event_id)
         if event.supervisor != user:
@@ -732,16 +734,33 @@ def createSegment(request):
     location.save()
 
     currentTimeUTC = timezone.now()
-
     warsaw_tz = pytz.timezone('Europe/Warsaw')
     currentTime = currentTimeUTC.astimezone(warsaw_tz)
 
+    starttime = currentTime
+    endtime = currentTime + timedelta(days=10)
+
+    if starttime >= endtime:
+        return Response({"detail": "Start time must be before end time."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check for time conflicts with other segments for the same event
+    conflicting_segments = Segments.objects.filter(
+        event=event
+    ).filter(
+        starttime__lt=endtime,
+        endtime__gt=starttime
+    )
+
+    if conflicting_segments.exists():
+        return Response({"detail": "There is already a segment scheduled that conflicts with the provided time range."},
+                        status=status.HTTP_409_CONFLICT)
+
     newSegment = Segments(
         event=event,
-        name="",
-        description="",
-        starttime=currentTime,
-        endtime=currentTime + timedelta(days=10),
+        name="1",
+        description="2",
+        starttime=starttime,
+        endtime=endtime,
         speaker=user,
         isactive=False,
         location=location,
@@ -751,7 +770,7 @@ def createSegment(request):
     return Response({"detail": "Segment created successfully."}, status=status.HTTP_201_CREATED)
 
 
-
+@api_view(['POST'])
 def editSegment(request):
     token = request.COOKIES.get('token')
     if not token:
@@ -797,9 +816,22 @@ def editSegment(request):
             return Response({"detail": "Invalid endtime format. Use 'YYYY-MM-DD HH:MM:SS'."},
                             status=status.HTTP_400_BAD_REQUEST)
 
-    if starttime and endtime and starttime > endtime:
+    if starttime and endtime and segment.starttime > segment.endtime:
         return Response({"detail": "Invalid timeline. Start time must be before end time."},
                         status=status.HTTP_400_BAD_REQUEST)
+    # Overlap check
+    if starttime or endtime:
+        conflicting_segments = Segments.objects.filter(
+            event=segment.event
+        ).exclude(id=segment.id).filter(
+            starttime__lt=segment.endtime,
+            endtime__gt=segment.starttime
+        )
+
+        if conflicting_segments.exists():
+            return Response(
+                {"detail": "There is already a segment scheduled that conflicts with the provided time range."},
+                status=status.HTTP_409_CONFLICT)
 
     if location_id is not None:
         try:
