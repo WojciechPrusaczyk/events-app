@@ -56,3 +56,18 @@ export async function getAddressByLaLng(lat, lng) {
         return "Error fetching address";
     }
 }
+
+export function formatDateForInput(dateString)  {
+  const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są 0-indeksowane
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function formatTimeForInput(dateString) {
+  const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}

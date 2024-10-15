@@ -758,8 +758,8 @@ def createSegment(request):
 
     newSegment = Segments(
         event=event,
-        name="1",
-        description="2",
+        name=event.name+" segment",
+        description="",
         starttime=starttime,
         endtime=endtime,
         speaker=user,
@@ -854,7 +854,7 @@ def editSegment(request):
     segment.save()
     return Response({"detail": "Segment updated successfully.", "segment_id": segment.id}, status=status.HTTP_200_OK)
 
-@api_view(['DELETE'])
+@api_view(['POST'])
 def deleteSegment(request):
     token = request.COOKIES.get('token')
     if not token:

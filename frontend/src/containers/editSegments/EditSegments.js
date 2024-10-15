@@ -2,16 +2,18 @@ import React, {useState, useEffect} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
+import "../../styles/components/form.scss";
+import "../../styles/containers/editSegment.scss";
 import axios from "axios";
 import {useParams} from 'react-router-dom';
-import "../../styles/components/form.scss"
 import Loader from "../../components/loader";
 import SegmentFormItem from "../../components/SegmentFormItem";
+import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
 
 const EditSegments = () => {
     const {id: eventId} = useParams();
     const [segmentsList, setSegmentsList] = useState([]);
-    const [isDataLoaded, setIsDataLoaded] = useState(false)
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const updateSegmentsList = () => {
         axios
@@ -21,7 +23,23 @@ const EditSegments = () => {
             .then((response) => {
                 if (response.status === 200) {
                     const data = response.data;
-                    setSegmentsList(data);
+                    let preparedData = [];
+                    data.forEach((element) => {
+                        preparedData.push({
+                            id: element.id,
+                            name: element.name,
+                            description: (element.description != "") ? JSON.parse(element.description) : "",
+                            startDate: formatDateForInput(element.starttime),
+                            startTime: formatTimeForInput(element.starttime),
+                            endDate: formatDateForInput(element.endtime),
+                            endTime: formatTimeForInput(element.endtime),
+                            speaker: element.speaker,
+                            isActive: element.isactive,
+                            location: element.location,
+                        })
+                    });
+
+                    setSegmentsList(preparedData);
                     setIsDataLoaded(true);
                 }
             });
@@ -47,7 +65,6 @@ const EditSegments = () => {
 
     let segmentsForms;
     if (Array.isArray(segmentsList) && segmentsList.length > 0) {
-        console.log("DZIAŁA!");
         segmentsForms = segmentsList.map((segment, index) => {
         return <SegmentFormItem key={segment.id} segmentObject={segment} />
     });

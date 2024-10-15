@@ -1,0 +1,16 @@
+@import "../colors";
+
+#delete-segment {
+  cursor: pointer;
+  padding: 10px;
+  font-size: 0;
+  img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+.univForm-container{
+  margin-top: 50px;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
+}

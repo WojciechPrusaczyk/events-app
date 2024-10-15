@@ -15,7 +15,7 @@ import TextEditor from "../../components/textEditor";
 import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";
-import {generateColorFromText, getShortName} from "../../components/Helpers";
+import {formatDateForInput, formatTimeForInput, generateColorFromText, getShortName} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
 let fileHandle;
 let dragoverTimeout;
@@ -104,21 +104,6 @@ const EditEvent = () => {
 
 
     }, [eventId]);
-
-    const formatDateForInput = (dateString) => {
-      const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są 0-indeksowane
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
-    const formatTimeForInput = (dateString) => {
-      const date = new Date(dateString); // Tworzy datę w lokalnej strefie czasowej
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
-    };
 
     function formatForBackend(dateInput, timeInput) {
         const combinedDateTime = `${dateInput}T${timeInput}`;

@@ -68,6 +68,7 @@ class EventSerializer(serializers.ModelSerializer):
         return None
 
 class SegmentsSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(read_only=True)
     class Meta:
         model = Segments
         fields = ['id', 'event', 'name', 'description', 'starttime', 'endtime', 'speaker', 'isactive', 'location']
