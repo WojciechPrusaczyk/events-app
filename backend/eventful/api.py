@@ -2,6 +2,7 @@ import pytz
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
+from django.utils.crypto import get_random_string
 
 from django.core.mail import send_mail, get_connection
 from rest_framework import status
@@ -406,7 +407,7 @@ def createEvent(request):
         token=event_token,
         location=location,
         icon=None,
-        joinCode=generate_code()
+        joinCode=get_random_string(8,"abcdefghijklmnopqrstuvwxyz0123456789")
     )
     newEvent.save()
 
@@ -738,17 +739,17 @@ def createSegment(request):
     currentTime = currentTimeUTC.astimezone(warsaw_tz)
 
     starttime = currentTime
-    endtime = currentTime + timedelta(days=10)
+    endtime = currentTime
 
-    if starttime >= endtime:
+    if starttime > endtime:
         return Response({"detail": "Start time must be before end time."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Check for time conflicts with other segments for the same event
     conflicting_segments = Segments.objects.filter(
         event=event
     ).filter(
-        starttime__lt=endtime,
-        endtime__gt=starttime
+        starttime__lte=endtime,
+        endtime__gte=starttime
     )
 
     if conflicting_segments.exists():
