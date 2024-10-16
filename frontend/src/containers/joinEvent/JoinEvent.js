@@ -2,100 +2,72 @@ import React, { useState } from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
-import "../../styles/containers/newPassword.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import "../../styles/containers/joinEvent.scss";
+
 
 const JoinEvent = () => {
-    const { token } = useParams();
-    const [newPassword, setNewPassword] = useState("");
-    const [newPasswordRepeat, setNewPasswordRepeat] = useState("");
-    const [error, setError] = useState("");
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
-    const resetPassword = (event) => {
-        event.preventDefault();
-        setError("");
-
-        if (newPassword !== newPasswordRepeat) {
-            setError("Passwords do not match.");
-            return;
-        }
-
-        axios
-            .post(`${window.location.protocol}//${window.location.host}/api/reset-password/`, {
-                password: newPassword,
-                token: token
-            })
-            .then(response => {
-                if (response.status === 200) {
-                    setIsFormSubmitted(true);
-                    setError("");
-                } else {
-                    setError("Server side error, please try again later.");
-                }
-            })
-            .catch(() => {
-                setError("Error occurred, try again later.");
-            });
+    const [code, setCode] = useState('');
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+  
+    const handleChange = (e) => {
+      setCode(e.target.value);
     };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError(null);
+      setSuccess(null);
 
-    const NewPasswordForm = (
-        <form className="NewPasswordForm">
-            <div>
-                <h2>Enter your new password</h2>
-                <ul>
-                    <input
-                        type="password"
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="login-form-email"
-                        placeholder="New password"
-                    />
-                    <input
-                        type="password"
-                        onChange={(e) => setNewPasswordRepeat(e.target.value)}
-                        className="login-form-email"
-                        placeholder="Repeat new password"
-                    />
-                    {error && <p><span className="resetError">{error}</span></p>}
-                    <input
-                        type="submit"
-                        onClick={resetPassword}
-                        className="form-container-confirmation-next btn-next"
-                        value="Reset Password"
-                    />
-                </ul>
-            </div>
+      try {
+        const response = await axios.post('/api/join-event/', { code });
+        if (response.status === 200) {
+          setSuccess("Successfully joined the event!");
+        }
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          setError("Event not found.");
+        } else {
+          setError("An error occurred while joining the event.");
+        }
+      }
+    };
+  
+    const JoinEventForm = (
+      <div className="join-event-form">
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="code">Join with code</label>
+          <input 
+            type="text" 
+            id="code" 
+            value={code} 
+            onChange={handleChange} 
+            placeholder="0000 0000" 
+            required 
+          />
+          <button type="submit">Join</button>
         </form>
+  
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {success && <p style={{ color: 'green' }}>{success}</p>}
+  
+        <p>Or</p>
+  
+        <a href="#">Download App and join <br/>with QR code</a>
+      </div>
     );
-
-    const PasswordResetSuccess = (
-        <div className="confirmation">
-            <h2 className="form-page-title">Password Reset Successful</h2>
-            <h3 className="form-page-title">Your password has been successfully reset.</h3>
-            <input
-                onClick={() => {
-                    window.location.href = `${window.location.protocol}//${window.location.host}`;
-                }}
-                type="button"
-                aria-label="Go to the main page"
-                title="Go to the main page"
-                value="Go to the main page"
-                className="form-container-confirmation-next btn-next"
-            />
-        </div>
-    );
-
+  
     return (
-        <div>
-            <Header />
-            <main>
-                {!isFormSubmitted && NewPasswordForm}
-                {isFormSubmitted && PasswordResetSuccess}
-            </main>
-            <Footer />
-        </div>
+      <div>
+        <Header />
+        <main>
+          {JoinEventForm}
+        </main>
+        <Footer />
+      </div>
     );
-};
-
-export default JoinEvent;
+  };
+  
+  export default JoinEvent;
