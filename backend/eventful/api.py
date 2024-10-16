@@ -89,7 +89,6 @@ def login(request):
     response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
                         expires=expires)
 
-    # TODO: dodać obsługę remember me DONE
     return response
 
 
@@ -529,7 +528,6 @@ def editEventApi(request):
     location = locationObject
 
 
-    #TODO description nie dziala napraw ktos ok? DONE? jest w bazie danych zapisywane Rules to samo DONE
 
 
     if name is not None and name != "New Event" and name != "":
@@ -540,7 +538,6 @@ def editEventApi(request):
     if rules is not None:
         event.rules = rules
 
-    # TODO: nie jest sprawdzane czy starttime < endtime   DONE
     if starttime is not None:
         try:
             starttime = starttime.replace('T', ' ')
@@ -587,10 +584,6 @@ def editEventApi(request):
 
 
         mime_type, _ = guess_type(uploaded_file.name)
-        # TODO: nie są spawdzane wyszczególnione formaty obrazów, można wrzucić np. webp   DONE
-        # TODO: nie widzę także sprawdzania wielkości pliku (max 2MB)   DONE
-        # TODO: nowo zapisywane pliki mają wciąż fragment starej nazwy (powinien być tylko nic nie znaczący ciąg znaków)   DONE
-        # TODO: backend wraz z nazwą pliku na serwerze zwraca SAjego id, a nie powinien DONE
 
         if mime_type and mime_type.startswith('image/'):
             if uploaded_file.content_type == 'image/webp':
@@ -882,5 +875,3 @@ def deleteSegment(request):
     segment.delete()
     return Response({"detail": "Segment deleted successfully."}, status=status.HTTP_200_OK)
 
-
-#TODO: dodać create, update i delete dla segmentów, bardzo podobne do samych eventów DONE

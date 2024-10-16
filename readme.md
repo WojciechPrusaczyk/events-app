@@ -42,7 +42,7 @@ Service for creating and managing events.
 9. [x] nie można usunąć wydarzenia
 10. [x] nie da się zmienić daty
 11. [x] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
-
+12.
 # Installation
 
 1. Zainstaluj całe potrzebne oprogramwoanie.
