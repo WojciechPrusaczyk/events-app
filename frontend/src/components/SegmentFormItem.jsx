@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import TextEditor from "./textEditor";
 import TimePicker from "./timePicker";
 import TimeIcon from "../images/icons/clockIcon.svg";
@@ -8,7 +8,7 @@ import {APIProvider, Map, Marker} from "@vis.gl/react-google-maps";
 import TrashIcon from "../images/icons/trashIcon.svg";
 import axios from "axios";
 
-const SegmentFormItem = ({segmentObject}) => {
+const SegmentFormItem = ({segmentObject, updateSegment}) => {
 
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const [selectedLocation, setSelectedLocation] = useState({
@@ -18,6 +18,8 @@ const SegmentFormItem = ({segmentObject}) => {
     const [formattedAddress, setFormattedAddress] = useState("");
     const [placeId, setPlaceId] = useState("");
     const [markerPosition, setMarkerPosition] = useState(null);
+    const titleRef = useRef(null);
+
     useEffect( () => {
 
 
@@ -35,7 +37,12 @@ const SegmentFormItem = ({segmentObject}) => {
             if ( null != segmentObject.location.placeId)
                 setPlaceId(segmentObject.location.placeId);
         }
-    }, [selectedLocation, formattedAddress])
+
+        if (titleRef.current) {
+            titleRef.current.textContent = segmentObject.name;
+        }
+
+    }, [])
 
     const handleMapClick = (e) => {
         if (e.detail.latLng) {
@@ -64,11 +71,18 @@ const SegmentFormItem = ({segmentObject}) => {
         }
     };
 
-    const handleChange = () => {
+    const handleChange = (field) => (event) => {
+        let updatedSegment = {
+            ...segmentObject,
+            [field]: event.target.type !== "checkbox" ? event.target.value : event.target.checked
+        };
+        updateSegment(updatedSegment);
+    };
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
     }
-
-    const handleArrayChange = () => {
+    const handleArrayChange = (e) => {
 
     }
 
@@ -96,15 +110,37 @@ const SegmentFormItem = ({segmentObject}) => {
             });
     };
 
+    const handleBlur = () => {
+        const titleElement = titleRef.current;
+        const fullText = segmentObject.name;
+        if (titleElement && titleElement.textContent !== fullText) {
+
+            let currentIndex = 1;
+
+            const updateText = () => {
+                if (currentIndex <= fullText.length) {
+                    titleElement.textContent = fullText.slice(0, currentIndex);
+                    currentIndex++;
+                    setTimeout(updateText, 100);
+                }
+            };
+
+            setTimeout(updateText, 800);
+        }
+    };
+
     return (
         <div className="univForm-container">
+            <p>
+                <h1 id={"segment-name" + segmentObject.id} className="univForm-container-title" ref={titleRef}></h1>
+            </p>
             <p>
                 <label className="univForm-container-label" htmlFor={"title-" + segmentObject.id}>
                     <span className="univForm-container-label-title">Title</span>
                     <span className="univForm-container-label-caption">Segment’s name shown to users.</span>
                 </label>
                 <input id={"title-" + segmentObject.id} type="text" className="univForm-container-textInput"
-                       onChange={handleChange('title')} defaultValue={segmentObject.name}/>
+                    onChange={handleChange('name')} defaultValue={segmentObject.name} onBlur={ handleBlur }/>
             </p>
             <p>
                 <label className="univForm-container-label" htmlFor={"description-" + segmentObject.id}>
@@ -173,7 +209,8 @@ const SegmentFormItem = ({segmentObject}) => {
                            type="checkbox"
                            aria-label="is active" onChange={handleChange('isActive')}
                            defaultChecked={segmentObject.isActive}/>
-                    <label title="is active" aria-hidden="true" className="tgl-btn" htmlFor={"isActive-" + segmentObject.id}/>
+                    <label title="is active" aria-hidden="true" className="tgl-btn"
+                           htmlFor={"isActive-" + segmentObject.id}/>
                 </div>
             </p>
             <p>
@@ -206,7 +243,7 @@ const SegmentFormItem = ({segmentObject}) => {
                     <span className="univForm-container-label-caption">Permanently delete segment.</span>
                 </label>
                 <button id={"delete-segment"} className='btn btn-danger'
-                        onClick={(e) => handleDelete(e)} >
+                        onClick={(e) => handleDelete(e)}>
                     <img src={TrashIcon}
                          alt="delete segment icon"
                     />

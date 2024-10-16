@@ -58,15 +58,24 @@ const EditSegments = () => {
             });
     }
 
+    const updateSegment = (updatedSegment) => {
+        setSegmentsList((prevState) =>
+            prevState.map(segment =>
+                segment.id === updatedSegment.id ? updatedSegment : segment
+            )
+        );
+    };
+
     useEffect(() => {
         if (eventId && segmentsList.length === 0 ) updateSegmentsList();
+        updateSegmentsList();
     }, [eventId]);
 
 
     let segmentsForms;
     if (Array.isArray(segmentsList) && segmentsList.length > 0) {
         segmentsForms = segmentsList.map((segment, index) => {
-        return <SegmentFormItem key={segment.id} segmentObject={segment} />
+        return <SegmentFormItem key={segment.id} segmentObject={segment} updateSegment={updateSegment} />
     });
 }
 
