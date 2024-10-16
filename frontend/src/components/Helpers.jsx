@@ -71,3 +71,17 @@ export function formatTimeForInput(dateString) {
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${hours}:${minutes}`;
 }
+
+export function formatForBackend(dateInput, timeInput) {
+    const combinedDateTime = `${dateInput}T${timeInput}`;
+    const dateObject = new Date(combinedDateTime);
+
+    // Obliczanie offsetu w minutach i przeliczanie na milisekundy
+    const timezoneOffset = dateObject.getTimezoneOffset() * 60 * 1000;
+
+    // Korygowanie daty przez odjęcie offsetu
+    const localTime = new Date(dateObject.getTime() - timezoneOffset);
+
+    // Zwraca w formacie ISO z zachowaniem lokalnej strefy czasowej
+    return localTime.toISOString().slice(0, 19);  // usunięcie 'Z' na końcu, aby nie było błędnie interpretowane jako UTC
+}

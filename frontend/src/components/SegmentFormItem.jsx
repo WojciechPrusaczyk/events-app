@@ -6,7 +6,10 @@ import DatePicker from "./datePicker";
 import DateIcon from "../images/icons/dateIcon.svg";
 import {APIProvider, Map, Marker} from "@vis.gl/react-google-maps";
 import TrashIcon from "../images/icons/trashIcon.svg";
+import RightArrow from "../images/icons/rightArrowIcon.svg";
 import axios from "axios";
+import {formatForBackend} from "./Helpers";
+import DateTimePresenter from "./DateTimePresenter";
 
 const SegmentFormItem = ({segmentObject, updateSegment}) => {
 
@@ -19,6 +22,9 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
     const [placeId, setPlaceId] = useState("");
     const [markerPosition, setMarkerPosition] = useState(null);
     const titleRef = useRef(null);
+
+    const [startDateTime, setStartDateTime] = useState(new Date(formatForBackend(segmentObject.startDate, segmentObject.startTime)));
+    const [endDateTime, setEndDateTime] = useState(new Date(formatForBackend(segmentObject.endDate, segmentObject.endTime)));
 
     useEffect( () => {
 
@@ -71,19 +77,59 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
         }
     };
 
-    const handleChange = (field) => (event) => {
+    const handleInputChange = (field) => (event) => {
         let updatedSegment = {
             ...segmentObject,
             [field]: event.target.type !== "checkbox" ? event.target.value : event.target.checked
         };
         updateSegment(updatedSegment);
     };
+    
+    const handleDirectChange = (field) => (directData) => {
+        let updatedSegment = {
+            ...segmentObject,
+            [field]: directData
+        };
+        updateSegment(updatedSegment);
+    };
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-    }
-    const handleArrayChange = (e) => {
-
+        e.preventDefault();
+        const preparedObject = {
+            id: segmentObject.id,
+            name: segmentObject.name,
+            description: JSON.stringify(segmentObject.description),
+            starttime: formatForBackend(segmentObject.startDate, segmentObject.startTime),
+            endtime: formatForBackend(segmentObject.endDate, segmentObject.endTime),
+            speaker: segmentObject.speaker,
+            isActive: segmentObject.isactive,
+            location: {
+                placeId: placeId,
+                formattedAddress: formattedAddress,
+                latitude: selectedLocation.lat,
+                longitude: selectedLocation.lng,
+            },
+        }
+        axios
+            .post(
+                `${window.location.protocol}//${window.location.host}/api/edit-segment/`, preparedObject,
+                {
+                    withCredentials: true
+                }
+             )
+            .then((response) => {
+                if (response.status === 200)
+                {
+                    window.location.hash = `segment-${segmentObject.id}`;
+                    window.location.reload();
+                }
+                else {
+                    console.error("Internal server error occurred.")
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     const handleDelete = (e) => {
@@ -130,9 +176,31 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
     };
 
     return (
-        <div className="univForm-container">
-            <p>
+        <form id={"segment-" + segmentObject.id} className="univForm-container">
+            <p className={"segment-header"}>
                 <h1 id={"segment-name" + segmentObject.id} className="univForm-container-title" ref={titleRef}></h1>
+                <DateTimePresenter
+                    startDate={startDateTime.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
+                    startTime={startDateTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })}
+                    endDate={endDateTime.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
+                    endTime={endDateTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })}
+                />
             </p>
             <p>
                 <label className="univForm-container-label" htmlFor={"title-" + segmentObject.id}>
@@ -140,7 +208,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <span className="univForm-container-label-caption">Segment’s name shown to users.</span>
                 </label>
                 <input id={"title-" + segmentObject.id} type="text" className="univForm-container-textInput"
-                    onChange={handleChange('name')} defaultValue={segmentObject.name} onBlur={ handleBlur }/>
+                    onChange={handleInputChange('name')} defaultValue={segmentObject.name} onBlur={ handleBlur }/>
             </p>
             <p>
                 <label className="univForm-container-label" htmlFor={"description-" + segmentObject.id}>
@@ -148,7 +216,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <span className="univForm-container-label-caption">Describe your segment to users, encourage them to attend.</span>
                 </label>
                 <TextEditor id={"description-" + segmentObject.id} className="univForm-container-bigTextInput"
-                            handleChange={handleArrayChange('description')}
+                            handleChange={handleDirectChange('description')}
                             defaultValue={segmentObject.description}/>
             </p>
             <p>
@@ -160,7 +228,10 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <TimePicker
                         id="startTime"
                         className="univForm-container-time"
-                        handleChange={(e) => handleChange('startTime')(e)}
+                        handleChange={(e) => {
+                            handleInputChange('startTime')(e);
+                            setStartDateTime(new Date(formatForBackend(segmentObject.startDate, e.target.value)));
+                        }}
                         timeValue={segmentObject.startTime}
                     />
                     <img className="univForm-container-dateTimeIcons" src={TimeIcon}
@@ -168,7 +239,10 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <DatePicker
                         id="startDate"
                         className="univForm-container-date"
-                        handleChange={(e) => handleChange('startDate')(e)}
+                        handleChange={(e) => {
+                            handleInputChange('startDate')(e);
+                            setStartDateTime(new Date(formatForBackend(e.target.value, segmentObject.startTime)));
+                        }}
                         dateValue={segmentObject.startDate}
                     />
                     <img className="univForm-container-dateTimeIcons" src={DateIcon}
@@ -184,7 +258,10 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <TimePicker
                         id={"endTime-" + segmentObject.id}
                         className="univForm-container-time"
-                        handleChange={(e) => handleChange('endTime')(e)}
+                        handleChange={(e) => {
+                            handleInputChange('endTime')(e);
+                            setEndDateTime(new Date(formatForBackend(segmentObject.endDate, e.target.value)));
+                        }}
                         timeValue={segmentObject.endTime}
                     />
                     <img className="univForm-container-dateTimeIcons" src={TimeIcon}
@@ -192,7 +269,10 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     <DatePicker
                         id={"endDate-" + segmentObject.id}
                         className="univForm-container-date"
-                        handleChange={(e) => handleChange('endDate')(e)}
+                        handleChange={(e) => {
+                            handleInputChange('endDate')(e);
+                            setEndDateTime(new Date(formatForBackend(e.target.value, segmentObject.endTime)));
+                        }}
                         dateValue={segmentObject.endDate}
                     />
                     <img className="univForm-container-dateTimeIcons" src={DateIcon}
@@ -207,7 +287,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                 <div className="univForm-container-toggle-wrapper">
                     <input className="univForm-container-toggle tgl tgl-light" id={"isActive-" + segmentObject.id}
                            type="checkbox"
-                           aria-label="is active" onChange={handleChange('isActive')}
+                           aria-label="is active" onChange={handleInputChange('isActive')}
                            defaultChecked={segmentObject.isActive}/>
                     <label title="is active" aria-hidden="true" className="tgl-btn"
                            htmlFor={"isActive-" + segmentObject.id}/>
@@ -236,7 +316,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
             </p>
             <p>
                 <input id="submit" type="submit" className="univForm-container-submitInput"
-                       value="Save"/>
+                       value="Save" onClick={(e) => handleSubmit(e)}/>
             </p>
             <p>
                 <label className="univForm-container-label" htmlFor="delete-segment">
@@ -249,7 +329,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                     />
                 </button>
             </p>
-        </div>
+        </form>
     );
 }
 

@@ -13,16 +13,15 @@ const TextEditor = ({ handleChange, id, defaultValue, className }) => {
       quill.setContents(defaultValue);
 
       quill.on('editor-change', (eventName, ...args) => {
-            handleChange(quill.getContents());
+            const delta = quill.getContents();
+            handleChange(delta);
         });
   }, []);
 
   return (
       <div id={actualId} className={actualClassName}>
           <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet"/>
-          <div id={"editor-"+actualId}>
-
-          </div>
+          <div id={"editor-"+actualId}></div>
       </div>
   );
 };

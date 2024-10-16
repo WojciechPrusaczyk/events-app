@@ -5,7 +5,7 @@ import "../../styles/containers/home.scss";
 import "../../styles/components/form.scss";
 import "../../styles/containers/editSegment.scss";
 import axios from "axios";
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Loader from "../../components/loader";
 import SegmentFormItem from "../../components/SegmentFormItem";
 import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
@@ -14,6 +14,7 @@ const EditSegments = () => {
     const {id: eventId} = useParams();
     const [segmentsList, setSegmentsList] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const navigate = useNavigate();
 
     const updateSegmentsList = () => {
         axios
@@ -85,10 +86,15 @@ const EditSegments = () => {
             <main>
                 {!isDataLoaded && <Loader />}
                 {isDataLoaded &&
-                <div>
-                    {Array.isArray(segmentsList) && segmentsList.length > 0 && segmentsForms}
-                    <button className={"btn"} onClick={ (e) => addSegmentHandler(e) }>Add segment</button>
-                </div>
+                    <div id={"segments-container"}>
+                        <button id={"go-back-btn"} className={"btn"} onClick={(e) => navigate(-1) }>
+                            Go back to event
+                        </button>
+                        {Array.isArray(segmentsList) && segmentsList.length > 0 && segmentsForms}
+                        <button id={"add-segment-btn"} className={"btn"} onClick={(e) => addSegmentHandler(e)}>Add
+                            segment
+                        </button>
+                    </div>
                 }
             </main>
             <Footer/>

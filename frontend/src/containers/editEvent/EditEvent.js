@@ -15,7 +15,13 @@ import TextEditor from "../../components/textEditor";
 import AddIcon from "../../images/icons/addIcon.svg";
 import DownloadIcon from "../../images/icons/downloadIcon.svg";
 import TrashIcon from "../../images/icons/trashIcon.svg";
-import {formatDateForInput, formatTimeForInput, generateColorFromText, getShortName} from "../../components/Helpers";
+import {
+    formatDateForInput,
+    formatForBackend,
+    formatTimeForInput,
+    generateColorFromText,
+    getShortName
+} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
 let fileHandle;
 let dragoverTimeout;
@@ -104,20 +110,6 @@ const EditEvent = () => {
 
 
     }, [eventId]);
-
-    function formatForBackend(dateInput, timeInput) {
-        const combinedDateTime = `${dateInput}T${timeInput}`;
-        const dateObject = new Date(combinedDateTime);
-
-        // Obliczanie offsetu w minutach i przeliczanie na milisekundy
-        const timezoneOffset = dateObject.getTimezoneOffset() * 60 * 1000;
-
-        // Korygowanie daty przez odjęcie offsetu
-        const localTime = new Date(dateObject.getTime() - timezoneOffset);
-
-        // Zwraca w formacie ISO z zachowaniem lokalnej strefy czasowej
-        return localTime.toISOString().slice(0, 19);  // usunięcie 'Z' na końcu, aby nie było błędnie interpretowane jako UTC
-    }
 
     const handleFormSubmit = (event) => {
         event.preventDefault();

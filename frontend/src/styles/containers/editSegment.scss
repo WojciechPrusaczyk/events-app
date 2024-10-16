@@ -1,13 +1,26 @@
 @import "../colors";
 
-#delete-segment {
-  cursor: pointer;
-  padding: 10px;
-  font-size: 0;
-  margin-left: auto;
-  img {
-    width: 35px;
-    height: 35px;
+#segments-container {
+  display: flex;
+  flex-direction: column;
+
+  #delete-segment {
+    cursor: pointer;
+    padding: 10px;
+    font-size: 0;
+    margin-left: auto;
+    img {
+      width: 35px;
+      height: 35px;
+    }
+  }
+  #add-segment-btn{
+    margin: 50px auto;
+    width: 30%;
+  }
+  #go-back-btn {
+    margin: 30px auto;
+    width: 30%;
   }
 }
 label[for="delete-segment"] {
@@ -17,9 +30,23 @@ label[for="delete-segment"] {
 
 .univForm-container{
   margin-top: 50px;
-    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
   &-title {
     color: $black-light;
     font-size: 1.9rem;
+    padding-right: 20px;
   }
+}
+
+.segment-header {
+  display: flex;
+  flex-direction: row!important;
+  align-items: center!important;
+}
+
+.datetime-presenter {
+  background-color: $main-white;
+  padding: 15px;
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
 }
