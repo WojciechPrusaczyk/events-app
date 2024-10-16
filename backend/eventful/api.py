@@ -792,16 +792,19 @@ def editSegment(request):
 
     name = request.data.get('name')
     description = request.data.get('description')
-    starttime = request.data.get('startTime')
-    endtime = request.data.get('endTime')
-    location_id = request.data.get('location')
+    starttime = request.data.get('starttime')
+    endtime = request.data.get('endtime')
+    location = request.data.get('location')
     speaker_id = request.data.get('speaker')
     isactive = request.data.get('isActive')
 
+    print(request.data)
     if name is not None:
         segment.name = name
     if description is not None:
         segment.description = description
+
+
     if starttime is not None:
         try:
             starttime = starttime.replace('T', ' ')
@@ -820,6 +823,7 @@ def editSegment(request):
     if starttime and endtime and segment.starttime > segment.endtime:
         return Response({"detail": "Invalid timeline. Start time must be before end time."},
                         status=status.HTTP_400_BAD_REQUEST)
+
     # Overlap check
     if starttime or endtime:
         conflicting_segments = Segments.objects.filter(
@@ -828,22 +832,21 @@ def editSegment(request):
             starttime__lt=segment.endtime,
             endtime__gt=segment.starttime
         )
-
         if conflicting_segments.exists():
             return Response(
                 {"detail": "There is already a segment scheduled that conflicts with the provided time range."},
                 status=status.HTTP_409_CONFLICT)
 
-    if location_id is not None:
-        try:
-            location = Locations.objects.get(id=location_id)
-            segment.location = location
-        except Locations.DoesNotExist:
-            return Response({"detail": "Location not found."}, status=status.HTTP_404_NOT_FOUND)
+    if location is not None:
+        segment.location.placeId = location["placeId"]
+        segment.location.longitude = location["longitude"]
+        segment.location.latitude = location["latitude"]
+        segment.location.formattedAddress = location["formattedAddress"]
+        segment.location.save()
 
     if speaker_id is not None:
         try:
-            speaker = Users.objects.get(id=speaker_id)
+            speaker = Users.objects.get(uid=speaker_id)
             segment.speaker = speaker
         except Users.DoesNotExist:
             return Response({"detail": "Speaker not found."}, status=status.HTTP_404_NOT_FOUND)
