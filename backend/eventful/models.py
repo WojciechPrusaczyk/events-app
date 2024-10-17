@@ -23,6 +23,7 @@ class Eventsparticipants(models.Model):
     user = models.ForeignKey("Users", models.DO_NOTHING, db_column="user", blank=True, null=True)
     event = models.ForeignKey(Events, models.DO_NOTHING, db_column="event", blank=True, null=True)
     role = models.CharField(max_length=32, blank=True, null=True)
+    isAccepted = models.BooleanField(db_column="isAccepted", default=False)
 
     class Meta:
         db_table = "eventsParticipants"

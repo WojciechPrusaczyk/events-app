@@ -59,6 +59,7 @@ urlpatterns = [
     path("api/create-segment/", api.createSegment, name="api_create_segment"),
     path("api/edit-segment/", api.editSegment, name="api_edit_segment"),
     path("api/delete-segment/", api.deleteSegment, name="api_delete_segment"),
+    path("api/send-event-request/", api.sendEventRequest, name="api_send_event_request"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

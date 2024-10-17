@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Users, Events, UserSettings, Locations, Photos, Segments
+from .models import Users, Events, UserSettings, Locations, Photos, Segments, Eventsparticipants
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
     LocationSerializer, SegmentsSerializer
 from .utils import *
@@ -38,6 +38,7 @@ def viewAPI(request):
         "api_get_event": "https://eventfull.pl/get_event{code, id}",
         "api_get_events": "https://eventfull.pl/get_events(token}",
         "api_edit_event": "https://eventfull.pl/editEventApi{wszystko eventu}",
+        "api_send_event_request": "https://eventfull.pl/sendEventRequest{event_id, user_id}",
         "api_forgot_password": "https://eventfull.pl/forgot_password{email}",
         "api_reset_password": "https://eventfull.pl/reset_password{new_password}",
         "api_get_segments": "https://eventfull.pl/getSegments{wszystko segmentu}",
@@ -650,6 +651,23 @@ def deleteEvent(request):
 
     event.delete()
     return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
+
+def sendEventRequest(request):
+
+    user_id = request.data.get("user_id")
+    event_id = request.data.get("event_id")
+
+    user = Users.objects.get(id=user_id)
+    event = Events.objects.get(id=event_id)
+
+    participant = Eventsparticipants(
+        user=user,
+        event=event,
+        is_participant=False,
+    )
+    participant.save()
+
+    return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
 
 
 
