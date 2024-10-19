@@ -12,12 +12,14 @@ from rest_framework.decorators import api_view
 from .models import Users, Events, UserSettings
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
 from .utils import *
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
 def index(request):
+    logger.info('Widok YourView został wywołany.')
     return render(request, "index.html")
 
 

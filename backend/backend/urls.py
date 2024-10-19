@@ -25,7 +25,6 @@ from rest_framework import routers
 
 
 urlpatterns = [
-    path('admin/clearcache/', include('clearcache.urls')),
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),

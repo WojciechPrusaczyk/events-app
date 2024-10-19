@@ -3,8 +3,8 @@ from django.db import models
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    description = models.JSONField(blank=True, null=True)
-    rules = models.JSONField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    rules = models.TextField(blank=True, null=True)
     starttime = models.DateTimeField(db_column="startTime")
     endtime = models.DateTimeField(db_column="endTime")
     supervisor = models.ForeignKey("Users", models.DO_NOTHING, db_column="supervisor", blank=True, null=True)
@@ -30,7 +30,7 @@ class Eventsparticipants(models.Model):
 
 class Locations(models.Model):
     id = models.AutoField(primary_key=True)
-    placeId = models.CharField(null=True, default="default", db_column="placeId")
+    placeId = models.CharField(max_length=128, null=True, default="default", db_column="placeId")
     formattedAddress = models.CharField(max_length=256, blank=True, null=True)
     latitude = models.CharField(max_length=64, default="0")
     longitude = models.CharField(max_length=64, default="0")
@@ -88,7 +88,7 @@ class UserSettings(models.Model):
     acceptedSharingDetails = models.BooleanField(db_column="acceptedSharingDetails", blank=True, null=True, default=False)
     acceptedTOS = models.BooleanField(db_column="acceptedTOS", blank=True, null=True, default=False)
     acceptedNews = models.BooleanField(db_column="acceptedNews", blank=True, null=True, default=False)
-    utilityToken = models.CharField(db_column="utilityToken", blank=True, null=True, default="", max_length=64, db_default="")
+    utilityToken = models.CharField(db_column="utilityToken", blank=True, null=True, default="", max_length=64)
 
     class Meta:
         db_table = "userSettings"
