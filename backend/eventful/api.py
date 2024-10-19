@@ -45,7 +45,6 @@ def viewAPI(request):
         "api_create_segment": "https://eventfull.pl/createSegment{event_id}",
         "api_edit_segment": "https://eventfull.pl/editSegment{wszystko segmentu}",
         "delete_segment": "https://eventfull.pl/delete_segment{wszystko segmentu}"
-
     }
     return Response(api, status=status.HTTP_400_BAD_REQUEST)
 
