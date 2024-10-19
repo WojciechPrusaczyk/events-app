@@ -142,11 +142,11 @@ def register(request):
         # Create verification link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
-        link = f"{protocol}://{full_host}/account-verification/{user.userSetting.utilityToken}"
+        link = "{}://{}/account-verification/{}".format(protocol, full_host, user.userSetting.utilityToken)
 
         try:
             subject = "Verification"
-            message = f"Cześć. Wejdź w tego linka: {link}"
+            message = "Cześć. Wejdź w tego linka: {}".format(link)
             username = user.username
             rawHTML = open_verification_template()  # Ensure this loads properly
             if rawHTML == "File doesn't exist.":
@@ -308,12 +308,12 @@ def forgotPassword(request):
         # Construct the reset link
         protocol = request.scheme  # http or https
         full_host = request.get_host()  # domain and port
-        link = f"{protocol}://{full_host}/reset-password/{userSetting.utilityToken}"
+        link = "{}://{}/reset-password/{}".format(protocol, full_host, userSetting.utilityToken)
     except Exception as e:
         return Response({"detail": "Error sending email.", "error": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     subject = "Password Reset"
-    message = f"Cześć, zmieniłeś hasło. Wejdź w tego linka: {link}"
+    message = "Cześć, zmieniłeś hasło. Wejdź w tego linka: {}".format(link)
     username = user.username
     rawHTML = open_email_template()
     if rawHTML == "File doesn't exist.":
