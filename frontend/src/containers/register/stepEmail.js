@@ -22,8 +22,9 @@ const StepEmail = ({ nextStep, handleChange, formData }) => {
   return (
     <div className="form-container-email">
       <PageCounter page={0} />
-      <h2 className="form-page-title">Sign in to participate in events</h2>
+      <h2 className="form-page-title">Sign in to participate and create events</h2>
       <input
+        id="email"
         type="email"
         title="Email address"
         aria-label="Email address"
@@ -37,10 +38,16 @@ const StepEmail = ({ nextStep, handleChange, formData }) => {
       />
       <button
         onClick={ () => {
+            const elem = document.getElementById("email");
+            elem.classList.remove("error")
+
             if (isEmailValid) nextStep();
+            else {
+                elem.classList += " error"
+                window.location.href = "#email";
+            }
         }}
         className="form-container-email-submit btn-next"
-        disabled={!isEmailValid}
       >
         Next
       </button>

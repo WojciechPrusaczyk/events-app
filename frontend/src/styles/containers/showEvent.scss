@@ -1,0 +1,80 @@
+@import "../mixins";
+
+.show-event {
+  margin: 50px auto auto;
+  width: 35%;
+  padding: 35px;
+  @include double-gradient(180deg, #fffbf9, #f2f1ff);
+  border-radius: 20px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+  &-title {
+    text-align: center;
+    font-size: 2rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $black;
+    font-weight: bold;
+    margin: 0;
+  }
+  &-image {
+    @include event-cover();
+    margin: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+    display: block;
+  }
+  &-join {
+    @include button( $success-light, $black-light );
+  }
+  &-address, &-address:active, &-address:hover, &-address:visited {
+    margin-top: 25px;
+    color: $black;
+    font-size: 1.5rem;
+    padding: 10px;
+    display: flex;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+  }
+  &-date {
+    margin-top: 25px;
+    color: $black;
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    &-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      width: 100%
+    }
+    &-time, &-date {
+      padding: 10px;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      width: calc( 50% - 20px );
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+    }
+  }
+  &-supervisor {
+    font-size: 1.5rem;
+    color: $black;
+    padding: 10px;
+    display: flex;
+    img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+  }
+}

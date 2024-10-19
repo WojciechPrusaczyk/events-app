@@ -1,8 +1,137 @@
 @import url("../components/header.scss");
 @import url("../components/footer.scss");
 @import "../colors";
+@import "../mixins";
+
+
+@font-face {
+ font-family: 'Inter';
+ src: url("../../fonts/Inter/Inter-VariableFont_opsz,wght.ttf");
+}
 
 body {
   background-color: $main-white;
+  font-family: "Inter", serif;
 }
 
+
+/* Stylowanie całego elementu przewijania */
+::-webkit-scrollbar {
+  width: 32px;   // szerokość scrolla
+  height: 32px;  // wysokość dla poziomego scrolla
+}
+
+/* Stylowanie suwaka (thumb) */
+::-webkit-scrollbar-thumb {
+  background-color: $main-dark;
+  border-radius: 10px;
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+/* Usuwanie tła scrolla (track) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Ukrywanie przycisków po bokach (dla starszych przeglądarek) */
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;  // upewniamy się, że przyciski są ukryte
+  background: none;
+}
+
+/* Firefox specific scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $main-dark transparent;
+}
+
+.btn {
+  @include button( $main, $black-light );
+  width: initial;
+  text-decoration: none;
+  &:active{
+    text-decoration: none;
+    color: $black-light;
+  }
+}
+.btn-success {
+  background-color: $success-light;
+}
+.btn-danger {
+  background-color: $danger-light;
+}
+
+.loader {
+  width: 100%;
+  text-align: center;
+  margin: 100px 0;
+  &-title {
+    margin: 30px 0;
+    color: $black;
+    font-size: 2.2rem;
+  }
+  &-animation {
+    /* HTML: <div class="loader"></div> */
+    width: 70px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 10px solid $main-dark;
+    margin: auto;
+    animation:
+      l20-1 1s infinite linear alternate,
+      l20-2 2s infinite linear;
+    @keyframes l20-1{
+       0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+       12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+       25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+       50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+       62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+       75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+       100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+    }
+    @keyframes l20-2{
+      0%    {transform:scaleY(1)  rotate(0deg)}
+      49.99%{transform:scaleY(1)  rotate(135deg)}
+      50%   {transform:scaleY(-1) rotate(0deg)}
+      100%  {transform:scaleY(-1) rotate(-135deg)}
+    }
+  }
+}
+
+.datetime-presenter {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  &-datetime {
+    margin: 0 20px;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  &-icon {
+    width: 30px;
+    height: 30px;
+  }
+  &-legend-icon {
+    width: 35px;
+    height: 35px;
+  }
+  &-datetime-time, &-legend-icon:nth-of-type(2) {
+    margin-top: 20px;
+  }
+  &-legend, &-datetime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &-datetime-time, &-datetime-date {
+    font-size: 1.3rem;
+    padding: 5px;
+  }
+}

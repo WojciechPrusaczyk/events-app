@@ -1,0 +1,70 @@
+@import "../colors";
+@import "../mixins";
+
+main{
+    display: flex;
+    justify-content: center;
+}
+
+
+.join-event-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    @include double-gradient(0deg, $main-white, $main-light);
+    border-radius: 10px;
+    box-shadow: 0 4px 7px rgba(0,0,0,.12);
+    width: 30%;
+    margin: auto;
+    margin-top: 100px;
+    padding: 0 40px;
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+  
+      label {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 30px;
+        margin-top: 30px;
+        color: $black;
+      }
+  
+      input {
+        @include input-text( $black-light, $main-white, $main-lighter );
+        margin-bottom: 30px;
+        text-align: center;
+
+      }
+  
+      button {
+        @include button( $success-light, $black-light );
+
+      }
+    }
+  
+    p {
+      margin: 20px 0 20px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: $black;
+    }
+  
+    a {
+      color: $black;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+      margin: 0px 0px 20px 0;
+      text-decoration: underline;
+      text-align: center;
+
+    }
+  }
+  

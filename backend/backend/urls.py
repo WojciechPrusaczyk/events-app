@@ -8,8 +8,8 @@ Function views
     1. Add an import:  from my_app import views
     2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+    1. Add an import:  from other_app.views import ForgotPassword
+    2. Add a URL to urlpatterns:  path('', ForgotPassword.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from eventful import views
+from eventful import api
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import routers
 
 
@@ -27,17 +30,36 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("register/", views.index, name="register"),
     path("login/", views.index, name="login"),
-    path("forgot_password/", views.index, name="forgot_password"),
-    path("reset_password/", views.index, name="reset_password"),
-    #
-    path("api/register/", views.register, name="api_register"),
-    path("api/login/", views.login, name="api_login"),
-    path("api/user/", views.user, name="api_user"),
-    path("api/checkUsername/", views.checkUsername, name="api_check_user"),
-    path("api/logout/", views.logout, name="api_logout"),
-    path("api/logoutUsername/", views.logoutUsername, name="api_logout_username"),
-    path("api/create_event/", views.create_event, name="api_create_event"),
-    path("api/forgot_password/", views.forgot_password, name="api_forgot_password"),
-    path("api/reset_password/", views.reset_password, name="api_reset_password"),
-]
+    path("forgot-password/", views.index, name="forgotPassword"),
+    path("events-list/", views.index, name="events_list"),
+    path("join/", views.index, name="join_event"),
+
+    path("reset-password/<str:token>", views.viewResetPassword, name="resetPassword"),
+    path("account-verification/<str:token>", views.viewAccountVerification, name="accountVerification"),
+    path("edit-event/<int:id>", views.editEvent, name="editEvent"),
+    path("edit-segments/<int:id>", views.editSegments, name="editSegments"),
+    path("join/<str:code>", views.showEvent, name="show_event"),
+
+    path("api/", api.viewAPI, name="view_api"),
+    path("api/register/", api.register, name="api_register"),
+    path("api/login/", api.login, name="api_login"),
+    path("api/user/", api.user, name="api_user"),
+    path("api/check-username/", api.checkUsername, name="api_check_user"),
+    path("api/logout/", api.logout, name="api_logout"),
+    path("api/logout-username/", api.logoutUsername, name="api_logout_username"),
+    path("api/forgot-password/", api.forgotPassword, name="api_forgot_password"),
+    path("api/reset-password/", api.resetPassword, name="api_reset_password"),
+    path("api/create-event/", api.createEvent, name="api_create_event"),
+    path("api/get-event/", api.getEvent, name="api_get_event"),
+    path("api/get-events/", api.getEvents, name="api_get_events"),
+    path("api/edit-event/", api.editEventApi, name="api_edit_event"),
+    path("api/search-users/", api.searchUsers, name="api_search_users"),
+    path("api/delete-event/", api.deleteEvent, name="api_delete_event"),
+    path("api/get-segments/", api.getSegments, name="api_get_segments"),
+    path("api/create-segment/", api.createSegment, name="api_create_segment"),
+    path("api/edit-segment/", api.editSegment, name="api_edit_segment"),
+    path("api/delete-segment/", api.deleteSegment, name="api_delete_segment"),
+    path("api/send-event-request/", api.sendEventRequest, name="api_send_event_request"),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

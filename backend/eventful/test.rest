@@ -1,7 +1,7 @@
 POST http://localhost:8000/api/login/
 Content-Type: application/json
 
-{"username" : "remo12", "password" : "Remo123@"}
+{"username" : "Adrok2", "password" : "Adrok123@"}
 
 ###
 
@@ -24,7 +24,7 @@ Content-Type: application/json
 GET http://localhost:8000/api/checkUsername/
 Content-Type: application/json
 
-{"username" : "asdf"}
+{"username" : "Adrok2"}
 
 ###
 
@@ -53,4 +53,10 @@ Content-Type: application/json
 
 {"email" : "eventfull2024@gmail.com"}
 
-##
+###
+
+
+POST http://localhost:8000/api/forgot_password/
+Content-Type: application/json
+
+{"email" : "adrianlewandowski40@gmail.com"}

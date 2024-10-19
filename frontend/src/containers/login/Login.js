@@ -10,6 +10,18 @@ import axios from "axios";
 import PasswordInput from "../../components/passwordInput";
 import Cookies from 'js-cookie';
 
+
+const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +34,8 @@ class Login extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.login = this.login.bind(this);
   }
+
+
 
   rememberUser(e){
       this.setState({
@@ -36,23 +50,32 @@ class Login extends Component {
     });
   }
 
-  login(e){
-      e.preventDefault();
+login(e) {
+    e.preventDefault();
 
-      axios
-          .post(`${window.location.protocol}//${window.location.host}/api/login/`, {
-              username: this.state.username,
-              password: this.state.password,
-              rememberMe: this.state.rememberUser,
-          }).then(response => {
-              if (response.status === 200 )
-              {
-                  Cookies.set("username", response.data.user.username)
-                  console.log(response.data.user.username);
-                  window.location.href = '/';
-              }
-          })
-   }
+    const csrfToken = getCSRFToken(); // Get CSRF token from cookies
+
+    axios
+        .post(`${window.location.protocol}//${window.location.host}/api/login/`, {
+            username: this.state.username,
+            password: this.state.password,
+            rememberMe: this.state.rememberUser,
+        }, {
+            headers: {
+                'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+            }
+        })
+        .then(response => {
+            if (response.status === 200) {
+                Cookies.set("username", response.data.user.username);
+                console.log(response.data.user.username);
+                window.location.href = '/';
+            }
+        })
+        .catch(error => {
+            console.log("Login error:", error);
+        });
+}
 
   render() {
       return (
@@ -98,7 +121,13 @@ class Login extends Component {
                       <p className="login-form-remember">
                           <div className="login-form-remember-wrapper">
                               <input className="login-form-remember tgl tgl-light" id="cb1-6" type="checkbox" aria-label="Remember me" onChange={this.handleChange('rememberUser')}/>
-                              <label title="Remember me" aria-hidden="true" className="tgl-btn" htmlFor="cb1-6" />
+                              <label aria-roledescription={"button"} title="Remember me" tabIndex={0} aria-hidden="true" className="tgl-btn" htmlFor="cb1-6" onKeyUp={ (e) => {
+                                  e.preventDefault();
+                                  if (e.key === "Enter" || e.key === " ") {
+                                      const el = document.getElementById("cb1-6");
+                                      el.checked = !el.checked;
+                                  }
+                              }} />
                           </div>
                           <span>Remember me</span>
                       </p>
@@ -108,7 +137,7 @@ class Login extends Component {
                       </p>
                       <p>
                           <h3 className="login-form-forgotPasswd">
-                              <a href="">Forgot password?</a>
+                              <a href={`${window.location.protocol}//${window.location.host}/forgot-password`}>Forgot password?</a>
                           </h3>
                       </p>
                   </form>

@@ -1,9 +1,10 @@
+@import "colors";
 @mixin double-gradient($degrees, $main-color, $secondary-color) {
   background: $main-color;
   background: -moz-linear-gradient($degrees, $main-color 0%, $secondary-color 100%);
   background: -webkit-linear-gradient($degrees, $main-color 0%, $secondary-color 100%);
   background: linear-gradient($degrees, $main-color 0%, $secondary-color 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fff2ee",endColorstr="#fff9f4",GradientType=1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$main-color,endColorstr=$secondary-color,GradientType=1);
 }
 
 @mixin button ($background, $font-color) {
@@ -171,6 +172,9 @@
   .tgl-light:checked + .tgl-btn {
     background: $checked-color;
   }
+  .tgl-btn:focus {
+    outline: 2px solid black;
+  }
 }
 
 
@@ -269,5 +273,89 @@
   select {
     width: 40%;
     cursor: pointer;
+  }
+}
+
+@mixin input-time($font-color, $background-color)
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  input {
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.12);
+    border: none;
+    border-radius: 5px;
+    width: calc( 100% - 30px );
+    font-size: 1.3rem;
+    padding: 25px 20px;
+    color: $font-color;
+    background-color: $background-color;
+  }
+  input{
+    width: 45%;
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  span{
+    width: 10%;
+    text-align: center;
+    font-size: 1.3rem;
+    padding: 25px 20px;
+  }
+}
+
+@mixin event-cover()
+{
+  background: white;
+  border-radius: 10px;
+
+  // cover size multiplier
+
+  &.dp-large {
+    width: $cover-size * 24px;
+    height: $cover-size * 36px;
+    &:is(span){
+      font-size: 10rem;
+    }
+  }
+  &.dp-medium {
+    width: $cover-size * 18px;
+    height: $cover-size * 24px;
+    &:is(span){
+      font-size: 7rem;
+    }
+  }
+  &.dp-small {
+    width: $cover-size * 11px;
+    height: $cover-size * 17px;
+  }
+  @media (max-width: $breakpoint-mobile) {
+    width: $cover-size * 24px;
+    height: $cover-size * 36px;
+    &:is(span){
+      font-size: 10rem;
+    }
+  }
+  @media (max-width: $breakpoint-tablet) {
+    width: $cover-size * 18px;
+    height: $cover-size * 24px;
+    &:is(span){
+      font-size: 7rem;
+    }
+  }
+  @media (max-width: $breakpoint-desktop) {
+    width: $cover-size * 11px;
+    height: $cover-size * 17px;
+  }
+
+  &:is(span)
+  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4.5rem;
+    font-weight: 600;
   }
 }

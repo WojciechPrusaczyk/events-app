@@ -10,9 +10,10 @@ import StepInfo from "./stepInfo";
 import StepTos from "./stepTos";
 import StepConfirmation from "./stepConfirmation";
 import axios from "axios";
+import StepError from "./stepError";
 
 const minStep = 0;
-const maxStep = 4;
+const maxStep = 5;
 const validateEmail = (email) => {
   return email.match(
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -45,6 +46,20 @@ const validatePassword = (password) => {
 
   return isLengthValid && hasSpecialChar && hasThreeNumbers;
 };
+
+// Helper function to get the CSRF token from the cookies
+const getCSRFToken = () => {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+        }
+    });
+    return cookieValue;
+};
+
 
 class Register extends Component {
   constructor(props) {
@@ -115,6 +130,7 @@ class Register extends Component {
       isEntireFormValid = false;
       console.log("Invalid form: Invalid username");
     }
+    const csrfToken = getCSRFToken(); // Retrieve the CSRF token
 
     axios
       .post(`${window.location.protocol}//${window.location.host}/api/register/`, {
@@ -128,23 +144,42 @@ class Register extends Component {
         acceptedSharingDetails: formData.acceptedSharingDetails,
         acceptedTos: formData.acceptedTos,
         sex: formData.gender,
-        languge: "en",
+        language: "en",
+      }, {
+        headers: {
+          'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+        }
       })
-      .then( result => {
+      .then(result => {
           if (result.status === 201) {
               this.nextStep();
           }
+          return result.status;
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          this.setState(() => ({
+              step: 5,
+              direction: 'forward'
+            }));
+      });
   };
 
+
+
   validateUsername = async (username) => {
-      try {
-          const result = await axios.post(`${window.location.protocol}//${window.location.host}/api/checkUsername/`, {
-              username: username
-          });
-          return !result.data.detail;
+      const csrfToken = getCSRFToken(); // Retrieve the CSRF token
+
+    try {
+        const response = await axios.post(`${window.location.protocol}//${window.location.host}/api/check-username/`, {
+            username: username
+        }, {
+            headers: {
+                'X-CSRFToken': csrfToken  // Include the CSRF token in headers
+            }
+        });
+          return !response.data.detail;
       } catch (err) {
+          console.error("Error validating username:", err);
           return false;
       }
   }
@@ -169,6 +204,7 @@ class Register extends Component {
               {step === 2 && <StepInfo nextStep={this.nextStep} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} validateUsername={this.validateUsername} />}
               {step === 3 && <StepTos register={this.register} prevStep={this.prevStep} handleChange={this.handleChange} formData={formData} />}
               {step === 4 && <StepConfirmation />}
+              {step === 5 && <StepError />}
             </main>
           </CSSTransition>
         </TransitionGroup>

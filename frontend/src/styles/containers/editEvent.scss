@@ -1,0 +1,37 @@
+@import "../colors";
+
+#delete-event {
+  cursor: pointer;
+  padding: 10px;
+  font-size: 0;
+  margin-left: auto;
+  img {
+    width: 35px;
+    height: 35px;
+  }
+}
+label[for="delete-event"] {
+  pointer-events: none;
+  text-align: end;
+}
+.file-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  .additional-info {
+    padding: 5px;
+    font-size: .9rem;
+    color: $black-light;
+    &.dp-large {
+      width: $cover-size * 24px;
+    }
+    &.dp-medium {
+      width: $cover-size * 18px;
+    }
+    &.dp-small {
+      width: $cover-size * 11px;
+    }
+  }
+}
+.toggle-wrapper:first-of-type {
+  justify-content: space-between;
+}

@@ -19,8 +19,8 @@ Service for creating and managing events.
 1. [x] Name, logo, deciding about tech stack
 2. [x] Registration
 3. [x] Signing in
-4. [ ] Creating event (mostly basic info)
-5. [ ] Event edition
+4. [x] Creating event (mostly basic info)
+5. [x] Event edition
 6. [ ] Creating segments
 7. [ ] Segment edition
 8. [ ] Joining and sharing events
@@ -29,6 +29,21 @@ Service for creating and managing events.
 11. [ ] Event map
 12. [ ] Mobile app
 
+### Bugs
+
+1. [x] date picker in registration is broken
+2. [x] toggle nie może być focusowany
+3. [x] email wysyłany do potwierdzenia maila wysyła zły template
+4. [x] użytkownik bez zweryfikowanego emaila może używać aplikacji
+5. [x] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
+6. [x] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
+7. [x] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane
+8. [x] gdy kliknie się kilka razy rejestruj po wypełnieniu formularza, to utworzy się kilku użytkowników
+9. [x] nie można usunąć wydarzenia
+10. [x] nie da się zmienić daty
+11. [x] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
+12. [ ] Edycja jednego segmentu usuwa zmiany reszty 
+13. [ ] Sugestia, edycja segmentów podzielona na 2 części, z lewej lista segmentów, z prawej edycja wybranego segmentu
 # Installation
 
 1. Zainstaluj całe potrzebne oprogramwoanie.
@@ -87,6 +102,18 @@ BEGIN
     END LOOP;
 END $$;
 ```
+
+### Wstępne dane
+Aby załadować wstępne dane należy użyć poniższej komendy
+```commandline
+cd .\backend\
+python manage.py loaddata initial_data
+```
+Utworzy to automatycznie użytkownika:
+Username: john_doe
+Email: john.doe@example.com
+Password: 71WF@IP4
+
 <!--
 # Mapa aplikacji
 - Strona główna (/):  

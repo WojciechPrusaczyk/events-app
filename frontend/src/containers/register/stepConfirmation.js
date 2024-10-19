@@ -1,7 +1,7 @@
 import React from 'react';
 import PageCounter from "./pageCounter";
 import PasswordInput from "../../components/passwordInput";
-import confirmationIcon from "../../images/confirmationIcon.png"
+import confirmationIcon from "../../images/confirmationIcon.svg"
 
 const StepConfirmation = () => {
     return (

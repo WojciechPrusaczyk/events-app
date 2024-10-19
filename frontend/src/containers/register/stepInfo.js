@@ -3,15 +3,16 @@ import PageCounter from "./pageCounter";
 import DatePicker from "../../components/datePicker";
 
 const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername }) => {
-    const [isFormValid, setIsFormValid] = useState(false);
     const [isUsernameFree, setIsUsernameFree] = useState(true);
-    const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
+    const [isDateOfBirthValid, setIsDateOfBirthValid] = useState(false);
+    const [isGenderValid, setIsGenderValid] = useState(false);
+    const [isNameValid, setIsNameValid] = useState(false);
+    const [isSurnameValid, setIsSurnameValid] = useState(false);
 
     const checkUsername = async (username) => {
-        setIsCheckingUsername(true);
         const usernameFree = await validateUsername(username);
         setIsUsernameFree(usernameFree);
-        setIsCheckingUsername(false);
     };
 
     const handleUsernameChange = (e) => {
@@ -21,11 +22,11 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername
     };
 
     const validateForm = (data) => {
-        const isUsernameValid = data.username && data.username.length > 3 && data.username.length < 64;
-        const isDateOfBirthValid = data.dateOfBirth && new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear() >= 13;
-        const isGenderValid = data.gender;
-
-        setIsFormValid(isUsernameValid && isDateOfBirthValid && isGenderValid && isUsernameFree);
+        setIsUsernameValid(data.username && data.username.length > 3 && data.username.length < 64);
+        setIsDateOfBirthValid(data.dateOfBirth && new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear() >= 13);
+        setIsGenderValid(data.gender != "");
+        setIsNameValid(data.name.length >= 3);
+        setIsSurnameValid(data.surname.length >= 3);
     };
 
     useEffect(() => {
@@ -94,7 +95,7 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername
                     onChange={(e) => handleChange('surname')(e)}
                 />
             </div>
-            <div>
+            <div id="gender">
                 <h2 className="form-container-info-h2">Gender</h2>
                 <h3 className="form-container-info-h3">Helps to personalize events feed</h3>
                 <label className="radio-container">
@@ -148,14 +149,52 @@ const StepInfo = ({ nextStep, handleChange, formData, prevStep, validateUsername
             </div>
             <input
                 onClick={() => {
-                    if (isFormValid) nextStep();
+                    if (isUsernameValid && isDateOfBirthValid && isGenderValid && isUsernameFree && isSurnameValid && isNameValid) nextStep();
+                    else {
+                        const usernameElem = document.getElementById("username");
+                        const birthElem = document.getElementById("dateOfBirth");
+                        const genderElem = document.getElementById("gender");
+                        const nameElem = document.getElementById("name");
+                        const surnameElem = document.getElementById("surname");
+
+                        usernameElem.classList.remove("error");
+                        birthElem.classList.remove("error");
+                        genderElem.classList.remove("error");
+                        nameElem.classList.remove("error");
+                        surnameElem.classList.remove("error");
+
+                        if (!isGenderValid)
+                        {
+                            genderElem.classList += " error"
+                            window.location.href = "#gender";
+                        }
+                        if (!isSurnameValid)
+                        {
+                            surnameElem.classList += " error"
+                            window.location.href = "#surname";
+                        }
+                        if (!isNameValid)
+                        {
+                            nameElem.classList += " error"
+                            window.location.href = "#name";
+                        }
+                        if (!isDateOfBirthValid)
+                        {
+                            birthElem.classList += " error"
+                            window.location.href = "#dateOfBirth";
+                        }
+                        if (!isUsernameValid)
+                        {
+                            usernameElem.classList += " error"
+                            window.location.href = "#username";
+                        }
+                    }
                 }}
                 type="button"
                 aria-label="Next"
                 title="Next"
                 value="Next"
                 className="form-container-info-next btn-next"
-                disabled={!isFormValid || isCheckingUsername}
             />
         </div>
     );

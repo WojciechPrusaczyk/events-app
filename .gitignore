@@ -1,0 +1,9 @@
+/backend/media/images/
+/backend/staticfiles/
+/frontend/.env
+/backend/.env
+
+.idea
+
+__pycache__/
+*.pyc
