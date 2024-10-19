@@ -47,7 +47,9 @@ Service for creating and managing events.
 14. [x] utils.py :84, nieodpowiednia ścieżka krytyczny błąd
 15. [ ] w przypadku wystpienia jakiegokolwiek błędu na serwerze przy zakładaniu konta, użytkownik i tak jest wrzucany do bazy danych, bez rejestracji
 16. [ ] Edit segments do poprawy
-17. [ ] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'
+17. [x] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'
+18. [ ] zmiana supervisora nie działa
+19. [ ] cofnięcie z segmentów z # w linku nie działa za 1 razem
 
 # Installation
 
