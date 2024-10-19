@@ -44,7 +44,7 @@ Service for creating and managing events.
 11. [x] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
 12. [ ] Edycja jednego segmentu usuwa zmiany reszty 
 13. [ ] Sugestia, edycja segmentów podzielona na 2 części, z lewej lista segmentów, z prawej edycja wybranego segmentu
-14. [ ] utils.py :84, nieodpowiednia ścieżka krytyczny błąd
+14. [x] utils.py :84, nieodpowiednia ścieżka krytyczny błąd
 15. [ ] w przypadku wystpienia jakiegokolwiek błędu na serwerze przy zakładaniu konta, użytkownik i tak jest wrzucany do bazy danych, bez rejestracji
 16. [ ] Edit segments do poprawy
 17. [ ] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'

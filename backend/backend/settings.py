@@ -148,7 +148,7 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-CSRF_TRUSTED_ORIGINS = ['eventfull.pl']
+CSRF_TRUSTED_ORIGINS = ['https://eventfull.pl']
 
 
 MEDIA_URL = "/media/"

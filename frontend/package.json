@@ -24,9 +24,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run copy-files",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "copy-files": "copyfiles src/templates/*.html public/"
   },
   "eslintConfig": {
     "extends": [
@@ -47,6 +48,11 @@
     ]
   },
   "react-dotenv": {
-    "whitelist": ["GOOGLE_API_KEY"]
+    "whitelist": [
+      "GOOGLE_API_KEY"
+    ]
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
   }
 }

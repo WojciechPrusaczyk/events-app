@@ -1,5 +1,6 @@
 /backend/media/images/
 /backend/staticfiles/
+/backend/django.log
 /frontend/.env
 /backend/.env
 
@@ -7,3 +8,7 @@
 
 __pycache__/
 *.pyc
+
+# migrations
+**/migrations/*
+!**/migrations/__init__.py
