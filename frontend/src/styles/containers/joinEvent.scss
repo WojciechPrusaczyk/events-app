@@ -10,9 +10,10 @@
     @include double-gradient(0deg, $main-white, $main-light);
     border-radius: 10px;
     box-shadow: 0 4px 7px rgba(0,0,0,.12);
-    width: 30%;
+    width: 20%;
     margin: auto;
     margin-top: 100px;
+    margin-bottom: 80px;
     padding: 0 40px;
     
     form {
@@ -55,10 +56,15 @@
       text-decoration: none;
       font-size: 1rem;
       transition: color 0.3s ease;
-      margin: 0px 0px 20px 0;
+      margin: 0px 0px 260px 0;
       text-decoration: underline;
       text-align: center;
 
+
+
+    }
+    @media (max-width: $breakpoint-mobile) {
+      width: 70%;
     }
   }
   

@@ -94,6 +94,9 @@ h3.form-page-title {
         color: $black;
         font-weight: bold;
         font-size: 1.5rem;
+        @media (max-width: $breakpoint-mobile) {
+          font-size: 18px;
+        }
       }
       > img {
         width: 50px;
@@ -216,6 +219,9 @@ h3.form-page-title {
         width: 100px;
         height: 100px;
       }
+    }
+    @media (max-width: $breakpoint-mobile) {
+      width: 70%;
     }
   }
 }
