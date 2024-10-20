@@ -1,4 +1,5 @@
 import pytz
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
@@ -408,7 +409,6 @@ def createEvent(request):
         icon=None,
         joinCode=get_random_string(8,"abcdefghijklmnopqrstuvwxyz0123456789")
     )
-    print(newEvent)
     newEvent.save()
 
 
@@ -526,6 +526,7 @@ def editEventApi(request):
     isactive = request.data.get('isActive')
     ispublic = request.data.get('isPublic')
     joinapproval = request.data.get('joinApproval')
+    supervisor = request.data.get('supervisor')
     location = locationObject
 
 
@@ -538,6 +539,14 @@ def editEventApi(request):
         event.description = description
     if rules is not None:
         event.rules = rules
+
+    if supervisor is not None:
+        try:
+            supervisorObject = Users.objects.get(uid=supervisor)
+        except ObjectDoesNotExist:
+            return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+        event.supervisor = supervisorObject
+        print(event.supervisor.uid)
 
     if starttime is not None:
         try:
@@ -572,7 +581,6 @@ def editEventApi(request):
     if uploaded_file is None:
         uploaded_file = request.data.get('image')
 
-    print(uploaded_file)
     if uploaded_file == "deleted":
         event.icon = None
     elif isinstance(uploaded_file, str):
@@ -625,7 +633,7 @@ def deleteEvent(request):
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Users.objects.get(token=token)
-    except Users.DoesNotExist:
+    except ObjectDoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     eventId = request.data.get("id")
@@ -635,7 +643,7 @@ def deleteEvent(request):
 
     try:
         event = Events.objects.get(id=eventId, supervisor=user)
-    except Events.DoesNotExist:
+    except ObjectDoesNotExist:
         return Response({"detail": "Event not found or you don't have permission to delete it."},
                         status=status.HTTP_403_FORBIDDEN)
 
@@ -653,13 +661,24 @@ def deleteEvent(request):
     event.delete()
     return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
 
-def sendEventRequest(request):
 
+@api_view(["POST"])
+def sendEventRequest(request):
     user_id = request.data.get("user_id")
     event_id = request.data.get("event_id")
 
-    user = Users.objects.get(id=user_id)
-    event = Events.objects.get(id=event_id)
+    try:
+        user = Users.objects.get(uid=user_id)
+    except ObjectDoesNotExist:
+        return Response({"detail": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        event = Events.objects.get(id=event_id)
+    except ObjectDoesNotExist:
+        return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+    if Eventsparticipants.objects.filter(user=user, event=event).exists():
+        return Response({"detail": "User is already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
 
     participant = Eventsparticipants(
         user=user,
@@ -669,6 +688,7 @@ def sendEventRequest(request):
     participant.save()
 
     return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+
 
 
 
@@ -810,7 +830,6 @@ def editSegment(request):
     speaker_id = request.data.get('speaker')
     isactive = request.data.get('isActive')
 
-    print(request.data)
     if name is not None:
         segment.name = name
     if description is not None:
