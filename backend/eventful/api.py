@@ -395,8 +395,8 @@ def createEvent(request):
     # Tworzenie obiektu wydarzenia
     newEvent = Events(
         name="New Event",
-        description="",
-        rules="",
+        description=None,
+        rules=None,
         starttime=currentTime,
         endtime=currentTime + timedelta(days=10),  # Poprawiono generowanie endtime
         supervisor=user,
@@ -408,6 +408,7 @@ def createEvent(request):
         icon=None,
         joinCode=get_random_string(8,"abcdefghijklmnopqrstuvwxyz0123456789")
     )
+    print(newEvent)
     newEvent.save()
 
 
@@ -639,13 +640,14 @@ def deleteEvent(request):
                         status=status.HTTP_403_FORBIDDEN)
 
     photo = event.icon
-    imagesPath = os.path.join(MEDIA_ROOT, "images")
-    filePath = os.path.join(imagesPath, photo.filename)
-    if os.path.exists(filePath):
-        os.remove(filePath)
-        photo.isdeleted = True
-        event.icon = None
-        photo.save()
+    if photo:
+        imagesPath = os.path.join(MEDIA_ROOT, "images")
+        filePath = os.path.join(imagesPath, photo.filename)
+        if os.path.exists(filePath):
+            os.remove(filePath)
+            photo.isdeleted = True
+            event.icon = None
+            photo.save()
 
 
     event.delete()
