@@ -60,8 +60,9 @@ urlpatterns = [
     path("api/delete-segment/", api.deleteSegment, name="api_delete_segment"),
     path("api/send-event-request/", api.sendEventRequest, name="api_send_event_request"),
     path("api/accept-user", api.acceptUser, name="api_join_event"),
+    path("api/get-Notifications", api.getNotifications, name="api_get_notifications"),
 
-    # TODO: punkt api getNotifications, dodać datę do Eventsparticipants
+
     # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

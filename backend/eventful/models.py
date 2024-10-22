@@ -24,7 +24,8 @@ class Eventsparticipants(models.Model):
     event = models.ForeignKey(Events, models.DO_NOTHING, db_column="event", blank=True, null=True)
     role = models.CharField(max_length=32, blank=True, null=True)
     isAccepted = models.BooleanField(db_column="isAccepted", default=False)
-
+    requestSentAt = models.DateTimeField(auto_now_add=True)  # Set when the record is created
+    acceptedAt = models.DateTimeField(blank=True, null=True)  # Set when the participant is accepted
     class Meta:
         db_table = "eventsParticipants"
 

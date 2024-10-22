@@ -936,8 +936,26 @@ def acceptUser(request):
     try:
         eventParticipant = Eventsparticipants.objects.get(user=user, event=event)
         eventParticipant.isAccepted = True
+        eventParticipant.accepted_at = timezone.now()  # Set the accepted_at timestamp
         eventParticipant.save()
     except:
         return Response({"detail": "Event participant not found."}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({"detail": "Event joined successfully."}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def getNotifications(request):
+    pendingParticipants = Eventsparticipants.objects.filter(isAccepted=False)
+
+    notifications = [
+        {
+            "event_id": participant.event.id,
+            "event_name": participant.event.name,
+            "user_id": participant.user.id,
+            "user_name": participant.user.username
+        }
+        for participant in pendingParticipants
+    ]
+
+    return Response({"notifications": notifications}, status=status.HTTP_200_OK)
