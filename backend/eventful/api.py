@@ -95,86 +95,91 @@ def login(request):
 
 @api_view(["POST"])
 def register(request):
-    serializerUser = RegisterUserSerializer(data=request.data)
+    try:
+        username = request.data.get("username")
+        email = request.data.get("email")
+        password = request.data.get("password")
+        name = request.data.get("name")
+        surname = request.data.get("surname")
 
-    if not serializerUser.is_valid():
-        return Response(serializerUser.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not username or not email or not password:
+            return Response({"detail": "Username, email, and password are required."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-    with transaction.atomic():
-        # Lock the rows for the duration of the transaction
-        existing_user_by_username = Users.objects.select_for_update().filter(
-            username=serializerUser.validated_data["username"]).exists()
-        existing_user_by_email = Users.objects.select_for_update().filter(
-            email=serializerUser.validated_data["email"]).exists()
+        if not is_valid_password(password):
+            return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if existing_user_by_username:
-            return Response({"detail": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        with transaction.atomic():
+            existing_user_by_username = Users.objects.select_for_update().filter(username=username).exists()
+            existing_user_by_email = Users.objects.select_for_update().filter(email=email).exists()
 
-        if existing_user_by_email:
-            return Response({"detail": "User with provided email already exists."},
-                            status=status.HTTP_406_NOT_ACCEPTABLE)
+            if existing_user_by_username:
+                return Response({"detail": "User with this username already exists."},
+                                status=status.HTTP_400_BAD_REQUEST)
 
-    # Check password validity before saving the user
-    if not is_valid_password(request.data["password"]):
-        return Response({"detail": "Password doesn't meet conditions."}, status=status.HTTP_400_BAD_REQUEST)
+            if existing_user_by_email:
+                return Response({"detail": "User with this email already exists."},
+                                status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    settings_data = {
-        "acceptedSharingDetails": request.data.get("acceptedSharingDetails"),
-        "acceptedTOS": request.data.get("acceptedTos"),
-        "acceptedNews": request.data.get("acceptedNews")
-    }
-
-    userSettingsSerializer = UserSettingsSerializer(data=settings_data)
-
-    if not userSettingsSerializer.is_valid():
-        return Response(userSettingsSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    with transaction.atomic():
-        user_setting = userSettingsSerializer.save()
-        user = serializerUser.save()
-        user.password = set_password(request.data["password"])  # Proper password hashing
-        user.userSetting = user_setting  # Associate the user with the UserSettings instance
-        user.save()
-
-        # Generate and save utility token
-        user.userSetting.utilityToken = generate_token()
-        user.userSetting.save()
-        # Create verification link
-        protocol = request.scheme  # http or https
-        full_host = request.get_host()  # domain and port
-        link = "{}://{}/account-verification/{}".format(protocol, full_host, user.userSetting.utilityToken)
-
-        try:
-            subject = "Verification"
-            message = "Cześć. Wejdź w tego linka: {}".format(link)
-            username = user.username
-            rawHTML = open_verification_template()  # Ensure this loads properly
-            if rawHTML == "File doesn't exist.":
-                return Response({"detail": "File doesn't exist."},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            html_message = rawHTML.replace("[Imię]", username)
-            html_message = html_message.replace("[Link do weryfikacji]", link)
-        except Exception as e:
-            return Response({"detail": "Error creating link.", "error": str(e)},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        try:
-            connection = get_connection()
-            connection.open()
-            send_mail(
-                subject,
-                message,
-                'no-reply@eventfull.pl',
-                [user.email],
-                html_message=html_message,
-                connection=connection
+            # UserSettings data
+            user_setting = UserSettings(
+                acceptedSharingDetails=request.data.get("acceptedSharingDetails", False),
+                acceptedTOS=request.data.get("acceptedTos", False),
+                acceptedNews=request.data.get("acceptedNews", False),
             )
-            connection.close()
-        except Exception as e:
-            return Response({"detail": "Error sending email.", "error": str(e)},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Create user
+            user = Users(
+                username=username,
+                email=email,
+                name=name,
+                surname=surname,
+                userSetting=user_setting
+            )
+            user.password = set_password(password)  # Hash the password
+
+            user_setting.utilityToken = generate_token()
+
+            protocol = request.scheme
+            full_host = request.get_host()
+            verification_link = f"{protocol}://{full_host}/account-verification/{user_setting.utilityToken}"
+
+            try:
+                subject = "Verification"
+                message = f"Cześć. Wejdź w tego linka: {verification_link}"
+                username = user.username
+                rawHTML = open_verification_template()
+
+                if rawHTML == "File doesn't exist.":
+                    return Response({"detail": "Verification email template not found."},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                html_message = rawHTML.replace("[Imię]", username).replace("[Link do weryfikacji]", verification_link)
+
+                # Send verification email
+                connection = get_connection()
+                connection.open()
+                send_mail(
+                    subject,
+                    message,
+                    'no-reply@eventfull.pl',
+                    [user.email],
+                    html_message=html_message,
+                    connection=connection
+                )
+                connection.close()
+
+            except Exception as e:
+                return Response({"detail": "Error sending verification email.", "error": str(e)},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            user_setting.save()
+            user.save()
 
         return Response({"detail": "Successfully registered."}, status=status.HTTP_201_CREATED)
 
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 def user(request):
