@@ -662,36 +662,6 @@ def deleteEvent(request):
     return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def sendEventRequest(request):
-    user_id = request.data.get("user_id")
-    event_id = request.data.get("event_id")
-
-    try:
-        user = Users.objects.get(uid=user_id)
-    except ObjectDoesNotExist:
-        return Response({"detail": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        event = Events.objects.get(id=event_id)
-    except ObjectDoesNotExist:
-        return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-    if Eventsparticipants.objects.filter(user=user, event=event).exists():
-        return Response({"detail": "User is already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
-
-    participant = Eventsparticipants(
-        user=user,
-        event=event,
-        is_participant=False,
-    )
-    participant.save()
-
-    return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
-
-
-
-
 @csrf_exempt
 @api_view(['POST'])
 def searchUsers(request):
@@ -913,3 +883,60 @@ def deleteSegment(request):
     segment.delete()
     return Response({"detail": "Segment deleted successfully."}, status=status.HTTP_200_OK)
 
+@api_view(["POST"])
+def sendEventRequest(request):
+    eventCode = request.data.get("code")
+
+    eventCode = eventCode.lower()
+
+    if not eventCode:
+        return Response({"detail": "Code required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        event = Events.objects.get(joinCode=eventCode)
+    except ObjectDoesNotExist:
+        return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+    if Eventsparticipants.objects.filter(user=user, event=event).exists():
+        return Response({"detail": "User is already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
+
+    participant = Eventsparticipants(
+        user=user,
+        event=event,
+        isAccepted=False,
+    )
+    participant.save()
+
+    return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def joinEvent(request):
+    code = request.data.get("code")
+
+    if not code:
+        return Response({"detail": "Code required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        event = Events.objects.get(joinCode=code)
+    except:
+        return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        eventParticipant = Eventsparticipants.objects.get(user=user, event=event)
+        eventParticipant.isAccepted = True
+    except:
+        return Response({"detail": "Event participant not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    return Response({"detail": "Event joined successfully."}, status=status.HTTP_200_OK)
