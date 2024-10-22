@@ -330,6 +330,12 @@ const EditEvent = () => {
                 });
         };
 
+    const AcceptButton = (e) => {
+        e.preventDefault();
+
+
+    }
+
     
 
     return (
@@ -678,6 +684,9 @@ const EditEvent = () => {
                                 />
                             </button>
                         </p>
+                        <button id={""} className=''
+                                    >
+                            </button>
                     </form>}
             </main>
             <Footer/>

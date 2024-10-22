@@ -911,7 +911,7 @@ def sendEventRequest(request):
     participant = Eventsparticipants(
         user=user,
         event=event,
-        isAccepted=False,
+        isAccepted=False if event.joinapproval else True,
     )
     participant.save()
 
