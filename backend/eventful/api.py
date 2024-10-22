@@ -918,7 +918,7 @@ def sendEventRequest(request):
     return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-def joinEvent(request):
+def acceptUser(request):
     code = request.data.get("code")
 
     if not code:
@@ -936,6 +936,7 @@ def joinEvent(request):
     try:
         eventParticipant = Eventsparticipants.objects.get(user=user, event=event)
         eventParticipant.isAccepted = True
+        eventParticipant.save()
     except:
         return Response({"detail": "Event participant not found."}, status=status.HTTP_404_NOT_FOUND)
 
