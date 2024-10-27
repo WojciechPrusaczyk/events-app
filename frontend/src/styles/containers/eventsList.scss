@@ -17,6 +17,7 @@
       border-radius: 10px;
       margin: 10px 20px;
       transition: scale, box-shadow .1s ease-in;
+      position: relative;
       &:first-of-type{
         margin: 10px 20px 10px 10px;
       }
@@ -34,6 +35,14 @@
       }
       &-image{
         @include event-cover();
+        &-settings {
+          bottom: 20%;
+          height: 50px;
+          position: absolute;
+          right: 0;
+          width: 50px;
+          margin: 10px;
+        }
       }
       &-title {
         padding: 25px 10px;

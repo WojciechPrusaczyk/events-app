@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import EventsList from "../containers/eventsList/EventsList";
 import {generateColorFromText, getShortName} from "./Helpers";
+import SettingsIcon from "../images/icons/settingsIcon.svg";
+import Cookies from "js-cookie";
 
 const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, EventsList = [], HandleMoreButton, IsEditList = false}) => {
     let EventsListComponent = null;
@@ -26,6 +28,7 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
                         backgroundColor: lightHex,
                         color: darkHex
                     }}>{shortName}</span>}
+                {(IsEditList && item.supervisor.username === Cookies.get('username')) && <img className="events-list-events-item-image-settings" src={SettingsIcon} alt="settings icon" aria-hidden={true}/>}
                 <h2 className="events-list-events-item-title" title={item.name}>{item.name}</h2>
             </a>
         });

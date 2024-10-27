@@ -66,6 +66,7 @@ urlpatterns = [
 
 
     # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
+    # TODO: dodawać do get-events do każdego eventu flagę, czy dany użytkownik jest juś dodany do danego eventu
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
