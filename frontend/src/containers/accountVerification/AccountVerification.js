@@ -1,5 +1,5 @@
 // src/containers/AccountVerification.js
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
@@ -8,8 +8,11 @@ import Cookies from "js-cookie";
 import PageCounter from "../register/pageCounter";
 import confirmationIcon from "../../images/confirmationIcon.svg";
 
-const AccountVerification = () => {
+const AccountVerification = ({title = "Eventful"}) => {
 
+    useEffect(() => {
+        document.title = title;
+    }, []);
 
     return (
       <div>

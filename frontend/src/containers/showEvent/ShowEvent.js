@@ -13,7 +13,7 @@ import DateIcon from "../../images/icons/dateIcon.svg"
 import CrownIcon from "../../images/icons/crownIcon.svg"
 import LocationPin from "../../images/icons/locationPinIcon.svg"
 
-const ShowEvent = () => {
+const ShowEvent = ({title = "Eventful"}) => {
     const { code } = useParams();
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -72,6 +72,7 @@ const ShowEvent = () => {
     }
 
     useEffect(() => {
+        document.title = title;
         getEvent();
     }, []);
     let event = null;

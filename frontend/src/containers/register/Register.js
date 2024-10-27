@@ -83,6 +83,10 @@ class Register extends Component {
     };
   }
 
+  componentDidMount() {
+    document.title = this.props.title?this.props.title:"Eventful";
+  }
+
   nextStep = () => {
     this.setState((prevState) => ({
       step: (prevState.step <= maxStep)?(prevState.step + 1):prevState.step,

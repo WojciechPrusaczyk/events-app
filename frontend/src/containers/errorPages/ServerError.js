@@ -5,7 +5,11 @@ import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
 
-const ServerError = () => {
+const ServerError = ({title = "Eventful"}) => {
+
+    useEffect(() => {
+        document.title = title;
+    }, []);
 
     return (
         <div>

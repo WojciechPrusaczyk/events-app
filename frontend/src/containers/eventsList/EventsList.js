@@ -15,6 +15,8 @@ class EventsList extends Component {
     }
 
     componentDidMount() {
+        document.title = this.props.title?this.props.title:"Eventful";
+
         this.getEvents();
     }
 

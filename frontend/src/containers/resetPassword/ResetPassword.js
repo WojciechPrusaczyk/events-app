@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
@@ -6,7 +6,13 @@ import "../../styles/containers/newPassword.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const ResetPassword = () => {
+const ResetPassword = ({title = "Eventful"}) => {
+
+    useEffect(() => {
+        document.title = title;
+    }, []);
+
+
     const { token } = useParams();
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordRepeat, setNewPasswordRepeat] = useState("");

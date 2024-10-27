@@ -10,7 +10,7 @@ import Loader from "../../components/loader";
 import SegmentFormItem from "../../components/SegmentFormItem";
 import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
 
-const EditSegments = () => {
+const EditSegments = ({title = "Eventful"}) => {
     const {id: eventId} = useParams();
     const [segmentsList, setSegmentsList] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -68,6 +68,9 @@ const EditSegments = () => {
     };
 
     useEffect(() => {
+
+        document.title = title;
+
         if (eventId && segmentsList.length === 0 ) updateSegmentsList();
         updateSegmentsList();
     }, [eventId]);

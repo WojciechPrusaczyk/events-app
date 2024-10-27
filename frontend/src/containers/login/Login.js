@@ -35,7 +35,9 @@ class Login extends Component {
     this.login = this.login.bind(this);
   }
 
-
+  componentDidMount() {
+    document.title = this.props.title?this.props.title:"Eventful";
+  }
 
   rememberUser(e){
       this.setState({

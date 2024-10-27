@@ -51,6 +51,7 @@ Service for creating and managing events.
 17. [x] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'
 18. [ ] Frontend: zmiana supervisora nie działa
 19. [ ] Frontend: cofnięcie z segmentów z # w linku nie działa za 1 razem
+20. [ ] Backend: Supervisor może dołączyć do swojego wydarzenia i się sam akceptować
 
 # Installation
 

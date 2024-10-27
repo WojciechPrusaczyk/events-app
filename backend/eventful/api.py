@@ -181,6 +181,7 @@ def register(request):
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(["POST"])
 def user(request):
     id = request.data.get('id')
@@ -188,7 +189,6 @@ def user(request):
 
     if isinstance(id, dict):
         id = id.get('id')
-
 
     # Check if both id and username are missing
     if not id and not username:
@@ -204,6 +204,7 @@ def user(request):
 
     serializer = LoginUserSerializer(user)
     return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -340,7 +341,7 @@ def forgotPassword(request):
         )
         connection.close()
     except Exception as e:
-        return Response({"detail": "Error sending email.", "error" :str(e)})
+        return Response({"detail": "Error sending email.", "error": str(e)})
     return Response({"detail": "Sent email."}, status=status.HTTP_200_OK)
 
 
@@ -412,10 +413,9 @@ def createEvent(request):
         token=event_token,
         location=location,
         icon=None,
-        joinCode=get_random_string(8,"abcdefghijklmnopqrstuvwxyz0123456789")
+        joinCode=get_random_string(8, "abcdefghijklmnopqrstuvwxyz0123456789")
     )
     newEvent.save()
-
 
     return Response({"event_id": newEvent.id, "detail": "Event created successfully."}, status=status.HTTP_201_CREATED)
 
@@ -521,7 +521,6 @@ def editEventApi(request):
     except:
         return Response({"detail": "Cant assign location"}, status=status.HTTP_400_BAD_REQUEST)
 
-
     # Retrieve fields from the request and update the event
     name = request.data.get('name')
     description = request.data.get('description')
@@ -533,9 +532,6 @@ def editEventApi(request):
     joinapproval = request.data.get('joinApproval')
     supervisor = request.data.get('supervisor')
     location = locationObject
-
-
-
 
     if name is not None and name != "New Event" and name != "":
         event.name = name
@@ -596,14 +592,12 @@ def editEventApi(request):
             return Response({"detail": "File too large."},
                             status=status.HTTP_400_BAD_REQUEST)
 
-
         mime_type, _ = guess_type(uploaded_file.name)
 
         if mime_type and mime_type.startswith('image/'):
             if uploaded_file.content_type == 'image/webp':
                 return Response({"detail": "webp files not supported"},
                                 status=status.HTTP_400_BAD_REQUEST)
-
 
             fs = FileSystemStorage(location='media/images')
             randomFilename = "".join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -628,6 +622,7 @@ def editEventApi(request):
 
     # Return a success response
     return Response({"detail": "Event updated successfully.", "event_id": event.id}, status=status.HTTP_200_OK)
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -661,7 +656,6 @@ def deleteEvent(request):
             photo.isdeleted = True
             event.icon = None
             photo.save()
-
 
     event.delete()
     return Response({"detail": "Event and associated photos deleted successfully."}, status=status.HTTP_200_OK)
@@ -701,6 +695,7 @@ def searchUsers(request):
 
     return Response({"users": user_data}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def getSegments(request):
     event_id = request.data.get("id")
@@ -726,7 +721,6 @@ def createSegment(request):
     event_id = request.data.get('id')
     if not event_id:
         return Response({"detail": "Event ID required."}, status=status.HTTP_400_BAD_REQUEST)
-
 
     try:
         event = Events.objects.get(id=event_id)
@@ -765,7 +759,7 @@ def createSegment(request):
 
     newSegment = Segments(
         event=event,
-        name=event.name+" segment",
+        name=event.name + " segment",
         description="",
         starttime=starttime,
         endtime=endtime,
@@ -809,7 +803,6 @@ def editSegment(request):
         segment.name = name
     if description is not None:
         segment.description = description
-
 
     if starttime is not None:
         try:
@@ -863,6 +856,7 @@ def editSegment(request):
     segment.save()
     return Response({"detail": "Segment updated successfully.", "segment_id": segment.id}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def deleteSegment(request):
     token = request.COOKIES.get('token')
@@ -888,6 +882,7 @@ def deleteSegment(request):
     segment.delete()
     return Response({"detail": "Segment deleted successfully."}, status=status.HTTP_200_OK)
 
+
 @api_view(["POST"])
 def sendEventRequest(request):
     eventCode = request.data.get("code")
@@ -911,7 +906,8 @@ def sendEventRequest(request):
         return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
     if Eventsparticipants.objects.filter(user=user, event=event, isAccepted=False).exists():
-        return Response({"detail": "You already sent request, wait for acceptation."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "You already sent request, wait for acceptation."},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     if Eventsparticipants.objects.filter(user=user, event=event).exists():
         return Response({"detail": "You are already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
@@ -935,9 +931,12 @@ def sendEventRequest(request):
 
 @api_view(['POST'])
 def acceptUser(request):
-    code = request.data.get("code")
+    #TODO: nie ma sprawdzania czy dany event należy do zalogowanego użytkownika
+    eventId = request.data.get("eventId")
+    user = request.data.get("userId")
+    accepted = request.data.get("accepted")
 
-    if not code:
+    if not eventId:
         return Response({"detail": "Code required."}, status=status.HTTP_400_BAD_REQUEST)
 
     token = request.COOKIES.get('token')
@@ -945,14 +944,23 @@ def acceptUser(request):
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        event = Events.objects.get(joinCode=code)
+        event = Events.objects.get(id=eventId)
     except:
         return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
 
     try:
         eventParticipant = Eventsparticipants.objects.get(user=user, event=event)
-        eventParticipant.isAccepted = True
-        eventParticipant.accepted_at = timezone.now()  # Set the accepted_at timestamp
+
+        if accepted is True:
+            eventParticipant.isAccepted = True
+        elif accepted is False:
+            eventParticipant.isAccepted = False
+            eventParticipant.delete()
+            return Response({"detail": "User request successfully refused.."}, status=status.HTTP_200_OK)
+        else:
+            eventParticipant.isAccepted = False
+
+        eventParticipant.accepted_at = timezone.now()
         eventParticipant.save()
     except:
         return Response({"detail": "Event participant not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -960,15 +968,24 @@ def acceptUser(request):
     return Response({"detail": "Event joined successfully."}, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getNotifications(request):
-    pendingParticipants = Eventsparticipants.objects.filter(isAccepted=False)
+    token = request.COOKIES.get('token')
+
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    pendingParticipants = Eventsparticipants.objects.filter(user=user, isAccepted=False)
 
     notifications = [
         {
             "event_id": participant.event.id,
             "event_name": participant.event.name,
-            "user_id": participant.user.id,
+            "user_id": participant.user.uid,
             "user_name": participant.user.username
         }
         for participant in pendingParticipants

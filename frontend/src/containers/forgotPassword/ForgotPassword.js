@@ -1,5 +1,5 @@
 // src/containers/ResetPassword.js
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/passwordReset.scss"
@@ -9,13 +9,18 @@ import PageCounter from "../register/pageCounter";
 import confirmationIcon from "../../images/confirmationIcon.svg";
 
 
+const ForgotPassword = ({title = "Eventful"}) => {
 
-const ForgotPassword = () => {
-const validateEmail = (email) => {
-    console.log(email);
-    var re = /\S+@\S+.\S+/;
-  return re.test(email);
-};
+    useEffect(() => {
+        document.title = title;
+    }, []);
+
+    const validateEmail = (email) => {
+        console.log(email);
+        var re = /\S+@\S+.\S+/;
+        return re.test(email);
+    };
+
     let tempMail;
     const [isFormSubmited, setisFormSubmited] = useState(false);
     const [error, setError] = useState("");
@@ -23,29 +28,28 @@ const validateEmail = (email) => {
         setError("")
         event.preventDefault();
         console.log(validateEmail(tempMail));
-        if(validateEmail(tempMail)){
+        if (validateEmail(tempMail)) {
             axios
-             .post(
-            `${window.location.protocol}//${window.location.host}/api/forgot-password/`, {
-                    email: tempMail
-                 })
-        .then(response => {
+                .post(
+                    `${window.location.protocol}//${window.location.host}/api/forgot-password/`, {
+                        email: tempMail
+                    })
+                .then(response => {
 
-                if (response.status == 200) {
-                    setisFormSubmited(true);
-                    // TODO: upewnić się że działa wiadomość w przyapdku sukcesu - działa
-                    setError("");
-                } else {
-                    // TODO: wyświetlić komunikat o błędzie wyświetlić czerwony tekst pod inputem
-                    //  z wiadomością o treści "Wystąpił błąd po stronie serwera, spróbuj ponownie później.
-                    setError("Server side error, please try again later.");
-                }
-            })
-            .catch(error => {
-                setError("Error occurred, try again later.");
-            })
-        }
-        else{
+                    if (response.status == 200) {
+                        setisFormSubmited(true);
+                        // TODO: upewnić się że działa wiadomość w przyapdku sukcesu - działa
+                        setError("");
+                    } else {
+                        // TODO: wyświetlić komunikat o błędzie wyświetlić czerwony tekst pod inputem
+                        //  z wiadomością o treści "Wystąpił błąd po stronie serwera, spróbuj ponownie później.
+                        setError("Server side error, please try again later.");
+                    }
+                })
+                .catch(error => {
+                    setError("Error occurred, try again later.");
+                })
+        } else {
             setError("Invalid email provided.")
         }
 
@@ -67,7 +71,7 @@ const validateEmail = (email) => {
                    placeholder="Email address"
             />
         </p>
-        { (error !== "" ) && <p><span className="resetError"> {error} </span></p>}
+        {(error !== "") && <p><span className="resetError"> {error} </span></p>}
         <p>
             <input type="submit" aria-label="Submit" title="Submit" value="Submit"
                    className="login-form-submit" onClick={(event) => {

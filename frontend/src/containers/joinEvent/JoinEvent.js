@@ -7,7 +7,7 @@ import "../../styles/containers/joinEvent.scss";
 import {useNavigate} from "react-router-dom";
 import QRCode from "react-qr-code";
 
-const JoinEvent = () => {
+const JoinEvent = ({title = "Eventful"}) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         code: '',
@@ -15,7 +15,11 @@ const JoinEvent = () => {
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-  
+
+    useEffect(() => {
+        document.title = title;
+    }, []);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };

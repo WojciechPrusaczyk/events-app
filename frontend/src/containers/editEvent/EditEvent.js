@@ -25,7 +25,7 @@ import {
 import DataLoader from "../../components/loader";
 let fileHandle;
 let dragoverTimeout;
-const EditEvent = () => {
+const EditEvent = ({title = "Eventful"}) => {
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({
@@ -60,6 +60,9 @@ const EditEvent = () => {
 
     /* TODO: nie jest sprawdzane czy starttime < endtime */
     useEffect(() => {
+
+        document.title = title;
+
         if (eventId) {
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/get-event/`, {

@@ -5,6 +5,8 @@ import userIcon from "../../images/icons/userIcon.svg";
 import addIcon from "../../images/icons/addIcon.svg";
 import listIcon from "../../images/icons/listIcon.svg";
 import notificationIcon from "../../images/icons/notificationIcon.svg";
+import { ReactComponent as ConfirmIcon } from "../../images/icons/confirmIcon.svg";
+import { ReactComponent as CloseIcon } from "../../images/icons/closeIcon.svg";
 import Cookies from 'js-cookie';
 
 const getCSRFToken = () => {
@@ -60,14 +62,30 @@ const CreateEvent = () => {
         });
 }
 
+const AcceptUser = async (userId, eventId, accepted) => {
+    axios
+        .post(`${window.location.protocol}//${window.location.host}/api/accept-user`, {
+                userId: userId,
+                eventId: eventId,
+                accepted: accepted,
+            }, { withCredentials: true })
+        .then(response => {
+            return response.status === 200;
+        })
+        .catch(err => {
+            console.log(err);
+            return false;
+        });
+}
+
 const Header = (props) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
-    const [user, setUser] = useState(null); // Dodajemy stan użytkownika
+    const [user, setUser] = useState(null);
+    const [notifications, setNotifications] = useState([]);
+    const [notificationsShown, showNotifications] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
-
-
             axios
                 .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
                     username: Cookies.get('username')
@@ -89,10 +107,45 @@ const Header = (props) => {
                 });
         };
         checkAuth();
+
+        if ( notifications.length === 0 )
+        {
+            axios
+                .post(`${window.location.protocol}//${window.location.host}/api/get-notifications`, {
+                    username: Cookies.get('username')
+                },{ withCredentials: true })
+                .then(result => {
+                    if (result.status === 200) {
+                        setNotifications(result.data.notifications);
+                        console.log(result.data)
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+
     }, []);
 
     const company_name = "Eventful";
     const company_logo = logo;
+
+    let notificationsList =  notifications.map((entity) => {
+        return <li className={"notificationsList-item"}>
+            <span className={"notificationsList-item-text"}>{`User ${entity.user_name} is asking for acceptation.`}</span>
+            <button className={"notificationsList-item-btn accept"} onClick={() => {
+                const isRequestSuccessfull = AcceptUser(entity.user_id, entity.event_id, true);
+            }} title={"Accept"}>
+                <ConfirmIcon className="notificationsList-item-btn-icon accept" />
+            </button>
+            <button className={"notificationsList-item-btn refuse"} onClick={() => {
+                const isRequestSuccessfull = AcceptUser(entity.user_id, entity.event_id, false);
+            }} title={"Refuse"}>
+                <CloseIcon className="notificationsList-item-btn-icon refuse" />
+            </button>
+        </li>
+    });
+
     const userNavigation = <div className="header-user">
         <button className="header-user-button"
                 onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN
@@ -104,14 +157,27 @@ const Header = (props) => {
             <img src={addIcon} alt="add new event" aria-hidden={true}/>
         </button>
         <button aria-label="add new event" className="header-user-button">
-            <img src={notificationIcon} alt="show notifications" aria-hidden={true}/>
+            <img src={notificationIcon} alt="show notifications" aria-hidden={true} onClick={ () => {showNotifications(!notificationsShown)}}/>
         </button>
+        { notificationsShown &&
+            <div id={"notifications"}>
+                {(notificationsList.length > 0) &&
+                    <ul className={"notificationsList"}>
+                        {notificationsList}
+                    </ul>
+                }
+                {!(notificationsList.length > 0) &&
+                    <div className={"notificationsList"}>No notifications found.</div>
+                }
+            </div>
+        }
         <button aria-label="user settings" className="header-user-button" onClick={(e) => {
             Logout();
         }}>
             <img src={userIcon} alt="user settings" aria-hidden={true}/>
         </button>
     </div>;
+
     const navigation = <div className="header-user">
         <button className="header-user-button"
                 onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/join`}>JOIN</button>

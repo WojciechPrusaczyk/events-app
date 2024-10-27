@@ -7,7 +7,7 @@ import axios from "axios";
 import EventsListSegment from "../../components/EventsListSegment";
 import "../../styles/containers/eventsList.scss"
 
-const Home = () => {
+const Home = ({title = "Eventful"}) => {
     const [eventsList, setEventsList] = useState([]);
 
     const getEvents = () => {
@@ -28,6 +28,7 @@ const Home = () => {
     }
 
     useEffect(() => {
+        document.title = title;
         getEvents();
     }, []);
 

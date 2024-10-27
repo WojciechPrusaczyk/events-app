@@ -72,5 +72,60 @@
       width: 99%;
     }
   }
+  #notifications {
+    position: relative;
+    .notificationsList {
+      position: absolute;
+      padding: 10px 20px;
+      margin: 0;
+      right: 10px;
+      top: 22.5px;
+      list-style: none;
+      background: $main-lighter;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
+      &-item{
+        display: flex;
+        flex-direction: row;
+        &-text {
+          flex-grow: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-right: 10px;
+          padding: 12px 0;
+        }
+
+        &-btn {
+          background: $white;
+          cursor: pointer;
+          border-radius: 50%;
+          &.accept {
+            border: 2px solid $success;
+          }
+
+          &.refuse {
+            border: 2px solid $danger;
+          }
+
+          &-icon {
+            width: 20px;
+            height: 20px;
+            &.accept path {
+              fill: $success;
+              stroke: none;
+            }
+
+            &.refuse path {
+              fill: $danger!important;
+              stroke: none;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
