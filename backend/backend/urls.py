@@ -23,6 +23,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
+handler404 = "eventful.views.error_404"
+handler500 = "eventful.views.error_500"
 
 urlpatterns = [
     path("admin/", admin.site.urls),

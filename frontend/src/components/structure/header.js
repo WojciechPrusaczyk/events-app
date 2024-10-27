@@ -3,7 +3,6 @@ import axios from "axios";
 import logo from "../../images/logo.png";
 import userIcon from "../../images/icons/userIcon.svg";
 import addIcon from "../../images/icons/addIcon.svg";
-import logout_icon from "../../images/icons/logout_icon.svg";
 import listIcon from "../../images/icons/listIcon.svg";
 import Cookies from 'js-cookie';
 
@@ -106,7 +105,7 @@ const Header = (props) => {
         <button aria-label="user settings" className="header-user-button" onClick={(e) => {
             Logout();
         }}>
-            <img src={logout_icon} alt="user settings" aria-hidden={true}/>
+            <img src={userIcon} alt="user settings" aria-hidden={true}/>
         </button>
     </div>;
     const navigation = <div className="header-user">

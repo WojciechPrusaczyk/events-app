@@ -910,8 +910,11 @@ def sendEventRequest(request):
     except ObjectDoesNotExist:
         return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
+    if Eventsparticipants.objects.filter(user=user, event=event, isAccepted=False).exists():
+        return Response({"detail": "You already sent request, wait for acceptation."}, status=status.HTTP_400_BAD_REQUEST)
+
     if Eventsparticipants.objects.filter(user=user, event=event).exists():
-        return Response({"detail": "User is already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "You are already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
 
     participant = Eventsparticipants(
         user=user,
@@ -920,7 +923,15 @@ def sendEventRequest(request):
     )
     participant.save()
 
-    return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+    if event.joinapproval:
+        return Response({"detail": "Request sent."}, status=status.HTTP_200_OK)
+
+    elif not event.joinapproval:
+        return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+
+    else:
+        raise Exception("Error occured.")
+
 
 @api_view(['POST'])
 def acceptUser(request):

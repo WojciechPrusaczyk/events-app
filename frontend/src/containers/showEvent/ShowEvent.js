@@ -4,7 +4,7 @@ import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
 import "../../styles/containers/showEvent.scss";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import DataLoader from "../../components/loader";
 import { getAddressByLaLng } from "../../components/Helpers";
 import EventImage from "../../components/EventImage";
@@ -16,9 +16,11 @@ import LocationPin from "../../images/icons/locationPinIcon.svg"
 const ShowEvent = () => {
     const { code } = useParams();
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [eventData, setEventData] = useState({});
     const [address, setAddress] = useState("");
+    const navigate = useNavigate();
 
     const getEvent = () => {
         axios
@@ -42,6 +44,32 @@ const ShowEvent = () => {
         const addr = await getAddressByLaLng(eventData.location.latitude, eventData.location.longitude);
         setAddress(addr);
     };
+
+    const joinEvent = () => {
+        axios
+            .post(`${window.location.protocol}//${window.location.host}/api/send-event-request/`, {
+                code: code.toLowerCase()
+            }, { withCredentials: true})
+            .then(response => {
+                let data = response.data;
+                setError("");
+                setSuccess("");
+                if(response.status === 200)
+                {
+                    if(data.detail === "Request sent.") setSuccess("Request has been sent.");
+                    else if(data.detail === "User added to event.") {
+                        setSuccess("User has been added to event.");
+                        navigate("/event/"+eventData.token);
+                    }
+                    else setError("Error occurred, try again later.")
+                }
+                if(data.detail === "User is already a participant of this event.") setError(data.detail);
+            })
+            .catch((response) => {
+                console.log(response)
+                setError(response.response.data.detail);
+            });
+    }
 
     useEffect(() => {
         getEvent();
@@ -117,7 +145,7 @@ const ShowEvent = () => {
                 </h1>
             </p>
             <p>
-                <button className={"show-event-join"}>{(eventData.joinapproval == false) ? "Join" : "Send join request"}</button>
+                <button className={"show-event-join"} onClick={joinEvent}>{(eventData.joinapproval == false) ? "Join" : "Send join request"}</button>
             </p>
         </div>
     }
@@ -128,6 +156,8 @@ const ShowEvent = () => {
             <main>
                 {!isDataLoaded && <DataLoader title={"Loading event, please wait."} />}
                 {isDataLoaded && event}
+                {error && <p className={"text-danger"}>{error}</p>}
+                {success && <p className={"text-success"}>{success}</p>}
             </main>
             <Footer />
         </div>

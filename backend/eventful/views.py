@@ -62,6 +62,7 @@ def editEvent(request, id=None):
     else:
         return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
 
+
 def editSegments(request, id=None):
     # weryfikacja zalogowania
     token = request.COOKIES.get('token')
@@ -117,3 +118,11 @@ def showEvent(request, code=None):
         return render(request, "index.html", {"code": code})
     else:
         return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)
+
+
+def error_404(request, exception):
+    return render(request, "index.html")
+
+
+def error_500(request):
+    return render(request, "index.html")
