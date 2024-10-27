@@ -4,6 +4,7 @@ import logo from "../../images/logo.png";
 import userIcon from "../../images/icons/userIcon.svg";
 import addIcon from "../../images/icons/addIcon.svg";
 import listIcon from "../../images/icons/listIcon.svg";
+import notificationIcon from "../../images/icons/notificationIcon.svg";
 import Cookies from 'js-cookie';
 
 const getCSRFToken = () => {
@@ -101,6 +102,9 @@ const Header = (props) => {
         </button>
         <button aria-label="add new event" className="header-user-button" onClick={CreateEvent}>
             <img src={addIcon} alt="add new event" aria-hidden={true}/>
+        </button>
+        <button aria-label="add new event" className="header-user-button">
+            <img src={notificationIcon} alt="show notifications" aria-hidden={true}/>
         </button>
         <button aria-label="user settings" className="header-user-button" onClick={(e) => {
             Logout();
