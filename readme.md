@@ -21,13 +21,14 @@ Service for creating and managing events.
 3. [x] Signing in
 4. [x] Creating event (mostly basic info)
 5. [x] Event edition
-6. [ ] Creating segments
-7. [ ] Segment edition
-8. [ ] Joining and sharing events
-9. [ ] Event page (schedule, important infos)
-10. [ ] Galleries (for events and segments)
-11. [ ] Event map
-12. [ ] Mobile app
+6. [x] Creating segments
+7. [x] Segment edition
+8. [x] Joining and sharing events
+9. [ ] Notification system, user acceptations.
+10. [ ] Event page (schedule, important infos)
+11. [ ] Galleries (for events and segments)
+12. [ ] Event map
+13. [ ] Mobile app
 
 ### Bugs
 
@@ -42,14 +43,14 @@ Service for creating and managing events.
 9. [x] nie można usunąć wydarzenia
 10. [x] nie da się zmienić daty
 11. [x] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
-12. [ ] Edycja jednego segmentu usuwa zmiany reszty 
-13. [ ] Sugestia, edycja segmentów podzielona na 2 części, z lewej lista segmentów, z prawej edycja wybranego segmentu
+12. [ ] Frontend: Edycja jednego segmentu usuwa zmiany reszty 
+13. [ ] Frontend: Sugestia, edycja segmentów podzielona na 2 części, z lewej lista segmentów, z prawej edycja wybranego segmentu
 14. [x] utils.py :84, nieodpowiednia ścieżka krytyczny błąd
-15. [ ] w przypadku wystpienia jakiegokolwiek błędu na serwerze przy zakładaniu konta, użytkownik i tak jest wrzucany do bazy danych, bez rejestracji
-16. [ ] Edit segments do poprawy
+15. [ ] Frontend: w przypadku wystpienia jakiegokolwiek błędu na serwerze przy zakładaniu konta, użytkownik i tak jest wrzucany do bazy danych, bez rejestracji
+16. [x] Frontend: Edit segments do poprawy
 17. [x] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'
-18. [ ] zmiana supervisora nie działa
-19. [ ] cofnięcie z segmentów z # w linku nie działa za 1 razem
+18. [ ] Frontend: zmiana supervisora nie działa
+19. [ ] Frontend: cofnięcie z segmentów z # w linku nie działa za 1 razem
 
 # Installation
 
