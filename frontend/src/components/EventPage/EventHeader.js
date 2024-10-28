@@ -7,8 +7,9 @@ import CrownIcon from "../../images/icons/crownIcon.svg";
 import EventImage from "../EventImage";
 import LocationPin from "../../images/icons/locationPinIcon.svg";
 import {formatForBackend, getAddressByLaLng} from "../Helpers";
+import { atcb_action } from "add-to-calendar-button";
 
-const EventHeader = ({id = "event-header", className = "event-header", title, supervisor, iconFilename, location, startDate, startTime, endDate, endTime}) => {
+const EventHeader = ({id = "event-header", className = "event-header", calendarConfig, title, supervisor, iconFilename, location, startDate, startTime, endDate, endTime}) => {
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [address, setAddress] = useState("");
@@ -37,6 +38,7 @@ const EventHeader = ({id = "event-header", className = "event-header", title, su
                     <h1 className={className+"-content-title"}>{title}</h1>
                     <div className={className+"-content-data"}>
                         <DateTimePresenter
+                            onClickFunction={ (element) => atcb_action(calendarConfig, element)}
                             className={className+"-content-data-datetime"}
                             startDate={startDateTime.toLocaleDateString('en-US', {
                                 year: 'numeric',

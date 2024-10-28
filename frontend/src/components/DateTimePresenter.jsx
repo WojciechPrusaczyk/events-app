@@ -2,10 +2,24 @@ import React from 'react';
 import RightArrow from "../images/icons/rightArrowIcon.svg";
 import ClockIcon from "../images/icons/clockIcon.svg";
 import DateIcon from "../images/icons/dateIcon.svg";
-const DateTimePresenter = ({className = "datetime-presenter", startDate, startTime, endDate, endTime}) => {
-
+const DateTimePresenter = ({className = "datetime-presenter", startDate, startTime, endDate, endTime, onClickFunction}) => {
   return (
-    <div className={className}>
+    <div
+        tabIndex={0}
+        className={className}
+        aria-label={"Add to calendar"}
+        onClick={ () => {
+            if (undefined !== onClickFunction) onClickFunction();
+        }}
+        onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (undefined !== onClickFunction) onClickFunction()
+            }
+        }}>
+        <div className={className+"-calendar-info"}>
+            <span>Add to calendar</span>
+        </div>
         <div className={className+"-legend"}>
             <img className={className+"-legend-icon"} src={DateIcon}
                  alt="date icon"/>

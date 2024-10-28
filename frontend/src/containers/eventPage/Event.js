@@ -18,6 +18,7 @@ const Event = ({title = "Eventful"}) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [calendarConfig, setCalendarConfig] = useState({});
 
     useEffect(() => {
         document.title = title;
@@ -53,29 +54,24 @@ const Event = ({title = "Eventful"}) => {
 
                     document.title = "Eventful: "+data.name;
 
-                    setSegmentsList(data.segments);
+                    setCalendarConfig({
+                        name: data.name,
+                        startDate: formatDateForInput(data.starttime),
+                        startTime: formatTimeForInput(data.starttime),
+                        endDate: formatDateForInput(data.endtime),
+                        endTime: formatTimeForInput(data.endtime),
+                        options: ["Google", "iCal", "Apple", "MicrosoftTeams", "Outlook.com"],
+                        organizer: `${data.supervisor.username}|${data.supervisor.email}`,
+                        timezone: "Europe/Warsaw",
+                        location: `https://maps.google.com/?q=${data.location.latitude},${data.location.longitude}`
+                    });
 
-                    // // ustawienie lokalizacji
-                    // if ( null != data.location)
-                    // {
-                    //     const lat = parseFloat(data.location.latitude);
-                    //     const lng = parseFloat(data.location.longitude);
-                    //
-                    //     setSelectedLocation({lat, lng});
-                    //     setMarkerPosition({lat, lng});
-                    //
-                    //     if ( null != data.location.formattedAddress)
-                    //         setFormattedAddress(data.location.formattedAddress);
-                    //
-                    //     if ( null != data.location.placeId)
-                    //         setPlaceId(data.location.placeId);
-                    // }
-                    // changeSupervisor(data.supervisor.uid);
-                    // setCopyButtonText(data.joinCode.toUpperCase());
+                    setSegmentsList(data.segments);
                     setIsDataLoaded(true);
                 }
             });
     }
+
 
     return (
         <div>
@@ -86,6 +82,7 @@ const Event = ({title = "Eventful"}) => {
                     <EventHeader
                         title={eventData.name}
                         supervisor={eventData.supervisor.username}
+                        calendarConfig={calendarConfig}
                         iconFilename={eventData.image}
                         location={eventData.location}
                         startDate={eventData.startDate}

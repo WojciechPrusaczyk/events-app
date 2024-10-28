@@ -38,7 +38,8 @@ class PublicUserdataSerializer(serializers.ModelSerializer):
             "uid",
             "username",
             "language",
-            "sex"
+            "sex",
+            "email",
         ]
         read_only_fields = ["uid"]
 
