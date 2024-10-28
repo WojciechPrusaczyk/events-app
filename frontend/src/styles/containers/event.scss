@@ -1,0 +1,114 @@
+@import "../colors";
+@import "../mixins";
+
+#event-header{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 15px;
+  background-color: $main-light;
+  border-radius: 20px;
+  padding: 20px;
+  .event-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    &-image{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &-element {
+        @include event-cover();
+        &-container {
+          margin: 0;
+        }
+      }
+    }
+    &-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      &-title {
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+        font-size: 2.3rem;
+        color: $black-light;
+      }
+      &-data {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        padding: 30px 0;
+        &-datetime {
+          width: calc( 50% - 250px );
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: space-between;
+          padding: 0 125px;
+
+          &-legend {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            &-icon {
+              width: 50px;
+              height: 50px;
+            }
+          }
+          &-datetime {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            &-date, &-time {
+              font-size: 1.3rem;
+              color: $black;
+              text-align: center;
+              margin: 13px 0;
+            }
+          }
+          &-icon {
+            width: 50px;
+            height: 50px;
+            margin-top: auto;
+            margin-bottom: auto;
+          }
+        }
+        &-info {
+          display: flex;
+          flex-direction: column;
+          width: 50%;
+          justify-content: space-between;
+          &-location, &-supervisor {
+            display: flex;
+            flex-direction: row;
+            a, a:active, a:hover, a:visited{
+              color: $black;
+            }
+            &-container{
+              margin: 0;
+              padding: 0;
+              font-size: 1.4rem;
+              display: flex;
+              align-items: center;
+              img {
+                width: 50px;
+                height: 50px;
+                margin-right: 20px;
+              }
+            }
+          }
+          &-supervisor-container{
+            font-weight: bold;
+            color: $black;
+          }
+        }
+      }
+    }
+  }
+}
+  

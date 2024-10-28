@@ -3,16 +3,17 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss";
 import axios from "axios";
-import "../../styles/containers/joinEvent.scss";
+import "../../styles/containers/event.scss";
 import {useNavigate, useParams} from "react-router-dom";
-import QRCode from "react-qr-code";
 import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
+import EventHeader from "../../components/EventPage/EventHeader";
 
 const Event = ({title = "Eventful"}) => {
     const navigate = useNavigate();
     const { eventToken } = useParams();
     const [eventData, setEventData] = useState({});
+    const [segmentsList, setSegmentsList] = useState([]);
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -41,15 +42,18 @@ const Event = ({title = "Eventful"}) => {
                         startTime: formatTimeForInput(data.starttime),
                         endDate: formatDateForInput(data.endtime),
                         endTime: formatTimeForInput(data.endtime),
-                        supervisor: data.supervisor.uid,
+                        supervisor: data.supervisor,
                         isActive: data.isactive,
                         isPublic: data.ispublic,
                         joinApproval: data.joinapproval,
                         image: data.iconFilename,
                         joinCode: data.joinCode,
+                        location: data.location,
                     })
 
                     document.title = "Eventful: "+data.name;
+
+                    setSegmentsList(data.segments);
 
                     // // ustawienie lokalizacji
                     // if ( null != data.location)
@@ -78,10 +82,19 @@ const Event = ({title = "Eventful"}) => {
             <Header />
             <main>
                 {!isDataLoaded && <DataLoader />}
-                {isDataLoaded && <h1>{eventData.name}</h1>}
+                {isDataLoaded && <div>
+                    <EventHeader
+                        title={eventData.name}
+                        supervisor={eventData.supervisor.username}
+                        iconFilename={eventData.image}
+                        location={eventData.location}
+                        startDate={eventData.startDate}
+                        startTime={eventData.startTime}
+                        endDate={eventData.endDate}
+                        endTime={eventData.endTime}
+                    />
+                </div> }
 
-                {error && <p className={"text-danger"}>{error}</p>}
-                {success && <p className={"text-success"}>{success}</p>}
             </main>
             <Footer />
         </div>
