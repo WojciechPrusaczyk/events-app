@@ -8,6 +8,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
 import EventHeader from "../../components/EventPage/EventHeader";
+import Countdown from "../../components/EventPage/Countdown";
 
 const Event = ({title = "Eventful"}) => {
     const navigate = useNavigate();
@@ -90,6 +91,10 @@ const Event = ({title = "Eventful"}) => {
                         endDate={eventData.endDate}
                         endTime={eventData.endTime}
                     />
+                    <div className={"event-timers"}>
+                        <Countdown id={"event-timer-start"} className={"event-timers-start"} title={"start countdown"} countDownTo={`${eventData.startDate}T${eventData.startTime}`}/>
+                        <Countdown id={"event-timer-end"} className={"event-timers-end"} title={"end countdown"} countDownTo={`${eventData.endDate}T${eventData.endTime}`}/>
+                    </div>
                 </div> }
 
             </main>

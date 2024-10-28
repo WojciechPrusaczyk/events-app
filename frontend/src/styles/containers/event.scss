@@ -1,7 +1,7 @@
 @import "../colors";
 @import "../mixins";
 
-#event-header{
+#event-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,22 +10,26 @@
   background-color: $main-light;
   border-radius: 20px;
   padding: 20px;
+
   .event-header {
     width: 100%;
     display: flex;
     flex-direction: row;
 
-    &-image{
+    &-image {
       display: flex;
       align-items: center;
       justify-content: center;
+
       &-element {
         @include event-cover();
+
         &-container {
           margin: 0;
         }
       }
     }
+
     &-content {
       width: 100%;
       display: flex;
@@ -38,25 +42,30 @@
         font-size: 2.3rem;
         color: $black-light;
       }
+
       &-data {
         display: flex;
         flex-direction: row;
         height: 100%;
         padding: 30px 0;
+
         &-datetime {
-          width: calc( 50% - 250px );
+          width: calc(50% - 250px);
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
           justify-content: space-between;
           padding: 0 125px;
           position: relative;
-          &:focus{
+
+          &:focus {
             outline: 2px solid #000;
+
             .event-header-content-data-datetime-calendar-info {
               backdrop-filter: blur(1.5px);
               cursor: pointer;
               transition: backdrop-filter .1s ease-out;
+
               span {
                 visibility: visible;
                 color: $black;
@@ -64,6 +73,7 @@
               }
             }
           }
+
           &-calendar-info {
             position: absolute;
             width: 100%;
@@ -75,6 +85,7 @@
             align-items: center;
             justify-content: center;
             transition: backdrop-filter .1s ease-in;
+
             span {
               visibility: hidden;
               font-size: 2rem;
@@ -83,10 +94,12 @@
               transition: color .1s ease-in;
               filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 16px #fff);
             }
+
             &:hover {
               backdrop-filter: blur(1.5px);
               cursor: pointer;
               transition: backdrop-filter .1s ease-out;
+
               span {
                 visibility: visible;
                 color: $black;
@@ -99,15 +112,18 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+
             &-icon {
               width: 50px;
               height: 50px;
             }
           }
+
           &-datetime {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+
             &-date, &-time {
               font-size: 1.3rem;
               color: $black;
@@ -115,6 +131,7 @@
               margin: 13px 0;
             }
           }
+
           &-icon {
             width: 50px;
             height: 50px;
@@ -122,23 +139,28 @@
             margin-bottom: auto;
           }
         }
+
         &-info {
           display: flex;
           flex-direction: column;
           width: 50%;
           justify-content: space-between;
+
           &-location, &-supervisor {
             display: flex;
             flex-direction: row;
-            a, a:active, a:hover, a:visited{
+
+            a, a:active, a:hover, a:visited {
               color: $black;
             }
-            &-container{
+
+            &-container {
               margin: 0;
               padding: 0;
               font-size: 1.4rem;
               display: flex;
               align-items: center;
+
               img {
                 width: 50px;
                 height: 50px;
@@ -146,12 +168,47 @@
               }
             }
           }
-          &-supervisor-container{
+
+          &-supervisor-container {
             font-weight: bold;
             color: $black;
           }
         }
       }
+    }
+  }
+}
+
+.event-timers {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  justify-content: space-between;
+  align-items: center;
+  margin: 50px auto auto;
+
+  &:has(> *:only-child) {
+    justify-content: center;
+  }
+
+  &-start, &-end {
+    display: flex;
+    flex-direction: column;
+
+    &-title {
+      padding: 10px 0;
+      font-size: 1.3rem;
+    }
+
+    &-time {
+      border-radius: 15px;
+      background-color: $main;
+      color: $white;
+      font-weight: bold;
+      font-size: 2.7rem;
+      padding: 15px 40px;
+      width: 170px;
+      text-align: center;
     }
   }
 }

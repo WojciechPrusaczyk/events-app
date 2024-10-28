@@ -435,7 +435,7 @@ const EditEvent = ({title = "Eventful"}) => {
                                         Large cover proportions: 24:36
                                     </span>
                                 </div>
-                                <div>
+                                <div className="file-image-wrapper">
                                     <img className="univForm-container-file-image dp-medium"
                                          src={URL.createObjectURL(formData.image)}
                                          alt="uploaded image medium"/>
