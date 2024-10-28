@@ -9,6 +9,7 @@ from django.core.mail import send_mail, get_connection
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.urls import resolve
 
 from .models import Users, Events, UserSettings, Locations, Photos, Segments, Eventsparticipants
 from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
@@ -473,7 +474,7 @@ def getEvent(request):
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["POST"])
 def getEvents(request):
     # Checking token and user
     token = request.COOKIES.get('token')
@@ -489,20 +490,20 @@ def getEvents(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Finding public and active events
-    eventsPublicActive = Events.objects.filter(ispublic=True, isactive=True).select_related('icon').distinct()
+    userAssociatedEvents = request.data.get('userAssociatedEvents')
 
-    # Finding inactive events where user is a supervisor
-    eventsUserInactive = Events.objects.filter(supervisor=user.uid).select_related('icon').distinct()
+    if userAssociatedEvents:
+        eventsUserInactive = Events.objects.filter(supervisor=user.uid).select_related('icon').distinct()
 
-    # Finding events, user participates in.
-    events_with_pending_participants = Events.objects.filter(
-        eventsparticipants__user=user,
-        eventsparticipants__isAccepted=True
-    ).select_related('icon').distinct()
+        # Finding events, user participates in.
+        events_with_pending_participants = Events.objects.filter(
+            eventsparticipants__user=user,
+            eventsparticipants__isAccepted=True
+        ).select_related('icon').distinct()
 
-    # Combine the two querysets using union
-    events = eventsPublicActive.union(eventsUserInactive, events_with_pending_participants)
+        events = eventsUserInactive.union(events_with_pending_participants)
+    else:
+        events = Events.objects.filter(ispublic=True, isactive=True).select_related('icon').distinct()
 
     # Serializing events
     if events.exists():
@@ -935,6 +936,9 @@ def sendEventRequest(request):
 
     if Eventsparticipants.objects.filter(user=user, event=event).exists():
         return Response({"detail": "You are already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if Events.objects.filter(supervisor=user, id=event.id).exists():
+        return Response({"detail": "You can't request to join your own event."}, status=status.HTTP_400_BAD_REQUEST)
 
     participant = Eventsparticipants(
         user=user,

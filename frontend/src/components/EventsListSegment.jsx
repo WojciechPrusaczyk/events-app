@@ -21,6 +21,7 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
                 link = "event/"+item.token;
             }
             else {
+                console.log(item.supervisor.username, Cookies.get('username'))
                 link = "join/"+item.joinCode;
             }
 

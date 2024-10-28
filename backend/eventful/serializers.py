@@ -60,11 +60,18 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Photos
         fields = '__all__'
 
+class SegmentsSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(read_only=True)
+    class Meta:
+        model = Segments
+        fields = ['id', 'event', 'name', 'description', 'starttime', 'endtime', 'speaker', 'isactive', 'location']
+
 class EventSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
     iconFilename = serializers.SerializerMethodField()
     supervisor = PublicUserdataSerializer(read_only=True)
+    segments = SegmentsSerializer(read_only=True, many=True)
 
     class Meta(object):
         model = Events
@@ -75,8 +82,3 @@ class EventSerializer(serializers.ModelSerializer):
             return obj.icon.filename
         return None
 
-class SegmentsSerializer(serializers.ModelSerializer):
-    location = LocationSerializer(read_only=True)
-    class Meta:
-        model = Segments
-        fields = ['id', 'event', 'name', 'description', 'starttime', 'endtime', 'speaker', 'isactive', 'location']

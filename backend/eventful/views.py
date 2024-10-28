@@ -125,7 +125,7 @@ def showEvent(request, code=None):
 
         userApproval = Eventsparticipants.objects.filter(user=user, event=event, isAccepted=True)
 
-        if userApproval:
+        if userApproval or Events.objects.filter(supervisor=user, id=event.id).exists():
             return redirect("event_page", eventToken=event.token)
         else:
             return render(request, "index.html", {"code": code})
@@ -153,6 +153,11 @@ def eventPage(request, eventToken=None):
         return Response({"detail": "Invalid token: " + userToken}, status=status.HTTP_400_BAD_REQUEST)
 
     if user and requestedEvent:
+
+        # If this events belongs to user
+        if Events.objects.filter(supervisor=user, id=requestedEvent.id).exists():
+            return render(request, "index.html", {"eventToken": eventToken.lower()})
+
         if requestedEvent.joinapproval:
             # check if user is approved to attend
             userApproval = Eventsparticipants.objects.filter(user=user, event=requestedEvent, isAccepted=True)

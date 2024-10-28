@@ -5,6 +5,7 @@ import "../../styles/containers/eventsList.scss"
 import axios from "axios";
 import Loader from "../../components/loader";
 import EventsListSegment from "../../components/EventsListSegment";
+import Cookies from "js-cookie";
 class EventsList extends Component {
     constructor(props) {
         super(props);
@@ -22,7 +23,9 @@ class EventsList extends Component {
 
     getEvents() {
         axios
-            .get(`${window.location.protocol}//${window.location.host}/api/get-events/`, {
+            .post(`${window.location.protocol}//${window.location.host}/api/get-events/`, {
+                userAssociatedEvents: true
+            }, {
                 withCredentials: true,
             })
             .then((response) => {
@@ -46,6 +49,10 @@ class EventsList extends Component {
         const now = new Date(); // aktualny czas
 
         // Filtracja list wydarzeń
+        const supervisedEvents = this.state.eventsList?.filter(event => {
+            return event.supervisor.username === Cookies.get('username')
+        });
+
         const upcomingEvents = this.state.eventsList?.filter(event => {
             const startTime = new Date(event.starttime);
             return startTime > now; // Wydarzenia, które jeszcze się nie rozpoczęły
@@ -70,6 +77,17 @@ class EventsList extends Component {
                     {this.state.eventsList === [] && <div className="loader">
                         Found no events associated with you.
                     </div>}
+
+                    {/* Lista nadzorowanych wydarzeń */}
+                    {supervisedEvents && supervisedEvents.length > 0 && (
+                        <EventsListSegment
+                            Id="upcoming-events-list"
+                            ListTitle={"Supervised events"}
+                            EventsList={supervisedEvents}
+                            IsEditList={true}
+                        />
+                    )}
+
                     {/* Lista nadchodzących wydarzeń */}
                     {upcomingEvents && upcomingEvents.length > 0 && (
                         <EventsListSegment

@@ -159,7 +159,7 @@ const EditEvent = ({title = "Eventful"}) => {
                 .then((response) => {
                     if (response.status === 200)
                     {
-                        window.location.href = `${window.location.protocol}//${window.location.host}/`
+                        window.location.href = `${window.location.protocol}//${window.location.host}/events-list`
                     }
                 })
         }

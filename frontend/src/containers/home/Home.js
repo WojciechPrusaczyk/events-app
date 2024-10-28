@@ -12,7 +12,9 @@ const Home = ({title = "Eventful"}) => {
 
     const getEvents = () => {
         axios
-            .get(`${window.location.protocol}//${window.location.host}/api/get-events/`, {
+            .post(`${window.location.protocol}//${window.location.host}/api/get-events/`, {
+                userAssociatedEvents: false
+            }, {
                 withCredentials: true,
             })
             .then((response) => {

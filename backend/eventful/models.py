@@ -62,7 +62,7 @@ class Photos(models.Model):
 
 class Segments(models.Model):
     id = models.AutoField(primary_key=True)
-    event = models.ForeignKey(Events, on_delete=models.CASCADE, db_column="event", blank=True, null=True)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE, db_column="event", blank=True, null=True, related_name='segments')
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     starttime = models.DateTimeField(db_column="startTime")
