@@ -12,9 +12,13 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
             const shortName = getShortName(item.name);
             const {lightHex, darkHex} = generateColorFromText(shortName);
             let link = "";
-            if(IsEditList)
+            if(IsEditList && item.supervisor.username === Cookies.get('username'))
             {
                 link = "edit-event/"+item.id;
+            }
+            else if(IsEditList)
+            {
+                link = "event/"+item.token;
             }
             else {
                 link = "join/"+item.joinCode;

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Users, Events, UserSettings, Locations, Photos, Segments
+from .models import Users, Events, UserSettings, Locations, Photos, Segments, Eventsparticipants
+
 
 class LoginUserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -46,6 +47,13 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Locations
         fields = '__all__'
+
+
+class EventsParticipantsSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Eventsparticipants
+        fields = '__all__'
+
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta(object):

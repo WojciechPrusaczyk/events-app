@@ -14,6 +14,7 @@ import EditSegments from "./containers/editSegments/EditSegments";
 import NotFound from "./containers/errorPages/NotFound";
 import ServerError from "./containers/errorPages/ServerError";
 import { Helmet } from 'react-helmet';
+import Event from "./containers/eventPage/Event";
 
 
 const Title = 'Eventful';
@@ -33,6 +34,8 @@ function App() {
         <Route path="/events-list" element={<EventsList title={"Eventful: Your events list"} />} />
         <Route path="/join" element={<JoinEvent title={"Eventful: Join event"} />} />
         <Route path="/join/:code" element={<ShowEvent title={"Eventful: Join event"} />} />
+        <Route path="/event/:eventToken" element={<Event />} />
+
         <Route path="/404" element={<NotFound title={"Eventful: Not found"} />} />
         <Route path="/500" element={<ServerError title={"Eventful: Critical error"} />} />
         <Route path="*" element={<NotFound title={"Eventful: Not found"} />} />

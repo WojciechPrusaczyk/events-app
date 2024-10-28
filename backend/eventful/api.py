@@ -280,12 +280,11 @@ def logoutUsername(request):
         )
     user.token = ""
     user.save()
-    return Response(
-        {
-            "detail": "User logged out."
-        },
-        status=status.HTTP_200_OK,
-    )
+
+    response = Response( { "detail": "User logged out." }, status=status.HTTP_200_OK )
+    response.delete_cookie(key='token')
+
+    return response
 
 
 @csrf_exempt
@@ -425,19 +424,34 @@ def createEvent(request):
 def getEvent(request):
     # Checking token and user
     token = request.COOKIES.get('token')
-    if not token:
+    joinCode = request.data.get("code")
+    eventToken = request.data.get("token")
+
+    if not token and not eventToken and joinCode:
+        event = Events.objects.get(joinCode=joinCode, ispublic=True, joinapproval=False)
+        eventSerializer = EventSerializer(event)
+
+        if event:
+            return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
+
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        user = Users.objects.get(token=token)
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # check if join code provided
-    joinCode = request.data.get("code")
     if joinCode:
         event = Events.objects.get(joinCode=joinCode)
         eventSerializer = EventSerializer(event)
         return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
+
+    if eventToken:
+        event = Events.objects.get(token=eventToken)
+        eventSerializer = EventSerializer(event)
+
+        return Response({"detail": eventSerializer.data}, status=status.HTTP_200_OK)
+
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding event by id
     eventId = request.data.get("id")
@@ -464,7 +478,11 @@ def getEvents(request):
     # Checking token and user
     token = request.COOKIES.get('token')
     if not token:
-        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+        # Finding public and active events
+        eventsPublicActive = Events.objects.filter(ispublic=True, isactive=True, joinapproval=False).select_related('icon').distinct()
+        eventSerializer = EventSerializer(eventsPublicActive, many=True)
+
+        return Response({"events": eventSerializer.data}, status=status.HTTP_200_OK)
 
     try:
         user = Users.objects.get(token=token)
@@ -472,13 +490,19 @@ def getEvents(request):
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     # Finding public and active events
-    eventsPublicActive = Events.objects.filter(ispublic=True, isactive=True).select_related('icon')
+    eventsPublicActive = Events.objects.filter(ispublic=True, isactive=True).select_related('icon').distinct()
 
     # Finding inactive events where user is a supervisor
-    eventsUserInactive = Events.objects.filter(supervisor=user.uid).select_related('icon')
+    eventsUserInactive = Events.objects.filter(supervisor=user.uid).select_related('icon').distinct()
+
+    # Finding events, user participates in.
+    events_with_pending_participants = Events.objects.filter(
+        eventsparticipants__user=user,
+        eventsparticipants__isAccepted=True
+    ).select_related('icon').distinct()
 
     # Combine the two querysets using union
-    events = eventsPublicActive | eventsUserInactive
+    events = eventsPublicActive.union(eventsUserInactive, events_with_pending_participants)
 
     # Serializing events
     if events.exists():
@@ -979,7 +1003,7 @@ def getNotifications(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    pendingParticipants = Eventsparticipants.objects.filter(user=user, isAccepted=False)
+    pendingParticipants = Eventsparticipants.objects.filter(event__supervisor=user, isAccepted=False)
 
     notifications = [
         {

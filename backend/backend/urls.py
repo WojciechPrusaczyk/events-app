@@ -23,6 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
+handler403 = "eventful.views.error_403"
 handler404 = "eventful.views.error_404"
 handler500 = "eventful.views.error_500"
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path("edit-event/<int:id>", views.editEvent, name="editEvent"),
     path("edit-segments/<int:id>", views.editSegments, name="editSegments"),
     path("join/<str:code>", views.showEvent, name="show_event"),
+    path("event/<str:eventToken>", views.eventPage, name="event_page"),
 
     path("api/", api.viewAPI, name="view_api"),
     path("api/register/", api.register, name="api_register"),

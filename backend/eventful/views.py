@@ -9,8 +9,9 @@ from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Users, Events, UserSettings
-from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer
+from .models import Users, Events, UserSettings, Eventsparticipants
+from .serializers import RegisterUserSerializer, LoginUserSerializer, EventSerializer, UserSettingsSerializer, \
+    EventsParticipantsSerializer
 from .utils import *
 import logging
 
@@ -96,8 +97,14 @@ def joinEvent(request):
 
 
 def showEvent(request, code=None):
+
     token = request.COOKIES.get('token')
     if not token:
+        event = Events.objects.get(joinCode=code.lower(), ispublic=True, joinapproval=False)
+
+        if event:
+            return render(request, "index.html", {"code": event.joinCode})
+
         return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Users.objects.get(token=token)
@@ -115,14 +122,56 @@ def showEvent(request, code=None):
         for letter in code:
             if letter.islower():
                 return redirect("show_event", code=code.upper())
-        return render(request, "index.html", {"code": code})
+
+        userApproval = Eventsparticipants.objects.filter(user=user, event=event, isAccepted=True)
+
+        if userApproval:
+            return redirect("event_page", eventToken=event.token)
+        else:
+            return render(request, "index.html", {"code": code})
     else:
         return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)
+
+def eventPage(request, eventToken=None):
+
+    # Checking if event exist
+    requestedEvent = Events.objects.get(token=eventToken.lower(), isactive=True)
+    if not requestedEvent:
+        return Response({"detail": "Event does not exist, or is inactive."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Checking if participant is logged
+    userToken = request.COOKIES.get('token')
+
+    # OK if user is not logged and event is public and event doesn't need request to enter
+    if not userToken and requestedEvent.ispublic and not requestedEvent.joinapproval:
+        return render(request, "index.html", {"eventToken": requestedEvent.token})
+
+    # Checking if user is valid and is logged in
+    try:
+        user = Users.objects.get(token=userToken)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + userToken}, status=status.HTTP_400_BAD_REQUEST)
+
+    if user and requestedEvent:
+        if requestedEvent.joinapproval:
+            # check if user is approved to attend
+            userApproval = Eventsparticipants.objects.filter(user=user, event=requestedEvent, isAccepted=True)
+
+            if userApproval:
+                return render(request, "index.html", {"eventToken": eventToken.lower()})
+            else:
+                return Response({"detail": "User is not accepted to attend."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return render(request, "index.html", {"eventToken": eventToken.lower()})
+    else:
+        return Response({"detail": "Invalid data provided."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def error_404(request, exception):
     return render(request, "index.html")
 
-
 def error_500(request):
+    return render(request, "index.html")
+
+def error_403(request, exception):
     return render(request, "index.html")
