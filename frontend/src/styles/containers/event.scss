@@ -212,4 +212,70 @@
     }
   }
 }
+
+.event-calendar {
+  background-color: $main-lighter;
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 15px;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.35);
+  &-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 32px 0;
+  }
+  &-day {
+    display: flex;
+    flex-direction: column;
+    background-color: $white;
+    border-radius: 10px;
+    padding: 3px 0;
+    width: 90px;
+    height: 84px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 6px;
+    &:first-of-type {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      margin-right: 0;
+    }
+    &-date, &-month, &-weekday {
+      color: $black-light;
+      text-align: center;
+    }
+    &-date {
+      font-size: 2.4rem;
+      font-weight: bold;
+    }
+    &-month {
+      font-size: .8rem;
+      text-transform: lowercase;
+    }
+    &-weekday {
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    &-current {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      bottom: -25px;
+    }
+    &.event-day {
+      background-color: $main;
+      transition: transform .1s ease-out;
+      position: relative;
+      &:hover {
+        cursor: pointer;
+        transform: translateY(2px);
+        transition: transform .1s ease-in;
+      }
+    }
+  }
+}
   

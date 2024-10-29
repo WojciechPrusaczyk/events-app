@@ -9,6 +9,7 @@ import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
 import EventHeader from "../../components/EventPage/EventHeader";
 import Countdown from "../../components/EventPage/Countdown";
+import Calendar from "../../components/EventPage/Calendar";
 
 const Event = ({title = "Eventful"}) => {
     const navigate = useNavigate();
@@ -95,6 +96,9 @@ const Event = ({title = "Eventful"}) => {
                         <Countdown id={"event-timer-start"} className={"event-timers-start"} title={"start countdown"} countDownTo={`${eventData.startDate}T${eventData.startTime}`}/>
                         <Countdown id={"event-timer-end"} className={"event-timers-end"} title={"end countdown"} countDownTo={`${eventData.endDate}T${eventData.endTime}`}/>
                     </div>
+                    <p className={"event-calendar-container"}>
+                        <Calendar className={"event-calendar"} segmentsList={segmentsList} />
+                    </p>
                 </div> }
 
             </main>
