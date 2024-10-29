@@ -12,7 +12,7 @@ Service for creating and managing events.
 - Reminders :calling:
 - Event map :pushpin:
 - Useful informations about event :page_with_curl:
-- Surrounding events browser :mag:
+- Local events browser :mag:
   
 ### Roadmap
 
