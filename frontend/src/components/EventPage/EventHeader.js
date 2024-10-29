@@ -38,6 +38,7 @@ const EventHeader = ({id = "event-header", className = "event-header", calendarC
                     <h1 className={className+"-content-title"}>{title}</h1>
                     <div className={className+"-content-data"}>
                         <DateTimePresenter
+                            showAddToCalendar={true}
                             onClickFunction={ (element) => atcb_action(calendarConfig, element)}
                             className={className+"-content-data-datetime"}
                             startDate={startDateTime.toLocaleDateString('en-US', {

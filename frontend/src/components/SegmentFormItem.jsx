@@ -101,7 +101,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
             description: JSON.stringify(segmentObject.description),
             starttime: formatForBackend(segmentObject.startDate, segmentObject.startTime),
             endtime: formatForBackend(segmentObject.endDate, segmentObject.endTime),
-            speaker: segmentObject.speaker,
+            speaker: segmentObject.speaker.uid,
             isActive: segmentObject.isactive,
             location: {
                 placeId: placeId,
@@ -120,8 +120,9 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
             .then((response) => {
                 if (response.status === 200)
                 {
-                    window.location.hash = `segment-${segmentObject.id}`;
+                    const elem = document.getElementById(`segment-${segmentObject.id}`);
                     window.location.reload();
+                    elem.scrollIntoView({behavior: "smooth"})
                 }
                 else {
                     console.error("Internal server error occurred.")

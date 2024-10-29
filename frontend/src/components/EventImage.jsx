@@ -11,7 +11,6 @@ function applyStylesToElements(shortName) {
 }
 
 const EventImage = ({className = "event-image", name, image, size}) => {
-    console.log(image)
     if (size !== "small" && size !== "medium" && size !== "large")
     {
         console.log("Invalid size data provided for EventImage: "+size)

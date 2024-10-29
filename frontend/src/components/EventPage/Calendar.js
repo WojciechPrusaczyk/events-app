@@ -37,6 +37,12 @@ const Calendar = ({ id = "event-calendar", className = "event-calendar", segment
                 <div
                     key={index}
                     className={`${className}-day${index === currentDayIndex ? ' current-day' : ''}${day.hasEvent ? ' event-day' : ''}`}
+                    onClick={ () => {
+                        if (day.hasEvent) {
+                            const elem = document.getElementById(`day-${day.date.getDate()}-${day.date.toLocaleString('default', { month: 'short' })}-${day.date.toLocaleString('default', { year: 'numeric' })}`);
+                            elem.scrollIntoView({behavior: "smooth"})
+                        }
+                    }}
                 >
                     <span className={className+"-day-date"}>{day.date.getDate()}</span>
                     <span className={className+"-day-month"}>{day.date.toLocaleString('default', { month: 'short' })}</span>

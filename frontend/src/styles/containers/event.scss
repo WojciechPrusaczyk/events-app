@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   margin: 15px;
-  background-color: $main-light;
+  background-color: $main-lighter;
   border-radius: 20px;
   padding: 20px;
 
@@ -23,6 +23,7 @@
 
       &-element {
         @include event-cover();
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
 
         &-container {
           margin: 0;
@@ -209,6 +210,7 @@
       padding: 15px 40px;
       width: 170px;
       text-align: center;
+      box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
     }
   }
 }
@@ -220,12 +222,14 @@
   flex-direction: row;
   border-radius: 15px;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.35);
+
   &-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 32px 0;
+    margin: 50px 0;
   }
+
   &-day {
     display: flex;
     flex-direction: column;
@@ -237,45 +241,189 @@
     align-items: center;
     justify-content: space-between;
     margin: 0 6px;
+
     &:first-of-type {
       margin-left: 0;
     }
+
     &:last-of-type {
       margin-right: 0;
     }
+
     &-date, &-month, &-weekday {
       color: $black-light;
       text-align: center;
     }
+
     &-date {
       font-size: 2.4rem;
       font-weight: bold;
     }
+
     &-month {
       font-size: .8rem;
       text-transform: lowercase;
     }
+
     &-weekday {
       font-size: 1.3rem;
       font-weight: bold;
       text-transform: uppercase;
     }
+
     &-current {
       position: absolute;
       width: 30px;
       height: 30px;
       bottom: -25px;
     }
+
     &.event-day {
       background-color: $main;
       transition: transform .1s ease-out;
-      position: relative;
+
       &:hover {
         cursor: pointer;
         transform: translateY(2px);
         transition: transform .1s ease-in;
       }
     }
+
+    &.current-day {
+      position: relative;
+    }
   }
+}
+
+.event-schedule {
+  margin: 60px 15px 15px;
+  &-day {
+    background-color: $main-lighter;
+    border-radius: 20px;
+    padding: 10px;
+    margin-top: 50px;
+    &-container {
+      display: flex;
+      flex-direction: row;
+      margin-top: 20px;
+      &-list {
+        width: 30%;
+        &-element {
+          display: flex;
+          flex-direction: column;
+          align-items: end;
+          margin: 0 10px;
+          &:last-of-type {
+            margin-top: 10px;
+          }
+          .segment-list-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            &-dot {
+              width: 16px;
+              height: 16px;
+              border-radius: 50%;
+              background-color: $main;
+            }
+            &-text {
+              padding: 10px;
+              font-size: .9rem;
+              padding-left: 20px;
+            }
+          }
+          .segment-list-content-name {
+            margin: 0;
+            padding: 20px;
+            border-left: 2px solid $main;
+            width: calc( 100% - (40px + 8px));
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: transform .15s ease-in;
+            &:hover {
+              transform: translateX(10px);
+              transition: transform .15s ease-out;
+              cursor: pointer;
+            }
+          }
+          .segment-list-content-info {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            border-left: 2px solid $main;
+            width: calc( 100% - (40px + 8px));
+            font-weight: bold;
+            font-size: 1.2rem;
+            &-location { margin-top: 0; }
+            &-time  { margin-bottom: 0; }
+            &-location, &-speaker, &-time {
+              margin: 10px 0;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              img {
+                width: 30px;
+                height: 30px;
+              }
+              span {
+                padding: 5px 20px;
+                color: $black;
+              }
+            }
+          }
+        }
+      }
+    }
+    &-description {
+      width: 70%;
+      border-radius: 15px;
+      background-color: $white;
+      padding: 15px;
+      &-header {
+        color: $black-light;
+        font-size: 1.5rem;
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+        padding-top: 0;
+        font-weight: bold;
+      }
+    }
+    &-segment {
+
+    }
+    &-header {
+      display: flex;
+      flex-direction: row;
+      &-date {
+        padding: 20px 15px;
+        background-color: $white;
+        border-radius: 15px;
+        &-day {
+          color: $black;
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
+        &-month {
+          color: $black;
+          font-size: 1rem;
+          text-transform: lowercase;
+        }
+      }
+      &-weekday {
+        text-transform: uppercase;
+        color: $black-light;
+        font-size: 1.8rem;
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+        font-weight: bold;
+      }
+    }
+  }
+
 }
   

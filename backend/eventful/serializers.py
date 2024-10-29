@@ -63,6 +63,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class SegmentsSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
+    speaker = PublicUserdataSerializer(read_only=True)
     class Meta:
         model = Segments
         fields = ['id', 'event', 'name', 'description', 'starttime', 'endtime', 'speaker', 'isactive', 'location']

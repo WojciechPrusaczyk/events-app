@@ -10,6 +10,7 @@ import DataLoader from "../../components/loader";
 import EventHeader from "../../components/EventPage/EventHeader";
 import Countdown from "../../components/EventPage/Countdown";
 import Calendar from "../../components/EventPage/Calendar";
+import EventSchedule from "../../components/EventPage/EventSchedule";
 
 const Event = ({title = "Eventful"}) => {
     const navigate = useNavigate();
@@ -99,8 +100,8 @@ const Event = ({title = "Eventful"}) => {
                     <p className={"event-calendar-container"}>
                         <Calendar className={"event-calendar"} segmentsList={segmentsList} />
                     </p>
+                    <EventSchedule segments={segmentsList} />
                 </div> }
-
             </main>
             <Footer />
         </div>

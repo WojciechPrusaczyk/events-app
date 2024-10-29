@@ -1,4 +1,6 @@
 import axios from "axios";
+import Quill from 'quill';
+import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 
 export function getShortName(name) {
     if(name.length >= 3 )
@@ -84,4 +86,10 @@ export function formatForBackend(dateInput, timeInput) {
 
     // Zwraca w formacie ISO z zachowaniem lokalnej strefy czasowej
     return localTime.toISOString().slice(0, 19);  // usunięcie 'Z' na końcu, aby nie było błędnie interpretowane jako UTC
+}
+
+export function quillToHtml(data) {
+    const delta = JSON.parse(data);
+    const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
+    return converter.convert();
 }
