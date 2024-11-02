@@ -94,7 +94,7 @@ class EventsList extends Component {
                             Id="upcoming-events-list"
                             ListTitle={"Upcoming Events"}
                             EventsList={upcomingEvents}
-                            IsEditList={true}
+                            IsEditList={false}
                         />
                     )}
 
@@ -104,7 +104,7 @@ class EventsList extends Component {
                             Id="ongoing-events-list"
                             ListTitle={"Ongoing Events"}
                             EventsList={ongoingEvents}
-                            IsEditList={true}
+                            IsEditList={false}
                         />
                     )}
 
@@ -114,7 +114,7 @@ class EventsList extends Component {
                             Id="recent-events-list"
                             ListTitle={"Recent Events"}
                             EventsList={recentEvents}
-                            IsEditList={true}
+                            IsEditList={false}
                         />
                     )}
                 </main>
