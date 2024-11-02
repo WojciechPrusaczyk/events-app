@@ -5,7 +5,7 @@ import "../../styles/containers/home.scss";
 import axios from "axios";
 import "../../styles/containers/event.scss";
 import {useNavigate, useParams} from "react-router-dom";
-import {formatDateForInput, formatTimeForInput} from "../../components/Helpers";
+import {formatDateForInput, formatTimeForInput, getAddressByLaLng} from "../../components/Helpers";
 import DataLoader from "../../components/loader";
 import EventHeader from "../../components/EventPage/EventHeader";
 import Countdown from "../../components/EventPage/Countdown";
@@ -57,17 +57,19 @@ const Event = ({title = "Eventful"}) => {
 
                     document.title = "Eventful: "+data.name;
 
-                    setCalendarConfig({
-                        name: data.name,
-                        startDate: formatDateForInput(data.starttime),
-                        startTime: formatTimeForInput(data.starttime),
-                        endDate: formatDateForInput(data.endtime),
-                        endTime: formatTimeForInput(data.endtime),
-                        options: ["Google", "iCal", "Apple", "MicrosoftTeams", "Outlook.com"],
-                        organizer: `${data.supervisor.username}|${data.supervisor.email}`,
-                        timezone: "Europe/Warsaw",
-                        location: `https://maps.google.com/?q=${data.location.latitude},${data.location.longitude}`
-                    });
+                    getAddressByLaLng(data.location.latitude, data.location.longitude).then( (address) => {
+                        setCalendarConfig({
+                            name: data.name,
+                            startDate: formatDateForInput(data.starttime),
+                            startTime: formatTimeForInput(data.starttime),
+                            endDate: formatDateForInput(data.endtime),
+                            endTime: formatTimeForInput(data.endtime),
+                            options: ["Google", "iCal", "Apple", "MicrosoftTeams", "Outlook.com"],
+                            organizer: `${data.supervisor.username}|${data.supervisor.email}`,
+                            timezone: "Europe/Warsaw",
+                            location: address
+                        });
+                    })
 
                     setSegmentsList(data.segments);
                     setIsDataLoaded(true);

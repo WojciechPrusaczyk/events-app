@@ -21,6 +21,7 @@ const EventHeader = ({id = "event-header", className = "event-header", calendarC
         setAddress(addr);
         setIsDataLoaded(true);
     };
+
     if (address === "" ) fetchAddress();
 
     useEffect(() => {
