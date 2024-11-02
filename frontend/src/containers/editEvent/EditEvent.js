@@ -116,7 +116,6 @@ const EditEvent = ({title = "Eventful"}) => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        console.log(formData)
 
         if (formData.title === "New Event" || formData.title === "")
         {
@@ -137,7 +136,7 @@ const EditEvent = ({title = "Eventful"}) => {
                 rules: JSON.stringify(formData.rules),
                 startTime: formatForBackend(formData.startDate, formData.startTime),
                 endTime: formatForBackend(formData.endDate, formData.endTime),
-                supervisor: formData.supervisor,
+                supervisor: supervisor,
                 isActive: formData.isActive,
                 isPublic: formData.isPublic,
                 joinApproval: formData.joinApproval,
@@ -223,13 +222,13 @@ const EditEvent = ({title = "Eventful"}) => {
             })
     }
     const changeSupervisor = (id) => {
-                console.log(id)
         axios
         .post(`${window.location.protocol}//${window.location.host}/api/user/`, {
             id: id
         },{
             withCredentials: true,
         }).then((response) => {
+            console.log(response)
            if (response.status === 200 || response.status === 201) {
                 setSupervisor(response.data.user.uid);
                 setUsersList([]);
