@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
 
 from django.contrib import admin
 from django.urls import path, include
@@ -22,6 +23,11 @@ from eventful import api
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import re_path
+from django.views.generic import TemplateView
+from django.views.static import serve
 
 handler403 = "eventful.views.error_403"
 handler404 = "eventful.views.error_404"
@@ -69,6 +75,9 @@ urlpatterns = [
 
     # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
     # TODO: dodawać do get-events do każdego eventu flagę, czy dany użytkownik jest juś dodany do danego eventu
+    re_path(r'^favicon\.ico$', serve, {'path': 'favicon.ico', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
+
+    # Ścieżka do manifest.json
+    re_path(r'^manifest\.json$', serve, {'path': 'manifest.json', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
