@@ -294,7 +294,7 @@ const EditEvent = ({title = "Eventful"}) => {
     // called with drag and drop
     const dropHandler = (event) => {
 		event.preventDefault();
-        const file = event.dataTransfer.items[0];
+        const file = event.dataTransfer.files[0];
         setDraggingItem(false);
         handleImageChange(file);
 	};
