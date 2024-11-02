@@ -15,6 +15,7 @@ import NotFound from "./containers/errorPages/NotFound";
 import ServerError from "./containers/errorPages/ServerError";
 import { Helmet } from 'react-helmet';
 import Event from "./containers/eventPage/Event";
+import Forbidden from "./containers/errorPages/Forbidden";
 
 
 const Title = 'Eventful';
@@ -38,6 +39,7 @@ function App() {
 
         <Route path="/404" element={<NotFound title={"Eventful: Not found"} />} />
         <Route path="/500" element={<ServerError title={"Eventful: Critical error"} />} />
+        <Route path="/403" element={<Forbidden title={"Eventful: Forbidden"} />} />
         <Route path="*" element={<NotFound title={"Eventful: Not found"} />} />
       </Routes>
     </Router>

@@ -76,8 +76,8 @@ urlpatterns = [
     # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
     # TODO: dodawać do get-events do każdego eventu flagę, czy dany użytkownik jest juś dodany do danego eventu
     re_path(r'^favicon\.ico$', serve, {'path': 'favicon.ico', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
-
-    # Ścieżka do manifest.json
+    re_path(r'^logo192\.png$', serve, {'path': 'logo192.png', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
+    re_path(r'^logo512\.png$', serve, {'path': 'logo512.png', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
     re_path(r'^manifest\.json$', serve, {'path': 'manifest.json', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

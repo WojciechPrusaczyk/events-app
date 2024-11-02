@@ -5,7 +5,7 @@ import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
 
-const NotFound = ({title = "Eventful: 404 NotFound"}) => {
+const ServerError = ({title = "Eventful"}) => {
 
     useEffect(() => {
         document.title = title;
@@ -15,11 +15,11 @@ const NotFound = ({title = "Eventful: 404 NotFound"}) => {
         <div>
             <Header />
             <main>
-                <h1>Error 404</h1>
+                <h1>Error 403</h1>
             </main>
             <Footer />
         </div>
     );
 };
 
-export default NotFound;
+export default ServerError;

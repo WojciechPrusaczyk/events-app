@@ -172,10 +172,10 @@ def eventPage(request, eventToken=None):
         return Response({"detail": "Invalid data provided."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def error_404(request, exception):
+def error_500(request):
     return render(request, "index.html")
 
-def error_500(request):
+def error_404(request, exception):
     return render(request, "index.html")
 
 def error_403(request, exception):
