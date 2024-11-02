@@ -8,7 +8,7 @@ import axios from "axios";
 import {useNavigate, useParams} from 'react-router-dom';
 import Loader from "../../components/loader";
 import SegmentFormItem from "../../components/SegmentFormItem";
-import {formatDateForInput, formatForBackend, formatTimeForInput} from "../../components/Helpers";
+import {formatDateForInput, formatForBackend, formatTimeForInput, getAddressByLaLng} from "../../components/Helpers";
 import LocationPin from "../../images/icons/locationPinIcon.svg";
 import CrownIcon from "../../images/icons/crownIcon.svg";
 import ClockIcon from "../../images/icons/clockIcon.svg";
@@ -19,6 +19,7 @@ const EditSegments = ({title = "Eventful"}) => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [activeSegmentId, setActiveSegmentId] = useState(1);
     const navigate = useNavigate();
+    const [addresses, setAddresses] = useState({});
 
     const updateSegmentsList = (focusOnLastElement = false) => {
         axios
@@ -49,6 +50,16 @@ const EditSegments = ({title = "Eventful"}) => {
 
                     setSegmentsList(preparedData);
                     setIsDataLoaded(true);
+
+
+                    preparedData.forEach(async (segment) => {
+                        console.log("test")
+                        const address = await getAddressByLaLng(segment.location.latitude, segment.location.longitude);
+                        setAddresses((prevAddresses) => ({
+                            ...prevAddresses,
+                            [segment.id]: address,
+                        }));
+                    });
                 }
             });
     }
@@ -76,6 +87,7 @@ const EditSegments = ({title = "Eventful"}) => {
 
         if (eventId && segmentsList.length === 0) updateSegmentsList();
         updateSegmentsList();
+
     }, [eventId]);
 
 
@@ -121,8 +133,7 @@ const EditSegments = ({title = "Eventful"}) => {
                        href={`https://maps.google.com/?q=${segment.location.latitude},${segment.location.longitude}`}>
                         <img src={LocationPin} alt="location pin icon"/>
                         <span>
-                            {/*{addresses[segment.id] || 'Loading address...'}*/}
-                            Loading address...
+                            {addresses[segment.id] || 'Loading address...'}
                         </span>
                     </a>
                     <div className={"segment-list-content-info-speaker"}>
