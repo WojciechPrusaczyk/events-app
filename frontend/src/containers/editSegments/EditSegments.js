@@ -81,6 +81,42 @@ const EditSegments = ({title = "Eventful"}) => {
         setSegmentsList((prevState) => prevState.map(segment => segment.id === updatedSegment.id ? updatedSegment : segment));
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        segmentsList.forEach(async (segmentObject) => {
+            const preparedObject = {
+                id: segmentObject.id,
+                name: segmentObject.name,
+                description: JSON.stringify(segmentObject.description),
+                starttime: formatForBackend(segmentObject.startDate, segmentObject.startTime),
+                endtime: formatForBackend(segmentObject.endDate, segmentObject.endTime),
+                speaker: segmentObject.speaker.uid,
+                isactive: segmentObject.isActive,
+                location: segmentObject.location,
+            }
+            axios
+                .post(
+                    `${window.location.protocol}//${window.location.host}/api/edit-segment/`, preparedObject,
+                    {
+                        withCredentials: true
+                    }
+                 )
+                .then((response) => {
+                    if (response.status === 200)
+                    {
+                        window.location.reload();
+                    }
+                    else {
+                        console.error("Internal server error occurred.")
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        });
+    }
+
     useEffect(() => {
 
         document.title = title;
@@ -94,7 +130,7 @@ const EditSegments = ({title = "Eventful"}) => {
     let segmentsForms, segmentsChooserList;
     if (Array.isArray(segmentsList) && segmentsList.length > 0) {
         segmentsForms = segmentsList.map((segment, index) => {
-            return <SegmentFormItem key={segment.id} segmentObject={segment} updateSegment={updateSegment} active={segment.id === activeSegmentId} onDeleteAction={updateSegmentsList}/>
+            return <SegmentFormItem key={segment.id} segmentObject={segment} updateSegment={updateSegment} active={segment.id === activeSegmentId} onDeleteAction={updateSegmentsList} handleSubmit={handleSubmit}/>
         });
         segmentsChooserList = segmentsList.map((segment, index) => {
 

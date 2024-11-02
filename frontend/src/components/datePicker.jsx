@@ -62,7 +62,8 @@ const DatePicker = ({ handleChange, id, dateValue, className }) => {
         placeholder="dd"
         value={day}
         onChange={(e) => {
-          const newDay = e.target.value;
+          let newDay = e.target.value;
+          if (newDay === "0") newDay = "";
           setDay(newDay);
           synchronizeTime(newDay, month, year);
         }}

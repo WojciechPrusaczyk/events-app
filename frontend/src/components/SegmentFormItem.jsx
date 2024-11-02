@@ -11,7 +11,7 @@ import axios from "axios";
 import {formatForBackend} from "./Helpers";
 import DateTimePresenter from "./DateTimePresenter";
 
-const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteAction}) => {
+const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteAction, handleSubmit}) => {
 
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const [selectedLocation, setSelectedLocation] = useState({
@@ -57,6 +57,12 @@ const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteA
 
             setSelectedLocation({lat, lng});
             setMarkerPosition({lat, lng});
+            segmentObject.location = {
+                placeId: null,
+                formattedAddress: null,
+                latitude: lat,
+                longitude: lng,
+            }
             setFormattedAddress(null);
             setPlaceId(null);
 
@@ -69,6 +75,13 @@ const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteA
                             const result = response.data.results[0];
                             setFormattedAddress(result.formatted_address);
                             setPlaceId(result.place_id);
+
+                            segmentObject.location = {
+                                placeId: result.place_id,
+                                formattedAddress: result.formatted_address,
+                                latitude: lat,
+                                longitude: lng,
+                            }
                         }
                     });
             }
@@ -92,46 +105,6 @@ const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteA
         };
         updateSegment(updatedSegment);
     };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const preparedObject = {
-            id: segmentObject.id,
-            name: segmentObject.name,
-            description: JSON.stringify(segmentObject.description),
-            starttime: formatForBackend(segmentObject.startDate, segmentObject.startTime),
-            endtime: formatForBackend(segmentObject.endDate, segmentObject.endTime),
-            speaker: segmentObject.speaker.uid,
-            isActive: segmentObject.isactive,
-            location: {
-                placeId: placeId,
-                formattedAddress: formattedAddress,
-                latitude: selectedLocation.lat,
-                longitude: selectedLocation.lng,
-            },
-        }
-        axios
-            .post(
-                `${window.location.protocol}//${window.location.host}/api/edit-segment/`, preparedObject,
-                {
-                    withCredentials: true
-                }
-             )
-            .then((response) => {
-                if (response.status === 200)
-                {
-                    const elem = document.getElementById(`segment-${segmentObject.id}`);
-                    window.location.reload();
-                    elem.scrollIntoView({behavior: "smooth"})
-                }
-                else {
-                    console.error("Internal server error occurred.")
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
 
     const handleDelete = (e) => {
         e.preventDefault();
