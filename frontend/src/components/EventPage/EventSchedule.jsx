@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import LocationPin from "../../images/icons/locationPinIcon.svg";
 import CrownIcon from "../../images/icons/crownIcon.svg";
 import ClockIcon from "../../images/icons/clockIcon.svg";
-import {getAddressByLaLng, quillToHtml} from "../Helpers";
+import {formatForBackend, getAddressByLaLng, quillToHtml} from "../Helpers";
 
 const EventCalendar = ({ segments }) => {
 

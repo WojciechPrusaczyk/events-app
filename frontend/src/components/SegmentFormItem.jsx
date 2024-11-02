@@ -11,7 +11,7 @@ import axios from "axios";
 import {formatForBackend} from "./Helpers";
 import DateTimePresenter from "./DateTimePresenter";
 
-const SegmentFormItem = ({segmentObject, updateSegment}) => {
+const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteAction}) => {
 
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const [selectedLocation, setSelectedLocation] = useState({
@@ -147,8 +147,8 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
             .then((response) => {
                 if (response.status === 200)
                 {
-                    console.log("Segment deleted", response);
-                    window.location.reload();
+                    onDeleteAction();
+                    document.getElementById("segments-container").scrollIntoView({behavior: "smooth"});
                 }
 
             })
@@ -177,7 +177,7 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
     };
 
     return (
-        <form id={"segment-" + segmentObject.id} className="univForm-container">
+        <form id={"segment-" + segmentObject.id} className="univForm-container" style={{display: !active?"none":"block"}}>
             <p className={"segment-header"}>
                 <h1 id={"segment-name" + segmentObject.id} className="univForm-container-title" ref={titleRef}></h1>
                 <DateTimePresenter
@@ -280,20 +280,20 @@ const SegmentFormItem = ({segmentObject, updateSegment}) => {
                          alt="choose date icon"/>
                 </fieldset>
             </p>
-            <p className="univForm-container-toggle">
-                <p>
-                    <span className="univForm-container-toggle-label-title">Is active</span>
-                    <span className="univForm-container-toggle-label-caption">Determines if is segment active and visible to all users.</span>
-                </p>
-                <div className="univForm-container-toggle-wrapper">
-                    <input className="univForm-container-toggle tgl tgl-light" id={"isActive-" + segmentObject.id}
-                           type="checkbox"
-                           aria-label="is active" onChange={handleInputChange('isActive')}
-                           defaultChecked={segmentObject.isActive}/>
-                    <label title="is active" aria-hidden="true" className="tgl-btn"
-                           htmlFor={"isActive-" + segmentObject.id}/>
-                </div>
-            </p>
+            {/*<p className="univForm-container-toggle">*/}
+            {/*    <p>*/}
+            {/*        <span className="univForm-container-toggle-label-title">Is active</span>*/}
+            {/*        <span className="univForm-container-toggle-label-caption">Determines if is segment active and visible to all users.</span>*/}
+            {/*    </p>*/}
+            {/*    <div className="univForm-container-toggle-wrapper">*/}
+            {/*        <input className="univForm-container-toggle tgl tgl-light" id={"isActive-" + segmentObject.id}*/}
+            {/*               type="checkbox"*/}
+            {/*               aria-label="is active" onChange={handleInputChange('isActive')}*/}
+            {/*               defaultChecked={segmentObject.isActive}/>*/}
+            {/*        <label title="is active" aria-hidden="true" className="tgl-btn"*/}
+            {/*               htmlFor={"isActive-" + segmentObject.id}/>*/}
+            {/*    </div>*/}
+            {/*</p>*/}
             <p>
                 <label className="univForm-container-label" htmlFor={"map-" + segmentObject.id}>
                     <span className="univForm-container-label-title">Main location</span>

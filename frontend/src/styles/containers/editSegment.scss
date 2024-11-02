@@ -2,35 +2,54 @@
 
 #segments-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   #delete-segment {
     cursor: pointer;
     padding: 10px;
     font-size: 0;
     margin-left: auto;
+
     img {
       width: 35px;
       height: 35px;
     }
   }
-  #add-segment-btn{
-    margin: 50px auto;
-    width: 30%;
-  }
-  #go-back-btn {
-    margin: 30px auto;
-    width: 30%;
+
+  .segments-forms {
+    width: 100%;
+    .univForm-container {
+      width: calc( 100% - 80px );
+    }
   }
 }
+
+.go-back-btn-container, .add-segment-btn-container {
+  width: 100%;
+  display: flex;
+  margin: 30px 0;
+}
+
+#add-segment-btn {
+  margin: 50px auto;
+  width: 30%;
+}
+
+#go-back-btn {
+  margin: 30px auto;
+  width: 30%;
+}
+
+
 label[for="delete-segment"] {
   pointer-events: none;
   text-align: end;
 }
 
-.univForm-container{
-  margin-top: 50px;
+.univForm-container {
+  margin-top: 0px;
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
+
   &-title {
     color: $black-light;
     font-size: 1.9rem;
@@ -40,8 +59,8 @@ label[for="delete-segment"] {
 
 .segment-header {
   display: flex;
-  flex-direction: row!important;
-  align-items: center!important;
+  flex-direction: row !important;
+  align-items: center !important;
 }
 
 .datetime-presenter {
@@ -49,4 +68,91 @@ label[for="delete-segment"] {
   padding: 15px;
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
+}
+
+.segments-chooser-list {
+  margin: 60px 15px 15px;
+  &-element {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin: 0 10px;
+
+    &:last-of-type {
+      margin-top: 10px;
+    }
+
+    .segment-list-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      margin: 0;
+
+      &-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: $main;
+      }
+
+      &-text {
+        padding: 10px;
+        font-size: .9rem;
+        padding-left: 20px;
+      }
+    }
+
+    .segment-list-content-name {
+      margin: 0;
+      padding: 20px;
+      border-left: 2px solid $main;
+      width: calc(100% - (40px + 8px));
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: transform .15s ease-in;
+
+      &:hover {
+        transform: translateX(10px);
+        transition: transform .15s ease-out;
+        cursor: pointer;
+      }
+    }
+
+    .segment-list-content-info {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 20px;
+      border-left: 2px solid $main;
+      width: calc(100% - (40px + 8px));
+      font-weight: bold;
+      font-size: 1.2rem;
+
+      &-location {
+        margin-top: 0;
+      }
+
+      &-time {
+        margin-bottom: 0;
+      }
+
+      &-location, &-speaker, &-time {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+
+        span {
+          padding: 5px 20px;
+          color: $black;
+        }
+      }
+    }
+  }
 }
