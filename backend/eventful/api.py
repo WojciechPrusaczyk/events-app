@@ -58,8 +58,11 @@ def login(request):
     password = request.data.get("password")
     rememberMe = request.data.get("rememberMe")
 
-    if not usernameEmail or not password:
-        return Response({"detail": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+    if not password:
+        return Response({"detail": "Password is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not usernameEmail:
+        return Response({"detail": "Username, or email is required."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         user = Users.objects.get(email=usernameEmail)
@@ -67,7 +70,7 @@ def login(request):
         try:
             user = Users.objects.get(username=usernameEmail)
         except Users.DoesNotExist:
-            return Response({"detail": "Invalid username or email1."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Invalid username or email."}, status=status.HTTP_400_BAD_REQUEST)
 
     if not check_password(password, user.password):
         return Response({"detail": "Invalid password."}, status=status.HTTP_400_BAD_REQUEST)
