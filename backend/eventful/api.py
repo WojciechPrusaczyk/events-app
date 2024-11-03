@@ -1047,7 +1047,7 @@ def leaveEvent(request):
     try:
         participant_record = Eventsparticipants.objects.get(user=user, event=eventId)
     except Eventsparticipants.DoesNotExist:
-        return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "You are not on participating in this event."}, status=status.HTTP_404_NOT_FOUND)
 
     participant_record.delete()
 

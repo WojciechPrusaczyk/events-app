@@ -71,6 +71,7 @@ urlpatterns = [
     path("api/send-event-request/", api.sendEventRequest, name="api_send_event_request"),
     path("api/accept-user", api.acceptUser, name="api_join_event"),
     path("api/get-notifications", api.getNotifications, name="api_get_notifications"),
+    path("api/leaveEvent/", api.leaveEvent, name="api_leave_event"),
 
 
     # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
