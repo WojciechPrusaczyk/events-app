@@ -41,6 +41,7 @@ def viewAPI(request):
         "api_get_events": "https://eventfull.pl/get_events(token}",
         "api_edit_event": "https://eventfull.pl/editEventApi{wszystko eventu}",
         "api_send_event_request": "https://eventfull.pl/sendEventRequest{event_id, user_id}",
+        "api_leave_event": "https://eventfull.pl/leaveEvent{event_id, user_id}",
         "api_forgot_password": "https://eventfull.pl/forgot_password{email}",
         "api_reset_password": "https://eventfull.pl/reset_password{new_password}",
         "api_get_segments": "https://eventfull.pl/getSegments{wszystko segmentu}",
@@ -675,6 +676,10 @@ def deleteEvent(request):
         return Response({"detail": "Event not found or you don't have permission to delete it."},
                         status=status.HTTP_403_FORBIDDEN)
 
+    Segments.objects.filter(event=event).delete()
+
+    Eventsparticipants.objects.filter(event=event).delete()
+
     photo = event.icon
     if photo:
         imagesPath = os.path.join(MEDIA_ROOT, "images")
@@ -1023,3 +1028,27 @@ def getNotifications(request):
     ]
 
     return Response({"notifications": notifications}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def leaveEvent(request):
+    token = request.COOKIES.get('token')
+
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    eventId = request.data.get("eventId")
+    if not eventId:
+        return Response({"detail": "Code required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        participant_record = Eventsparticipants.objects.get(user=user, event=eventId)
+    except Eventsparticipants.DoesNotExist:
+        return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    participant_record.delete()
+
+    return Response({"detail": "Event leave successfully."}, status=status.HTTP_200_OK)
