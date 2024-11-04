@@ -23,6 +23,7 @@ import {
     getShortName
 } from "../../components/Helpers";
 import DataLoader from "../../components/loader";
+import Confirmation from '../../components/confirmation';
 let fileHandle;
 let dragoverTimeout;
 const EditEvent = ({title = "Eventful"}) => {
@@ -57,6 +58,7 @@ const EditEvent = ({title = "Eventful"}) => {
     const [isDraggingItem, setDraggingItem] = useState(false);
     const [fileError, setFileError] = useState("");
     const [copyButtonText, setCopyButtonText] = useState('Copy');
+    const [isconfirmationshown, setisconfirmshown] = useState(false);
 
     /* TODO: nie jest sprawdzane czy starttime < endtime */
     useEffect(() => {
@@ -308,6 +310,7 @@ const EditEvent = ({title = "Eventful"}) => {
     }
 
     const DeleteButton = (e) => {
+        
 
             e.preventDefault();  // Zatrzymuje domyślne zachowanie przycisku (przeładowanie strony)
             axios
@@ -330,14 +333,16 @@ const EditEvent = ({title = "Eventful"}) => {
                 .catch((error) => {
                     console.error(eventId);
                 });
+                
         };
 
-    const AcceptButton = (e) => {
-        e.preventDefault();
-
+    if (isconfirmationshown){
+        document.body.style.overflow = "hidden";
 
     }
-
+    else{
+        document.body.style.overflow = "scroll";
+    }
     
 
     return (
@@ -345,6 +350,9 @@ const EditEvent = ({title = "Eventful"}) => {
             <Header/>
             <main>
                 {!isDataLoaded && <DataLoader />}
+                {isconfirmationshown && <Confirmation text={"Are you sure to delete this event?"} onConfirm={DeleteButton} onClose={()=> {
+                    setisconfirmshown(false);
+                }} />}
                 {isDataLoaded &&
                     <form className="univForm-container">
                         <h1 className="univForm-container-title">Create event</h1>
@@ -680,15 +688,15 @@ const EditEvent = ({title = "Eventful"}) => {
                                 <span className="univForm-container-label-caption">Permanently delete event.</span>
                             </label>
                             <button id={"delete-event"} className='btn btn-danger'
-                                    onClick={(e) => DeleteButton(e)}>
+                                    onClick={(e) =>{ 
+                                            e.preventDefault();
+                                            setisconfirmshown(true);
+                                            }}>
                                 <img src={TrashIcon}
                                      alt="delete event icon"
                                 />
                             </button>
                         </p>
-                        <button id={""} className=''
-                                    >
-                            </button>
                     </form>}
             </main>
             <Footer/>
