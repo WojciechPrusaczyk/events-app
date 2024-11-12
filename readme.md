@@ -30,29 +30,6 @@ Service for creating and managing events.
 12. [ ] Event map
 13. [ ] Mobile app
 
-### Bugs
-
-1. [x] date picker in registration is broken
-2. [x] toggle nie może być focusowany
-3. [x] email wysyłany do potwierdzenia maila wysyła zły template
-4. [x] użytkownik bez zweryfikowanego emaila może używać aplikacji
-5. [x] opcja remember me nie działa, trzeba zweryfikować jakie ciasteczko zwrócić przy logowaniu
-6. [x] opcje IsActive, IsPublic i JoinThroughApproval nie działają przy edycji eventu
-7. [x] nie działa usuwanie miniatury eventu, na backend idzie null, ale na backendzie nie jest to obsługiwane
-8. [x] gdy kliknie się kilka razy rejestruj po wypełnieniu formularza, to utworzy się kilku użytkowników
-9. [x] nie można usunąć wydarzenia
-10. [x] nie da się zmienić daty
-11. [x] IsActive w evencie nie ma żadnego skutku, powinno zwracać 404 jeśli ktoś prosi o zasób IsActive = false
-12. [ ] Frontend: Edycja jednego segmentu usuwa zmiany reszty 
-13. [ ] Frontend: Sugestia, edycja segmentów podzielona na 2 części, z lewej lista segmentów, z prawej edycja wybranego segmentu
-14. [x] utils.py :84, nieodpowiednia ścieżka krytyczny błąd
-15. [ ] Frontend: w przypadku wystpienia jakiegokolwiek błędu na serwerze przy zakładaniu konta, użytkownik i tak jest wrzucany do bazy danych, bez rejestracji
-16. [x] Frontend: Edit segments do poprawy
-17. [x] PROD na serwerze, występuje błąd przy zapisie ikony wydarzenia module 'random' has no attribute 'choices'
-18. [ ] Frontend: zmiana supervisora nie działa
-19. [ ] Frontend: cofnięcie z segmentów z # w linku nie działa za 1 razem
-20. [ ] Backend: Supervisor może dołączyć do swojego wydarzenia i się sam akceptować
-
 # Installation
 
 1. Zainstaluj całe potrzebne oprogramwoanie.
