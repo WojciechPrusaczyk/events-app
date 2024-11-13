@@ -4,7 +4,7 @@
 [![Git](https://img.shields.io/badge/PostgreSQL%20%5E16.3-white?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/download/)
 [![ReactJS](https://img.shields.io/badge/React.js-gray?style=for-the-badge&logo=react)](https://react.dev/)
 [![Django](https://img.shields.io/badge/Django-darkgreen?style=for-the-badge&logo=django)](https://docs.djangoproject.com/en/5.0/)
-
+  
 # Eventful :fire:
 Service for creating and managing events.
 ### Key features:
