@@ -402,6 +402,13 @@ def createEvent(request):
         latitude="53.1231938"
     )
     location.save()
+    joinCode = get_random_string(8, "abcdefghijklmnopqrstuvwxyz0123456789")
+
+    while True:
+        if Events.objects.filter(joinCode=joinCode).exists():
+            joinCode = get_random_string(8, "abcdefghijklmnopqrstuvwxyz0123456789")
+        else:
+            break
 
     # Tworzenie obiektu wydarzenia
     newEvent = Events(
@@ -417,7 +424,7 @@ def createEvent(request):
         token=event_token,
         location=location,
         icon=None,
-        joinCode=get_random_string(8, "abcdefghijklmnopqrstuvwxyz0123456789")
+        joinCode=joinCode
     )
     newEvent.save()
 
@@ -839,24 +846,41 @@ def editSegment(request):
 
     if starttime is not None:
         try:
+            # Convert starttime string to datetime object
             starttime = starttime.replace('T', ' ')
-            segment.starttime = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+            starttime_obj = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+            segment.starttime = timezone.make_aware(starttime_obj) if timezone.is_naive(
+                starttime_obj) else starttime_obj
         except ValueError:
             return Response({"detail": "Invalid starttime format. Use 'YYYY-MM-DD HH:MM:SS'."},
                             status=status.HTTP_400_BAD_REQUEST)
+
     if endtime is not None:
         try:
+            # Convert endtime string to datetime object
             endtime = endtime.replace('T', ' ')
-            segment.endtime = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+            endtime_obj = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+            segment.endtime = timezone.make_aware(endtime_obj) if timezone.is_naive(endtime_obj) else endtime_obj
         except ValueError:
             return Response({"detail": "Invalid endtime format. Use 'YYYY-MM-DD HH:MM:SS'."},
                             status=status.HTTP_400_BAD_REQUEST)
 
-    if starttime and endtime and segment.starttime > segment.endtime:
+    # Validate timeline: Start time must be before end time
+    if segment.starttime and segment.endtime and segment.starttime > segment.endtime:
         return Response({"detail": "Invalid timeline. Start time must be before end time."},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # Overlap check
+    # Ensure segment end time does not exceed the event's end time
+    if segment.endtime and segment.event.endtime:
+        # Normalize both to timezone-aware for comparison
+        event_endtime = timezone.make_aware(segment.event.endtime) if timezone.is_naive(
+            segment.event.endtime) else segment.event.endtime
+        if segment.endtime > event_endtime:
+            return Response({"detail": "Segment end time cannot exceed the event's end time."},
+                            status=status.HTTP_400_BAD_REQUEST)
+    print(segment.event.endtime, "event", segment.endtime, "segment")
+
+    # Check for overlapping segments
     if starttime or endtime:
         conflicting_segments = Segments.objects.filter(
             event=segment.event
