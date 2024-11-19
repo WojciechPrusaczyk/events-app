@@ -80,7 +80,7 @@ def editSegments(request, id=None):
         return Response("Id not provided.", status=status.HTTP_404_NOT_FOUND)
 
 
-def joinEvent(request):
+def joinEvent(request, event_id):
     # weryfikacja zalogowania
     token = request.COOKIES.get('token')
     if not token:
@@ -90,7 +90,20 @@ def joinEvent(request):
     except Users.DoesNotExist:
         return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user:
+    event = Events.objects.get(Events, id=event_id)
+
+    #sprawdznie czy event jest publiczny
+    if not event.is_public:
+        return Response({"detail": "This event is not public."}, status=status.HTTP_403_FORBIDDEN)
+
+    #dodawanie uzytkownika jako zaakceptowanego
+    participation, created = Eventsparticipants.objects.get_or_create(
+        user=user,
+        event=event,
+        defaults={"is_accepted": True}
+    )
+
+    if created:
         return render(request, "index.html")
     else:
         return Response("Invalid user.", status=status.HTTP_404_NOT_FOUND)
