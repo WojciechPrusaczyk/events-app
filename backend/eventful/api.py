@@ -1076,3 +1076,38 @@ def leaveEvent(request):
     participant_record.delete()
 
     return Response({"detail": "Event leave successfully."}, status=status.HTTP_200_OK)
+
+
+@api_view(['get'])
+def getEventsByKeywords(request):
+    keywords_criteria = {
+        "technology": ["tech", "AI", "machine learning", "programming"],
+        "sports": ["football", "soccer", "basketball", "tennis"],
+        "music": ["concert", "band", "music", "orchestra"],
+        "education": ["lecture", "study", "course", "university"],
+        "concert": ["concert", "live music", "performance", "show", "tour", "festival",
+                    "event", "live band", "orchestra"]
+    }
+
+    token = request.COOKIES.get('token')
+    if not token:
+        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Users.objects.get(token=token)
+    except Users.DoesNotExist:
+        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+    result = {keyword: [] for keyword in keywords_criteria}
+
+    events = Events.objects.all()
+
+    if not events:
+        return Response({"detail": "No events found."}, status=status.HTTP_404_NOT_FOUND)
+
+    for event in events:
+        for keyword, word_list in keywords_criteria.items():
+            if any(word.lower() in event.title.lower() or word.lower() in event.description.lower() for word in
+                   word_list):
+                result[keyword].append(event.id)
+
+    return Response({"categorized events": result}, status=status.HTTP_200_OK)
