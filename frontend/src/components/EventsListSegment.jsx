@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import EventsList from "../containers/eventsList/EventsList";
 import {eventsCategories, generateColorFromText, getShortName} from "./Helpers";
 import SettingsIcon from "../images/icons/settingsIcon.svg";
 import Cookies from "js-cookie";
@@ -55,7 +54,8 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", CategoryName = "
 
     return (
         <p id={Id} className={`${ClassName ? ClassName + " " : ""}events-list`} style={{display: (EventsList.length > 0)?"":"none"}}>
-            { "" !== CategoryName && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}/?eventCategory=${CategoryName}`} aria-label="show this category" className="events-list-title">{translatedCategoryName(ListTitle)}</a>}
+            { ("" !== CategoryName && "" !== ListTitle ) && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}/?eventCategory=${CategoryName}`} aria-label="show this category" className="events-list-title">{translatedCategoryName(ListTitle)}</a>}
+            { ("" === CategoryName && "" !== ListTitle ) && <h2 aria-hidden={true} aria-label="show this category" className="events-list-title">{translatedCategoryName(ListTitle)}</h2>}
             <div className="events-list-events">
                 {( null !== EventsListComponent ) && EventsListComponent}
             </div>

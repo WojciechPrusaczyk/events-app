@@ -72,7 +72,6 @@
     font-weight: bold;
     letter-spacing: 4px;
     color: $black;
-    cursor: pointer;
     text-decoration: none;
     padding-left: 10px;
     transition: letter-spacing .1s ease-in;
@@ -94,3 +93,6 @@
   }
 }
 
+a.events-list-title {
+  cursor: pointer;
+}
