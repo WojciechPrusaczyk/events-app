@@ -1078,36 +1078,80 @@ def leaveEvent(request):
     return Response({"detail": "Event leave successfully."}, status=status.HTTP_200_OK)
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Events
+from .serializers import EventSerializer
+from datetime import datetime
+
 @api_view(['get'])
 def getEventsByKeywords(request):
-    keywords_criteria = {
-        "technology": ["tech", "AI", "machine learning", "programming"],
-        "sports": ["football", "soccer", "basketball", "tennis"],
-        "music": ["concert", "band", "music", "orchestra"],
-        "education": ["lecture", "study", "course", "university"],
-        "concert": ["concert", "live music", "performance", "show", "tour", "festival",
-                    "event", "live band", "orchestra"]
-    }
 
     token = request.COOKIES.get('token')
-    if not token:
-        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
-    try:
+    if token:
         user = Users.objects.get(token=token)
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
+    current_year = datetime.now().year
+    next_year = current_year + 1
+
+    # Definicja kategorii i słów kluczowych
+    keywords_criteria = {
+        "technology": [
+            "tech", "AI", "machine learning", "programming", "robotics", "blockchain",
+            "cybersecurity", "data science", "hackathon", "startup", "cloud computing",
+            "konferencja", "technologia", "innowacje", "targi pracy", "IT", "sztuczna inteligencja"
+        ],
+        "sports": [
+            "football", "soccer", "basketball", "tennis", "volleyball", "swimming",
+            "athletics", "running", "cycling", "yoga", "gym", "workout", "sport",
+            "piłka nożna", "koszykówka", "siatkówka", "tenis", "bieganie", "pływanie", "sport"
+        ],
+        "cultural": [
+            "theatre", "cinema", "movie", "festival", "art", "museum", "exhibition",
+            "spotkanie", "kultura", "teatr", "kino", "wystawa", "sztuka", "muzeum", "targi",
+            "impreza", "event", "wieczór", "towarzyski", "kulturalne"
+        ],
+        "music": [
+            "concert", "live music", "performance", "festival", "band", "orchestra",
+            "festiwal", "koncert", "muzyka", "show", "trasa koncertowa", "zespół", "orkiestra"
+        ],
+        "education": [
+            "lecture", "study", "course", "workshop", "university", "conference", "seminar",
+            "juwenalia", "dni otwarte", "warsztaty", "edukacja", "studia", "nauka", "lekcja", "szkolenie"
+        ],
+        current_year: [],
+        next_year: []
+    }
+
+    # Przygotowanie wyników
     result = {keyword: [] for keyword in keywords_criteria}
 
-    events = Events.objects.all()
+    # Pobranie wszystkich aktywnych i publicznych wydarzeń
+    if token and user:
+        events = Events.objects.filter(isactive=True, ispublic=True)
+    else:
+        events = Events.objects.filter(isactive=True, ispublic=True, joinapproval=False)
 
-    if not events:
-        return Response({"detail": "No events found."}, status=status.HTTP_404_NOT_FOUND)
+    if not events.exists():
+        return Response({"detail": "No active and public events found."}, status=status.HTTP_404_NOT_FOUND)
 
     for event in events:
+        # Sprawdzanie słów kluczowych dla każdej kategorii
         for keyword, word_list in keywords_criteria.items():
-            if any(word.lower() in event.title.lower() or word.lower() in event.description.lower() for word in
-                   word_list):
-                result[keyword].append(event.id)
+            if keyword in [current_year, next_year]:
+                # Obsługa kategorii czasowych
+                event_year = event.starttime.year
+                if (keyword == current_year and event_year == current_year) or \
+                        (keyword == next_year and event_year == next_year):
+                    result[keyword].append(EventSerializer(event).data)
+            else:
+                # Obsługa kategorii bazujących na słowach kluczowych
+                if any(word.lower() in event.name.lower() or word.lower() in event.description.lower() for word in word_list):
+                    result[keyword].append(EventSerializer(event).data)
 
-    return Response({"categorized events": result}, status=status.HTTP_200_OK)
+    # Sortowanie wydarzeń w każdej kategorii po dacie rozpoczęcia (od najwcześniejszej)
+    for category in result.keys():
+        result[category].sort(key=lambda x: x["starttime"])
+
+    return Response({"categorized_events": result}, status=status.HTTP_200_OK)

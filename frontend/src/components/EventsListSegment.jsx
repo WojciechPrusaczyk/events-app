@@ -4,7 +4,7 @@ import {generateColorFromText, getShortName} from "./Helpers";
 import SettingsIcon from "../images/icons/settingsIcon.svg";
 import Cookies from "js-cookie";
 
-const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, EventsList = [], HandleMoreButton, IsEditList = false}) => {
+const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, EventsList = [], IsEditList = false}) => {
     let EventsListComponent = null;
     if (EventsList.length > 0)
     {
@@ -40,11 +40,7 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
 
     return (
         <p id={Id} className={`${ClassName ? ClassName + " " : ""}events-list`} style={{display: (EventsList.length > 0)?"":"none"}}>
-            { "" !== ListTitle && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}`} onClick={ () => {
-                    if (undefined !== HandleMoreButton) {
-                        HandleMoreButton();
-                    }
-                }} aria-label="show this category" className="events-list-title">{ListTitle}</a>}
+            { "" !== ListTitle && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}/?eventCategory=${ListTitle}`} aria-label="show this category" className="events-list-title">{ListTitle}</a>}
             <div className="events-list-events">
                 {( null !== EventsListComponent ) && EventsListComponent}
             </div>

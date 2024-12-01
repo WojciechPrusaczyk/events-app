@@ -18,10 +18,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
 def index(request):
-    logger.info('Widok YourView został wywołany.')
-    return render(request, "index.html")
+    event_category = request.GET.get("eventCategory", None)
+
+    context = {"eventCategory": event_category} if event_category else {}
+
+    return render(request, "index.html", context)
 
 
 def viewResetPassword(request, token=""):

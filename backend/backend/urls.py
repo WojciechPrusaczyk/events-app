@@ -72,7 +72,7 @@ urlpatterns = [
     path("api/accept-user", api.acceptUser, name="api_join_event"),
     path("api/get-notifications", api.getNotifications, name="api_get_notifications"),
     path("api/leaveEvent/", api.leaveEvent, name="api_leave_event"),
-    path("api/getEventsByKeywords/", api.getEventsByKeywords, name="api_get_events_by_keyword"),
+    path("api/get-events-by-keywords/", api.getEventsByKeywords, name="api_get_events_by_keyword"),
 
                   # TODO: punkt api acceptUser, na wejściu podaję listę, LUB  jednego użytkownika do zaakceptowania do eventu
     # TODO: dodawać do get-events do każdego eventu flagę, czy dany użytkownik jest juś dodany do danego eventu
