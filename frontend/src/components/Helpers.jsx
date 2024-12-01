@@ -93,3 +93,14 @@ export function quillToHtml(data) {
     const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
     return converter.convert();
 }
+
+const currentYear = new Date().getFullYear();
+export const eventsCategories = [
+    {technology: "Learn about new technologies 💻"},
+    {sports: "Take breath of fresh air 🥵"},
+    {cultural: "Culture to go 📖"},
+    {music: "For your ears 📢"},
+    {education: "Education is important 📒"},
+    {[currentYear]: "Upcoming this year 📅"},
+    {[currentYear+1]: "Awesome next year 📆"},
+]

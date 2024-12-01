@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import EventsList from "../containers/eventsList/EventsList";
-import {generateColorFromText, getShortName} from "./Helpers";
+import {eventsCategories, generateColorFromText, getShortName} from "./Helpers";
 import SettingsIcon from "../images/icons/settingsIcon.svg";
 import Cookies from "js-cookie";
 
-const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, EventsList = [], IsEditList = false}) => {
+const EventsListSegment = ({Id = "events-list", ListTitle = "", CategoryName = "", ClassName, EventsList = [], IsEditList = false}) => {
     let EventsListComponent = null;
     if (EventsList.length > 0)
     {
@@ -38,9 +38,24 @@ const EventsListSegment = ({Id = "events-list", ListTitle = "", ClassName, Event
         });
     }
 
+    const translatedCategoryName = (name) => {
+
+        let translatedValue = name;
+        eventsCategories.forEach((translation) => {
+            const key = Object.keys(translation)[0];
+            const value = Object.values(translation)[0];
+
+            if (key == name)
+            {
+                translatedValue = value;
+            }
+        });
+        return translatedValue;
+    }
+
     return (
         <p id={Id} className={`${ClassName ? ClassName + " " : ""}events-list`} style={{display: (EventsList.length > 0)?"":"none"}}>
-            { "" !== ListTitle && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}/?eventCategory=${ListTitle}`} aria-label="show this category" className="events-list-title">{ListTitle}</a>}
+            { "" !== CategoryName && <a aria-hidden={true} href={`${window.location.protocol}//${window.location.host}/?eventCategory=${CategoryName}`} aria-label="show this category" className="events-list-title">{translatedCategoryName(ListTitle)}</a>}
             <div className="events-list-events">
                 {( null !== EventsListComponent ) && EventsListComponent}
             </div>

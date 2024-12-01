@@ -9,10 +9,13 @@ import "../../styles/containers/eventsList.scss"
 import Loader from "../../components/loader";
 import SegmentFormItem from "../../components/SegmentFormItem";
 import eventsList from "../eventsList/EventsList";
+import {eventsCategories} from "../../components/Helpers";
+import {useSearchParams} from "react-router-dom";
 
 const Home = ({title = "Eventful"}) => {
     const [eventsList, setEventsList] = useState([]);
     const [isDataLoaded, setDataLoaded] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const getEvents = () => {
         axios
@@ -47,15 +50,46 @@ const Home = ({title = "Eventful"}) => {
         getEvents();
     }, []);
 
+    const categoryParam = searchParams.get("eventCategory");
+    let category = null;
+    if ( undefined !== categoryParam && "" !== categoryParam)
+    {
+        eventsCategories.forEach((item) => {
+            const key = Object.keys(item)[0];
+
+            if (key == categoryParam)
+            {
+                category = categoryParam;
+            }
+        });
+    }
+
     let eventsListComponent = null;
-    if (isDataLoaded)
+
+    if (null != category && isDataLoaded)
+    {
+        const result = eventsList.filter(obj => {
+            return Object.keys(obj)[0] === category;
+        })
+        console.log(Object.values(result[0])[0]);
+        eventsListComponent = <EventsListSegment
+                        Id={"upcoming-events-list-"+category}
+                        ListTitle={category}
+                        CategoryName={category}
+                        EventsList={Object.values(result[0])[0]}
+                        IsEditList={false}
+                    />
+    }
+    else if (isDataLoaded)
     {
         eventsListComponent = eventsList.map((category) => {
-            console.log(Object.keys(category), Object.values(category)[0])
+
+            const categoryName = Object.keys(category)[0];
 
             return <EventsListSegment
                         Id={"upcoming-events-list-"+Object.keys(category)}
-                        ListTitle={Object.keys(category)[0]}
+                        ListTitle={categoryName}
+                        CategoryName={categoryName}
                         EventsList={Object.values(category)[0]}
                         IsEditList={false}
                     />
