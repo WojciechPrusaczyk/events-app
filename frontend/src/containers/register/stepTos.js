@@ -11,14 +11,14 @@ const StepTos = ({ register, handleChange, formData, prevStep }) => {
             <h3 className="form-page-title">3 out of 3 steps</h3>
             <p className="form-container-tos-agreement">
                 <label className="agreement">
-                    I want to recieve news and offers from Eventful
+                    I want to recieve news and offers from Eventfull
                     <input className="checkbox" type="checkbox" onChange={ handleChange('acceptedNews') } />
                     <span className="checkmark"></span>
                 </label>
             </p>
             <p className="form-container-tos-agreement">
                 <label className="agreement">
-                    Share my registration details with content providers on Eventful. This information may be used for marketing purposes.
+                    Share my registration details with content providers on Eventfull. This information may be used for marketing purposes.
                     <input className="checkbox" type="checkbox" onChange={ handleChange('acceptedSharingDetails') } />
                     <span className="checkmark"></span>
                 </label>
@@ -33,7 +33,7 @@ const StepTos = ({ register, handleChange, formData, prevStep }) => {
             <p className="form-container-tos-closure">
                 To learn more about how Events App collects, uses and shares your personal information, please review
                 <a href={`${window.location.protocol}//${window.location.host}/`}>
-                    Eventful’s Privacy Policy.
+                    Eventfull’s Privacy Policy.
                 </a>
             </p>
             <input

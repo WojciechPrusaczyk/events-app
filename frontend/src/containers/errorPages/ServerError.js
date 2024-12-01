@@ -5,7 +5,7 @@ import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
 
-const ServerError = ({title = "Eventful"}) => {
+const ServerError = ({title = "Eventfull"}) => {
 
     useEffect(() => {
         document.title = title;

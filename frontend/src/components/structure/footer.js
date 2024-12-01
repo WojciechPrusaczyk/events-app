@@ -8,7 +8,7 @@ import xLogo from "../../images/icons/x_black.svg"
 
 const Footer = (props) => {
 
-    const appName = "Eventful";
+    const appName = "Eventfull";
     const currentYear = new Date().getFullYear();
     const appLogo = logo;
     const currentLanguage = "English";

@@ -9,7 +9,7 @@ import PageCounter from "../register/pageCounter";
 import confirmationIcon from "../../images/confirmationIcon.svg";
 
 
-const ForgotPassword = ({title = "Eventful"}) => {
+const ForgotPassword = ({title = "Eventfull"}) => {
 
     useEffect(() => {
         document.title = title;

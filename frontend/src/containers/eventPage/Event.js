@@ -12,7 +12,7 @@ import Countdown from "../../components/EventPage/Countdown";
 import Calendar from "../../components/EventPage/Calendar";
 import EventSchedule from "../../components/EventPage/EventSchedule";
 
-const Event = ({title = "Eventful"}) => {
+const Event = ({title = "Eventfull"}) => {
     const navigate = useNavigate();
     const { eventToken } = useParams();
     const [eventData, setEventData] = useState({});
@@ -55,7 +55,7 @@ const Event = ({title = "Eventful"}) => {
                         location: data.location,
                     })
 
-                    document.title = "Eventful: "+data.name;
+                    document.title = "Eventfull: "+data.name;
 
                     getAddressByLaLng(data.location.latitude, data.location.longitude).then( (address) => {
                         setCalendarConfig({

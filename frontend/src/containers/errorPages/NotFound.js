@@ -5,7 +5,7 @@ import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
 
-const NotFound = ({title = "Eventful: 404 NotFound"}) => {
+const NotFound = ({title = "Eventfull: 404 NotFound"}) => {
 
     useEffect(() => {
         document.title = title;

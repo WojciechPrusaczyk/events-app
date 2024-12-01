@@ -12,7 +12,7 @@ import eventsList from "../eventsList/EventsList";
 import {eventsCategories} from "../../components/Helpers";
 import {useSearchParams} from "react-router-dom";
 
-const Home = ({title = "Eventful"}) => {
+const Home = ({title = "Eventfull"}) => {
     const [eventsList, setEventsList] = useState([]);
     const [isDataLoaded, setDataLoaded] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();

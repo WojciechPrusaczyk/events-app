@@ -18,8 +18,8 @@ import os
 
 from django.contrib import admin
 from django.urls import path, include
-from eventful import views
-from eventful import api
+from eventfull import views
+from eventfull import api
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
@@ -29,9 +29,9 @@ from django.urls import re_path
 from django.views.generic import TemplateView
 from django.views.static import serve
 
-handler403 = "eventful.views.error_403"
-handler404 = "eventful.views.error_404"
-handler500 = "eventful.views.error_500"
+handler403 = "eventfull.views.error_403"
+handler404 = "eventfull.views.error_404"
+handler500 = "eventfull.views.error_500"
 
 urlpatterns = [
     path("admin/", admin.site.urls),

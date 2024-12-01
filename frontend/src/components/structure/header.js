@@ -138,7 +138,7 @@ const Header = (props) => {
 
     }, []);
 
-    const company_name = "Eventful";
+    const company_name = "Eventfull";
     const company_logo = logo;
 
     let notificationsList =  notifications.map((entity) => {

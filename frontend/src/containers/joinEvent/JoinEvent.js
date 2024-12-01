@@ -7,7 +7,7 @@ import "../../styles/containers/joinEvent.scss";
 import {useNavigate} from "react-router-dom";
 import QRCode from "react-qr-code";
 
-const JoinEvent = ({title = "Eventful"}) => {
+const JoinEvent = ({title = "Eventfull"}) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         code: '',

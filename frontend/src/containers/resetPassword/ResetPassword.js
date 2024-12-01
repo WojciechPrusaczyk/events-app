@@ -6,7 +6,7 @@ import "../../styles/containers/newPassword.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const ResetPassword = ({title = "Eventful"}) => {
+const ResetPassword = ({title = "Eventfull"}) => {
 
     useEffect(() => {
         document.title = title;

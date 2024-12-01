@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import PageCounter from "../register/pageCounter";
 import confirmationIcon from "../../images/confirmationIcon.svg";
 
-const AccountVerification = ({title = "Eventful"}) => {
+const AccountVerification = ({title = "Eventfull"}) => {
 
     useEffect(() => {
         document.title = title;

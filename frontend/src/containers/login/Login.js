@@ -39,7 +39,7 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        document.title = this.props.title ? this.props.title : "Eventful";
+        document.title = this.props.title ? this.props.title : "Eventfull";
     }
 
     rememberUser(e) {
@@ -91,7 +91,7 @@ class Login extends Component {
                 <main>
                     <form className="login-form">
                         <p>
-                            <h2 className="login-form-title">Log into Eventful</h2>
+                            <h2 className="login-form-title">Log into Eventfull</h2>
                         </p>
                         <p>
                             <a href="" className="login-form-company" aria-label="login with google">

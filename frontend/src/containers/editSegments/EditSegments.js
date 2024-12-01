@@ -13,7 +13,7 @@ import LocationPin from "../../images/icons/locationPinIcon.svg";
 import CrownIcon from "../../images/icons/crownIcon.svg";
 import ClockIcon from "../../images/icons/clockIcon.svg";
 
-const EditSegments = ({title = "Eventful"}) => {
+const EditSegments = ({title = "Eventfull"}) => {
     const {id: eventId} = useParams();
     const [segmentsList, setSegmentsList] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);

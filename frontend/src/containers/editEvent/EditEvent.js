@@ -26,7 +26,7 @@ import DataLoader from "../../components/loader";
 import Confirmation from '../../components/confirmation';
 let fileHandle;
 let dragoverTimeout;
-const EditEvent = ({title = "Eventful"}) => {
+const EditEvent = ({title = "Eventfull"}) => {
     const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const {id: eventId} = useParams();
     const [formData, setFormData] = useState({

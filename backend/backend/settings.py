@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['eventfull.pl', 'wojciechp.atthost24.pl', '185.255.40.62', 'loc
 # Application definition
 
 INSTALLED_APPS = [
-    "eventful.apps.EventfulConfig",
+    "eventfull.apps.EventfulllConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
