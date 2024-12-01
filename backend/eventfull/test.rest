@@ -1,0 +1,62 @@
+POST http://localhost:8000/api/login/
+Content-Type: application/json
+
+{"username" : "Adrok2", "password" : "Adrok123@"}
+
+###
+
+POST http://localhost:8000/api/register/
+Content-Type: application/json
+
+{"username" : "remo12",  "password" : "Remo123@", "name" : "Remigiusz", "surname" : "Grzemo",
+"email" : "Woj@gmail.com","registrationdate" : "2001-11-11",
+ "birthdate" : "2001-03-11", "language" : "pl"}
+
+###
+
+GET http://localhost:8000/api/user/
+Content-Type: application/json
+
+{"username" : "s"}
+
+###
+
+GET http://localhost:8000/api/checkUsername/
+Content-Type: application/json
+
+{"username" : "Adrok2"}
+
+###
+
+POST http://localhost:8000/api/logout/
+Content-Type: application/json
+
+{"token" : "VJIDXESI4RUD1Y4ObeSb"}
+
+###
+
+POST http://localhost:8000/api/logoutUsername/
+Content-Type: application/json
+
+{"username" : "Fox2137"}
+
+###
+POST http://localhost:8000/api/create_event/
+Content-Type: application/json
+
+{"name" : "Template Event", "description" : "Description"}
+
+###
+
+POST http://localhost:8000/api/verification_email/
+Content-Type: application/json
+
+{"email" : "eventfull2024@gmail.com"}
+
+###
+
+
+POST http://localhost:8000/api/forgot_password/
+Content-Type: application/json
+
+{"email" : "adrianlewandowski40@gmail.com"}

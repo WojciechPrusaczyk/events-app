@@ -1,0 +1,34 @@
+[
+  {
+    "model": "eventfull.usersettings",
+    "pk": 1,
+    "fields": {
+      "hasSeenTutorial": false,
+      "acceptedSharingDetails": false,
+      "acceptedTOS": true,
+      "acceptedNews": false,
+      "utilityToken": "abc123xyz"
+    }
+  },
+  {
+    "model": "eventfull.users",
+    "pk": 1,
+    "fields": {
+      "username": "john_doe",
+      "name": "John",
+      "surname": "Doe",
+      "email": "john.doe@example.com",
+      "password": "$2b$12$ZJfjf19/ZGdCh5ZbViT/QuYY2go.7rvDvDrdvFglSHJLSke8siium",
+      "isactive": true,
+      "registrationdate": "2024-01-01",
+      "lastlogin": "2024-09-01",
+      "birthdate": "1990-05-15",
+      "language": "EN",
+      "lastlocation": null,
+      "recentip": "192.168.0.1",
+      "sex": "M",
+      "token": null,
+      "userSetting": 1
+    }
+  }
+]
