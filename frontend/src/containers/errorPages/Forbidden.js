@@ -4,6 +4,8 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
+import ludzik from "../../images/errorBoiBackground.png";
+import "../../styles/containers/errorPages.scss"
 
 const ServerError = ({title = "Eventfull"}) => {
 
@@ -12,13 +14,29 @@ const ServerError = ({title = "Eventfull"}) => {
     }, []);
 
     return (
-        <div>
-            <Header />
-            <main>
-                <h1>Error 403</h1>
-            </main>
-            <Footer />
+<div>
+        <Header />
+        <main>
+                <div className="error-page-container">
+        <div className="text-section">
+            <h1>Oops!    Access Forbidden</h1>
+            <h2>
+            It seems like you don't have permission to access this page. <br />
+            </h2>
+            <h3>
+            Don't worry, just go back to the homepage.
+            </h3>
+            <div className="button-section">
+            <button className="home-button btn" type="submit">Home</button>
+            </div>
         </div>
+  <div className="logo-section">
+    <img src={ludzik} alt="ludzik" />
+  </div>
+        </div>
+        </main>
+        <Footer />
+    </div>
     );
 };
 

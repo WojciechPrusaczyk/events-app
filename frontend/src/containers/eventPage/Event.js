@@ -11,6 +11,7 @@ import EventHeader from "../../components/EventPage/EventHeader";
 import Countdown from "../../components/EventPage/Countdown";
 import Calendar from "../../components/EventPage/Calendar";
 import EventSchedule from "../../components/EventPage/EventSchedule";
+import EventDescription from "../../components/EventPage/EventDescription";
 
 const Event = ({title = "Eventfull"}) => {
     const navigate = useNavigate();
@@ -40,8 +41,8 @@ const Event = ({title = "Eventfull"}) => {
                     const data = response.data.detail;
                     setEventData({
                         name: data.name,
-                        description: (data.description != "")?JSON.parse(data.description):"",
-                        rules: (data.rules != "")?JSON.parse(data.rules):"",
+                        description: data.description,
+                        rules: (data.rules != "" && "null" != data.rules)?data.rules:null,
                         startDate: formatDateForInput(data.starttime),
                         startTime: formatTimeForInput(data.starttime),
                         endDate: formatDateForInput(data.endtime),
@@ -95,6 +96,7 @@ const Event = ({title = "Eventfull"}) => {
                         endDate={eventData.endDate}
                         endTime={eventData.endTime}
                     />
+                    <EventDescription desc={eventData.description} rules={eventData.rules}/>
                     <div className={"event-timers"}>
                         <Countdown id={"event-timer-start"} className={"event-timers-start"} title={"start countdown"} countDownTo={`${eventData.startDate}T${eventData.startTime}`}/>
                         <Countdown id={"event-timer-end"} className={"event-timers-end"} title={"end countdown"} countDownTo={`${eventData.endDate}T${eventData.endTime}`}/>
