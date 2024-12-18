@@ -24,8 +24,8 @@ Service for creating and managing events.
 6. [x] Creating segments
 7. [x] Segment edition
 8. [x] Joining and sharing events
-9. [ ] Notification system, user acceptations.
-10. [ ] Event page (schedule, important infos)
+9. [x] Notification system, user acceptations.
+10. [x] Event page (schedule, important infos)
 11. [ ] Galleries (for events and segments)
 12. [ ] Event map
 13. [ ] Mobile app
