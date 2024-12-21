@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import LocationPin from "../../images/icons/locationPinIcon.svg";
 import CrownIcon from "../../images/icons/crownIcon.svg";
 import ClockIcon from "../../images/icons/clockIcon.svg";
 import {formatForBackend, getAddressByLaLng, quillToHtml} from "../Helpers";
 
 const EventCalendar = ({ segments }) => {
+
+    const eventDesc = useRef(null)
 
     // Grupowanie i sortowanie segmentów według dni
     const groupedSegments = segments.reduce((acc, segment) => {
@@ -32,12 +34,17 @@ const EventCalendar = ({ segments }) => {
 
     const handleSegmentClick = (day, segment) => {
         setActiveSegments((prev) => ({ ...prev, [day]: segment }));
+
+        if (window.screen.width < 768)
+        {
+            document.getElementById(`event-${activeSegments[day].id}-desc`).
+            scrollIntoView({behavior: "smooth", block: 'center', inline: 'center'});
+        }
     };
 
     const [addresses, setAddresses] = useState({});
 
     useEffect(() => {
-        // Pobierz adresy dla każdego segmentu na podstawie lokalizacji
         segments.forEach(async (segment) => {
             const address = await getAddressByLaLng(segment.location.latitude, segment.location.longitude);
             setAddresses((prevAddresses) => ({
@@ -119,7 +126,7 @@ const EventCalendar = ({ segments }) => {
                                 </p>
                             </p>
                         </div>
-                        <div className="event-schedule-day-description">
+                        <div id={`event-${activeSegments[day].id}-desc`} className="event-schedule-day-description">
                             <h2 className="event-schedule-day-description-header">{activeSegments[day].name}</h2>
                             <p className="event-schedule-day-description-content" dangerouslySetInnerHTML={{ __html: quillToHtml(activeSegments[day].description) }}></p>
                             {/* Miejsce na zdjęcia */}

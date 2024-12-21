@@ -9,7 +9,7 @@
   border-radius: 20px;
   @include double-gradient(90deg, $main-light, $main-dark);
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: $breakpoint-tablet) {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -32,21 +32,30 @@
     align-items: center;
     justify-content: start;
     color: $main-white;
+    @media (max-width: $breakpoint-desktop) {
+      width: 45%;
+    }
     > h1 {
       margin: 0;
     }
-    @media (max-width: $breakpoint-mobile) {
+    @media (max-width: $breakpoint-tablet) {
       display: flex;
       align-items: center;
       flex-direction: column;
     }
   }
   &-user {
-    width: 35%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: end;
+    @media (max-width: $breakpoint-tablet) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 99%;
+    }
     &-button {
       background-color: $main-lighter;
       border-radius: 13px;
@@ -90,12 +99,6 @@
         right: 7px;
         top: 7px;
       }
-    }
-    @media (max-width: $breakpoint-mobile) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 99%;
     }
   }
   #notifications {

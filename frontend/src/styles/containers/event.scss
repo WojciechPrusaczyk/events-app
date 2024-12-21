@@ -16,6 +16,10 @@
     display: flex;
     flex-direction: row;
 
+    @media (max-width: $breakpoint-desktop) {
+      flex-direction: column;
+    }
+
     &-image {
       display: flex;
       align-items: center;
@@ -50,6 +54,10 @@
         height: 100%;
         padding: 30px 0;
 
+        @media (max-width: $breakpoint-desktop) {
+          flex-direction: column;
+        }
+
         &-datetime {
           width: calc(50% - 250px);
           display: flex;
@@ -58,6 +66,11 @@
           justify-content: space-between;
           padding: 0 125px;
           position: relative;
+
+          @media (max-width: $breakpoint-desktop) {
+            padding: 0 20px;
+            width: calc( 100% - 40px );
+          }
 
           &:focus {
             outline: 2px solid #000;
@@ -130,6 +143,10 @@
               color: $black;
               text-align: center;
               margin: 13px 0;
+
+              @media (max-width: $breakpoint-mobile) {
+                font-size: 1rem;
+              }
             }
           }
 
@@ -138,6 +155,11 @@
             height: 50px;
             margin-top: auto;
             margin-bottom: auto;
+
+            @media (max-width: $breakpoint-mobile) {
+              width: 40px;
+              height: 40px;
+            }
           }
         }
 
@@ -146,6 +168,11 @@
           flex-direction: column;
           width: 50%;
           justify-content: space-between;
+
+          @media (max-width: $breakpoint-desktop) {
+            padding: 20px;
+            width: calc( 100% - 40px );
+          }
 
           &-location, &-supervisor {
             display: flex;
@@ -162,10 +189,19 @@
               display: flex;
               align-items: center;
 
+              @media (max-width: $breakpoint-mobile) {
+                font-size: 1rem;
+              }
+
               img {
                 width: 50px;
                 height: 50px;
                 margin-right: 20px;
+
+                @media (max-width: $breakpoint-mobile) {
+                  width: 40px;
+                  height: 40px;
+                }
               }
             }
           }
@@ -222,6 +258,12 @@
   flex-direction: row;
   border-radius: 15px;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.35);
+  @media (max-width: $breakpoint-mobile) {
+    flex-wrap: wrap;
+    width: calc(100% - 60px);
+    gap: 8px;
+    justify-content: center;
+  }
 
   &-container {
     display: flex;
@@ -242,6 +284,22 @@
     justify-content: space-between;
     margin: 0 6px;
 
+    @media (max-width: $breakpoint-desktop) {
+      width: 70px;
+      height: 64px;
+      margin: 0 4px;
+    }
+
+    @media (max-width: 630px) {
+      width: 50px;
+      height: 44px;
+      margin: 0 3px;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      margin: 0;
+    }
+
     &:first-of-type {
       margin-left: 0;
     }
@@ -258,17 +316,37 @@
     &-date {
       font-size: 2.4rem;
       font-weight: bold;
+
+      @media (max-width: $breakpoint-desktop) {
+        font-size: 1.7rem;
+      }
+
+      @media (max-width: 630px) {
+        font-size: 1rem;
+      }
     }
 
     &-month {
       font-size: .8rem;
       text-transform: lowercase;
+
+      @media (max-width: 630px) {
+        font-size: .5rem;
+      }
     }
 
     &-weekday {
       font-size: 1.3rem;
       font-weight: bold;
       text-transform: uppercase;
+
+      @media (max-width: $breakpoint-desktop) {
+        font-size: .9rem;
+      }
+
+      @media (max-width: 630px) {
+        font-size: .6rem;
+      }
     }
 
     &-current {
@@ -276,6 +354,12 @@
       width: 30px;
       height: 30px;
       bottom: -25px;
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 15px;
+        height: 15px;
+        bottom: -7.5px;
+      }
     }
 
     &.event-day {
@@ -309,8 +393,16 @@
       flex-direction: row;
       margin-top: 20px;
 
+      @media (max-width: $breakpoint-tablet) {
+        flex-direction: column;
+      }
+
       &-list {
         width: 30%;
+
+        @media (max-width: $breakpoint-tablet) {
+          width: 100%;
+        }
 
         &-element {
           display: flex;
@@ -404,10 +496,15 @@
       background-color: $white;
       padding: 15px;
 
+      @media (max-width: $breakpoint-tablet) {
+        width: calc( 100% - 30px);
+        margin-top: 10px;
+      }
+
       &-header {
         color: $black-light;
         font-size: 1.5rem;
-        width: 100%;
+        width: calc(100% - 30px);
         text-align: center;
         padding: 15px;
         padding-top: 0;
@@ -445,7 +542,7 @@
         text-transform: uppercase;
         color: $black-light;
         font-size: 1.8rem;
-        width: 100%;
+        width: calc(100% - 30px);
         text-align: center;
         padding: 15px;
         font-weight: bold;
