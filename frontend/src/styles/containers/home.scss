@@ -118,6 +118,10 @@ body {
   flex-direction: row;
   width: 100%;
   justify-content: center;
+  @media (max-width: $breakpoint-tablet) {
+    width: calc(100% - 30px);
+  }
+
   &-datetime {
     margin: 0 20px;
     font-size: 1.2rem;
