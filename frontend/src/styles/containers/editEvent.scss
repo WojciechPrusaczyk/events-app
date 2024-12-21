@@ -22,13 +22,13 @@ label[for="delete-event"] {
     font-size: .9rem;
     color: $black-light;
     &.dp-large {
-      width: $cover-size * 24px;
+      width: ($cover-size * 24px) - 10px;
     }
     &.dp-medium {
-      width: $cover-size * 18px;
+      width: ($cover-size * 18px) - 10px;
     }
     &.dp-small {
-      width: $cover-size * 11px;
+      width: ($cover-size * 11px) - 10px;
     }
   }
 }
