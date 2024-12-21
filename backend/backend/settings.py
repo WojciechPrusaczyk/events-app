@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-edj8za53yh_7r*a46mbf&w(5sk@9@$exjfc7vl*c08$d+ga7m-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['eventfull.pl', 'wojciechp.atthost24.pl', '185.255.40.62', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['eventfull.pl', 'wojciechp.atthost24.pl', '185.255.40.62', 'localhost', '127.0.0.1', '192.168.1.142']
 
 
 # Application definition
