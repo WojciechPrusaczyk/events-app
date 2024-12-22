@@ -28,10 +28,17 @@ from django.conf.urls.static import static
 from django.urls import re_path
 from django.views.generic import TemplateView
 from django.views.static import serve
+from django.contrib.sitemaps.views import sitemap
+from eventfull.sitemaps import StaticViewSitemap, EventSitemap
 
 handler403 = "eventfull.views.error_403"
 handler404 = "eventfull.views.error_404"
 handler500 = "eventfull.views.error_500"
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'events': EventSitemap,
+}
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -81,5 +88,7 @@ urlpatterns = [
     re_path(r'^logo192\.png$', serve, {'path': 'logo192.png', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
     re_path(r'^logo512\.png$', serve, {'path': 'logo512.png', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
     re_path(r'^manifest\.json$', serve, {'path': 'manifest.json', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
+
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
