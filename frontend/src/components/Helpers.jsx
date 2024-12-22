@@ -89,14 +89,18 @@ export function formatForBackend(dateInput, timeInput) {
 }
 
 export function quillToHtml(data) {
-    const delta = JSON.parse(data);
-    if (delta && delta.ops)
-    {
-        const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
-        return converter.convert();
-    }
-    else {
-        console.error("Error occurred when processing description data.")
+    try {
+        const delta = JSON.parse(data);
+        if (delta && delta.ops)
+        {
+            const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
+            return converter.convert();
+        }
+        else {
+            console.error("Error occurred when processing description data.");
+        }
+    } catch (e) {
+        console.error("Error occurred when processing description data.");
     }
 }
 

@@ -12,6 +12,7 @@ import Countdown from "../../components/EventPage/Countdown";
 import Calendar from "../../components/EventPage/Calendar";
 import EventSchedule from "../../components/EventPage/EventSchedule";
 import EventDescription from "../../components/EventPage/EventDescription";
+import Cookies from "js-cookie";
 
 const Event = ({title = "Eventfull"}) => {
     const navigate = useNavigate();
@@ -40,6 +41,7 @@ const Event = ({title = "Eventfull"}) => {
                 if (response.status === 200) {
                     const data = response.data.detail;
                     setEventData({
+                        id: data.id,
                         name: data.name,
                         description: data.description,
                         rules: (data.rules != "" && "null" != data.rules)?data.rules:null,
@@ -78,13 +80,26 @@ const Event = ({title = "Eventfull"}) => {
             });
     }
 
+    const leaveEvent = () => {
+        axios
+            .post(`${window.location.protocol}//${window.location.host}/api/leaveEvent/`, {
+                eventId: eventData.id
+            }, {
+                withCredentials: true
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    window.location.href = `${window.location.protocol}//${window.location.host}/`
+                }
+            });
+    }
 
     return (
         <div>
             <Header />
             <main>
                 {!isDataLoaded && <DataLoader />}
-                {isDataLoaded && <div>
+                {isDataLoaded && <div className={"event-page-wrapper"}>
                     <EventHeader
                         title={eventData.name}
                         supervisor={eventData.supervisor.username}
@@ -105,6 +120,8 @@ const Event = ({title = "Eventfull"}) => {
                         <Calendar className={"event-calendar"} segmentsList={segmentsList} />
                     </p>
                     <EventSchedule segments={segmentsList} />
+                    { (Cookies.get('username') != eventData.supervisor.username) &&
+                        <button className={"btn"} onClick={leaveEvent}>Leave event</button>}
                 </div> }
             </main>
             <Footer />
