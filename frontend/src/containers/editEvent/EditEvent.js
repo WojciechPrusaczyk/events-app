@@ -610,7 +610,7 @@ const EditEvent = ({title = "Eventfull"}) => {
                                 <span className="univForm-container-label-caption">User who manages event. Changes after saving event.</span>
                             </label>
                             <input id="supervisor" type="text" className="univForm-container-textInput"
-                                   onChange={(e) => {
+                                   onKeyUp={(e) => {
                                        handleSupervisorInputChange(e.target.value)
                                    }} defaultValue={supervisor.username}
                             />
