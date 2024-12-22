@@ -4,30 +4,34 @@ import Header from "../../components/structure/header";
 import Footer from "../../components/structure/footer";
 import "../../styles/containers/home.scss"
 import "../../styles/containers/eventsList.scss"
-import ludzik from "../../images/errorBoiBackground.png";
+import MobileAppImage from "../../images/MobileApp.png";
 import "../../styles/containers/errorPages.scss"
 
-
-const NotFound = ({title = "Eventfull: 404 NotFound"}) => {
+const MobileApp = ({title = "Eventfull"}) => {
 
     useEffect(() => {
         document.title = title;
     }, []);
-
 
     return (
         <div>
             <Header/>
             <main>
                 <div className="error-page-container">
-                    <div className="text-section">
-                        <h1>Oops! Page not found</h1>
-                        <h2>
-                            It seems like the page you're looking for doesn't exist. <br/>
-                        </h2>
-                        <h3>
-                            Don't worry, just go back to the homepage.
-                        </h3>
+                    <div className="text-section text-black">
+                        <h1>Wait patiently!</h1>
+                        <p>
+                            We're still working on mobile app.<br/>
+                            The app is planned to expand current experience much further.<br/>
+                            With Many new features like: <br/>
+                            <ul>
+                                <li><b>Mobile app</b></li>
+                                <li>Event's ready to print <b>posters generator</b></li>
+                                <li>Notifications system</li>
+                                <li><b>Qr code system</b> combined with mobile app and posters</li>
+                                <li>Event resources managing</li>
+                            </ul>
+                        </p>
                         <div className="button-section">
                             <button className="home-button btn" onClick={ () => {
                                 window.location.href = `${window.location.protocol}//${window.location.host}`;
@@ -35,7 +39,7 @@ const NotFound = ({title = "Eventfull: 404 NotFound"}) => {
                         </div>
                     </div>
                     <div className="logo-section">
-                        <img src={ludzik} alt="ludzik"/>
+                        <img src={MobileAppImage} alt="mobile app image"/>
                     </div>
                 </div>
             </main>
@@ -44,4 +48,4 @@ const NotFound = ({title = "Eventfull: 404 NotFound"}) => {
     );
 };
 
-export default NotFound;
+export default MobileApp;

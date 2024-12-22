@@ -49,6 +49,10 @@ body {
   scrollbar-color: $main-dark transparent;
 }
 
+.text-black {
+  color: $black;
+}
+
 .btn {
   @include button( $main, $black-light );
   width: initial;

@@ -16,6 +16,7 @@ import ServerError from "./containers/errorPages/ServerError";
 import { Helmet } from 'react-helmet';
 import Event from "./containers/eventPage/Event";
 import Forbidden from "./containers/errorPages/Forbidden";
+import MobileApp from "./containers/articles/MobileApp";
 
 
 const Title = 'Eventfull';
@@ -25,6 +26,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" exact element={<Home title={"Eventfull"} />} />
+        <Route path="/app" element={<MobileApp title={"Eventfull: Mobile app"} />} />
         <Route path="/register" element={<Register title={"Eventfull: Sign up"} />} />
         <Route path="/login" element={<Login title={"Eventfull: Log in"} />} />
         <Route path="/forgot-password" element={<ForgotPassword title={"Eventfull: Password recovery"} />} />

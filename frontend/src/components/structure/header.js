@@ -177,7 +177,9 @@ const Header = (props) => {
         <button aria-label="show events list" className="header-user-button" onClick={() => window.location.href = `${window.location.protocol}//${window.location.host}/events-list`}>
             <img src={listIcon} alt="add new event" aria-hidden={true}/>
         </button>
-        <button aria-label="add new event" className="header-user-button" onClick={CreateEvent}>
+        <button aria-label="add new event" className="header-user-button" onClick={ (event) => {
+            CreateEvent();
+        }}>
             <img src={addIcon} alt="add new event" aria-hidden={true}/>
         </button>
         <button aria-label="add new event" className={`header-user-button${(notificationsList.length > 0)?" ping":""}`} onClick={ () => {

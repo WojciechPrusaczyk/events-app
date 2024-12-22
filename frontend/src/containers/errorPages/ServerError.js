@@ -28,7 +28,10 @@ const ServerError = ({title = "Eventfull"}) => {
                             Don't worry, just go back to the homepage.
                         </h3>
                         <div className="button-section">
-                            <button className="home-button btn" type="submit">Home</button>
+                            <button className="home-button btn" onClick={() => {
+                                window.location.href = `${window.location.protocol}//${window.location.host}`;
+                            }}>Home
+                            </button>
                         </div>
                     </div>
                     <div className="logo-section">

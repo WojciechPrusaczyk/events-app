@@ -28,6 +28,7 @@ main {
       padding: 12px;
       border-radius: 20px;
       text-decoration: none;
+      pointer-events: none;
       > span {
         padding: 8px 35px;
         color: $black;
