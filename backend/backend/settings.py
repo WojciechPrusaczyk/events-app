@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "bcrypt",
     "re",
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [

@@ -89,6 +89,6 @@ urlpatterns = [
     re_path(r'^logo512\.png$', serve, {'path': 'logo512.png', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
     re_path(r'^manifest\.json$', serve, {'path': 'manifest.json', 'document_root': os.path.join(settings.BASE_DIR, '../frontend/build')}),
 
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    path("sitemap.xml", sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

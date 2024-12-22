@@ -7,7 +7,15 @@ class StaticViewSitemap(Sitemap):
     changefreq = 'daily'
 
     def items(self):
-        return ['home', 'about', 'contact']
+        return [
+            "index",
+            "register",
+            "login",
+            "forgotPassword",
+            "events_list",
+            "join_event",
+            "app",
+        ]
 
     def location(self, item):
         # Zwróć URL dla każdego widoku
@@ -20,5 +28,5 @@ class EventSitemap(Sitemap):
     def items(self):
         return Events.objects.all()
 
-    def lastmod(self, obj):
-        return obj.updated_at
+    def location(self, obj):
+        return reverse("event_page", args=[obj.token])
