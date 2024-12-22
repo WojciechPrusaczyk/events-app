@@ -92,8 +92,7 @@ def login(request):
         expires = 1 * 24 * 60 * 60  # 1 day
 
     response = Response({"user": serializer.data}, status=status.HTTP_200_OK)
-    response.set_cookie(key='token', value=user.token, httponly=True, secure=True, samesite='Strict',
-                        expires=expires)
+    response.set_cookie(key='token', value=user.token, httponly=True, secure=False, samesite='Lax', expires=expires)
 
     return response
 

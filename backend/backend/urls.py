@@ -41,6 +41,7 @@ urlpatterns = [
     path("forgot-password/", views.index, name="forgotPassword"),
     path("events-list/", views.index, name="events_list"),
     path("join/", views.index, name="join_event"),
+    path("app/", views.index, name="app"),
 
     path("reset-password/<str:token>", views.viewResetPassword, name="resetPassword"),
     path("account-verification/<str:token>", views.viewAccountVerification, name="accountVerification"),
