@@ -13,9 +13,9 @@ const Footer = (props) => {
     const appLogo = logo;
     const currentLanguage = "English";
     const socialMedia = [
-        { name: "Facebook", href: "https://www.facebook.com/", icon: fbLogo},
-        { name: "Instagram", href: "https://www.instagram.com/", icon: igLogo},
-        { name: "X", href: "https://x.com", icon: xLogo},
+        { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61571709476410", icon: fbLogo},
+        { name: "Instagram", href: "https://www.instagram.com/eventfullpl/", icon: igLogo},
+        { name: "X", href: "https://x.com/eventfullpl", icon: xLogo},
     ];
     const footerLinks = [
         {

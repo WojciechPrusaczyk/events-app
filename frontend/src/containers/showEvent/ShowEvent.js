@@ -46,38 +46,30 @@ const ShowEvent = ({title = "Eventfull"}) => {
     };
 
     const joinEvent = () => {
-        if (eventData.joinapproval === false )
-        {
-            navigate("/event/"+eventData.token);
-            console.log("public event")
-        }
-        else {
-            console.log(eventData)
-            axios
-                .post(`${window.location.protocol}//${window.location.host}/api/send-event-request/`, {
-                    code: code.toLowerCase()
-                }, { withCredentials: true})
-                .then(response => {
-                    let data = response.data;
-                    setError("");
-                    setSuccess("");
-                    if(response.status === 200)
-                    {
-                        if(data.detail === "Request sent.") setSuccess("Request has been sent.");
-                        else if(data.detail === "User added to event.") {
-                            setSuccess("User has been added to event.");
-                            navigate("/event/"+eventData.token);
-                        }
-                        else setError("Error occurred, try again later.")
+        axios
+            .post(`${window.location.protocol}//${window.location.host}/api/send-event-request/`, {
+                code: code.toLowerCase()
+            }, { withCredentials: true})
+            .then(response => {
+                let data = response.data;
+                setError("");
+                setSuccess("");
+                if(response.status === 200)
+                {
+                    if(data.detail === "Request sent.") setSuccess("Request has been sent.");
+                    else if(data.detail === "User added to event.") {
+                        setSuccess("User has been added to event.");
+                        navigate("/event/"+eventData.token);
                     }
-                    if(data.detail === "User is already a participant of this event.") navigate("/event/"+eventData.token);
-                })
-                .catch((response) => {
-                    console.log(response)
-                    setError(response.response.data.detail);
-                    if(response.response.data.detail === "User is already a participant of this event.") navigate("/event/"+eventData.token);
-                });
-        }
+                    else setError("Error occurred, try again later.")
+                }
+                if(data.detail === "User is already a participant of this event.") navigate("/event/"+eventData.token);
+            })
+            .catch((response) => {
+                console.log(response)
+                setError(response.response.data.detail);
+                if(response.response.data.detail === "User is already a participant of this event.") navigate("/event/"+eventData.token);
+            });
     }
 
     useEffect(() => {
@@ -106,7 +98,7 @@ const ShowEvent = ({title = "Eventfull"}) => {
                         {address ? address : "Loading address."}
                     </a>
                 }
-                {(eventData.location.placeId !== null && eventData.location.placeId !== "default" && eventData.location.formattedAddress !== null) &&
+                {(eventData.location.placeId !== null && eventData.location.placeId !== "default" && eventData.location.formattedAddress.length > 0) &&
                     <a className={"show-event-address"} target="_blank"
                        href={`https://maps.google.com/?q=${eventData.location.latitude},${eventData.location.longitude}`}>
                         <img src={LocationPin} alt="location pin icon"/>
