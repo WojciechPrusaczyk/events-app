@@ -120,7 +120,7 @@ const Event = ({title = "Eventfull"}) => {
                         <Calendar className={"event-calendar"} segmentsList={segmentsList} />
                     </p>
                     <EventSchedule segments={segmentsList} />
-                    { ((Cookies.get('username') != eventData.supervisor.username) && eventData.joinApproval) &&
+                    { ((Cookies.get('username') != eventData.supervisor.username) && eventData.joinApproval === true) &&
                         <button className={"btn"} onClick={leaveEvent}>Leave event</button>}
                 </div> }
             </main>
