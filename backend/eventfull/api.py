@@ -887,6 +887,10 @@ def editSegment(request):
         ).exclude(id=segment.id).filter(
             starttime__lt=segment.endtime,
             endtime__gt=segment.starttime
+        ).exclude(
+            starttime=segment.endtime
+        ).exclude(
+            endtime=segment.starttime
         )
         if conflicting_segments.exists():
             return Response(

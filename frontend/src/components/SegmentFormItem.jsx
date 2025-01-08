@@ -182,7 +182,7 @@ const SegmentFormItem = ({segmentObject, updateSegment, active = true, onDeleteA
                     <span className="univForm-container-label-caption">Segment’s name shown to users.</span>
                 </label>
                 <input id={"title-" + segmentObject.id} type="text" className="univForm-container-textInput"
-                    onChange={handleInputChange('name')} defaultValue={segmentObject.name} onBlur={ handleBlur }/>
+                    onChange={handleInputChange('name')} value={segmentObject.name} onBlur={ handleBlur }/>
             </p>
             <p>
                 <label className="univForm-container-label" htmlFor={"description-" + segmentObject.id}>
