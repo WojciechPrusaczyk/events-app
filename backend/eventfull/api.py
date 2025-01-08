@@ -1166,17 +1166,29 @@ def getEventsByKeywords(request):
 
     # Pobranie wszystkich aktywnych, publicznych i nadchodzących wydarzeń
     if token and user:
-        events = Events.objects.filter(
+        upcoming_events = Events.objects.filter(
             isactive=True, ispublic=True,
             starttime__gte=now
         )
+
+        ongoing_events = Events.objects.filter(
+            isactive=True, ispublic=True,
+            starttime__lte=now, endtime__gte=now
+        )
     else:
-        events = Events.objects.filter(
+        upcoming_events = Events.objects.filter(
             isactive=True, ispublic=True, joinapproval=False,
             starttime__gte=now
         )
 
-    if not events.exists():
+        ongoing_events = Events.objects.filter(
+            isactive=True, ispublic=True, joinapproval=False,
+            starttime__lte=now, endtime__gte=now
+        )
+
+    events = list(upcoming_events) + list(ongoing_events)
+
+    if len( events ) == 0:
         return Response({"detail": "No active and public events found."}, status=status.HTTP_404_NOT_FOUND)
 
     for event in events:
