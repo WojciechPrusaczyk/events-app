@@ -23,6 +23,7 @@ from django.core.files.storage import FileSystemStorage
 from mimetypes import guess_type
 
 from backend.settings import MEDIA_ROOT
+from django.shortcuts import redirect
 
 
 @api_view(["GET"])
@@ -938,54 +939,89 @@ def deleteSegment(request):
     segment.delete()
     return Response({"detail": "Segment deleted successfully."}, status=status.HTTP_200_OK)
 
-
 @api_view(["POST"])
 def sendEventRequest(request):
     eventCode = request.data.get("code")
-
     eventCode = eventCode.lower()
 
     if not eventCode:
         return Response({"detail": "Code required."}, status=status.HTTP_400_BAD_REQUEST)
-
-    token = request.COOKIES.get('token')
-    if not token:
-        return Response({"detail": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        user = Users.objects.get(token=token)
-    except Users.DoesNotExist:
-        return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         event = Events.objects.get(joinCode=eventCode)
     except ObjectDoesNotExist:
         return Response({"detail": "Event does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-    if Eventsparticipants.objects.filter(user=user, event=event, isAccepted=False).exists():
-        return Response({"detail": "You already sent request, wait for acceptation."},
-                        status=status.HTTP_400_BAD_REQUEST)
-
-    if Eventsparticipants.objects.filter(user=user, event=event).exists():
-        return Response({"detail": "You are already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
-
-    if Events.objects.filter(supervisor=user, id=event.id).exists():
-        return Response({"detail": "You can't request to join your own event."}, status=status.HTTP_400_BAD_REQUEST)
-
-    participant = Eventsparticipants(
-        user=user,
-        event=event,
-        isAccepted=False if event.joinapproval else True,
-    )
-    participant.save()
+    token = request.COOKIES.get('token')
 
     if event.joinapproval:
-        return Response({"detail": "Request sent."}, status=status.HTTP_200_OK)
+        if not token:
+            return Response({"detail": "Account is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-    elif not event.joinapproval:
-        return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+        try:
+            user = Users.objects.get(token=token)
+        except Users.DoesNotExist:
+            return Response({"detail": "Invalid token: " + token}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Eventsparticipants.objects.filter(user=user, event=event, isAccepted=False).exists():
+            return Response({"detail": "You already sent request, wait for acceptation."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if Eventsparticipants.objects.filter(user=user, event=event).exists():
+            return Response({"detail": "You are already a participant of this event."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Events.objects.filter(supervisor=user, id=event.id).exists():
+            return Response({"detail": "You can't request to join your own event."}, status=status.HTTP_400_BAD_REQUEST)
+
+        participant = Eventsparticipants(
+            user=user,
+            event=event,
+            isAccepted=False if event.joinapproval else True,
+        )
+        participant.save()
+
+        if event.joinapproval:
+            return Response({"detail": "Request sent."}, status=status.HTTP_200_OK)
+
+        elif not event.joinapproval:
+            return Response({"detail": "User added to event."}, status=status.HTTP_200_OK)
+
+        else:
+            raise Exception("Error occured.")
+
 
     else:
-        raise Exception("Error occured.")
+
+        try:
+
+            user = Users.objects.get(token=token)
+
+            existing_participant = Eventsparticipants.objects.filter(user=user, event=event, isAccepted=True).first()
+
+            if existing_participant:
+
+                return Response({"detail": "Redirecting to event.", "token": event.token}, status=status.HTTP_200_OK)
+
+
+            participant = Eventsparticipants(
+
+                user=user,
+
+                event=event,
+
+                isAccepted=True,
+
+            )
+
+            participant.save()
+
+            return Response({"detail": "Successfully joined to event.", "token": event.token},
+                            status=status.HTTP_200_OK)
+
+
+        except Users.DoesNotExist:
+
+            return Response({"detail": "Redirecting to event.", "token": event.token}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

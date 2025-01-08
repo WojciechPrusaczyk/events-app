@@ -35,11 +35,11 @@ const EventCalendar = ({ segments }) => {
     const handleSegmentClick = (day, segment) => {
         setActiveSegments((prev) => ({ ...prev, [day]: segment }));
 
-        if (window.screen.width < 768)
-        {
+        // if (window.screen.width < 768)
+        // {
             document.getElementById(`event-${activeSegments[day].id}-desc`).
             scrollIntoView({behavior: "smooth", block: 'center', inline: 'center'});
-        }
+        // }
     };
 
     const [addresses, setAddresses] = useState({});

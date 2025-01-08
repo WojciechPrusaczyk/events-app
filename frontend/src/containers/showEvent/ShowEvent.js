@@ -61,6 +61,10 @@ const ShowEvent = ({title = "Eventfull"}) => {
                         setSuccess("User has been added to event.");
                         navigate("/event/"+eventData.token);
                     }
+                    else if(data.detail === "Redirecting to event." || data.detail === "Successfully joined to event.") {
+                        setSuccess("Redirecting to event.");
+                        navigate("/event/"+data.token);
+                    }
                     else setError("Error occurred, try again later.")
                 }
                 if(data.detail === "User is already a participant of this event.") navigate("/event/"+eventData.token);
